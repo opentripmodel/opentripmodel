@@ -1,0 +1,2339 @@
+swagger: "2.0"
+info:
+  title: Open Trip Model
+  description: |
+    # Introduction
+
+    ## What is OpenTripModel?
+    OpenTripModel is a simple, free (as in both “free speech” and “free beer”), lightweight and easy-to-use data model, used to exchange real-time logistic trip data on the web, and making it easier for shippers, carriers, software vendors, OEMs, and truck manufacturers to create new multi-brand application and services.
+
+    OpenTripModel is currently used and implemented by over 20 carriers providing transport services to the largest retailer in the Netherlands and the Dutch postal service provider. OpenTripModel is initiated and developed by Simacan and currently used in the Simacan Control Tower, where it has been in production since early 2014.
+
+    In order to speed up innovation in the market, Simacan decided to open up OpenTripModel specification for everyone to use, modify, and enrich. Ultimately, this will make it cheaper and easier for everyone in the logistics sector to exchange data, and develop and use new applications and services.
+
+    ## OpenTripModel sponsors
+    The [Platform Beter Benutten](http://www.beterbenutten.nl) project funds the open-source project related activities such as fine tuning and internationalising the documentation, the reference API, conduct extensive user evaluation and feedback sessions and the creation and maintenance of this website.
+
+    # The model
+    <iframe src="images/otm-model.svg" height="300" width="425" style="border:0px;"></iframe>
+
+    OpenTripModel defines entities, displayed yellow in the image. The entities are:
+      * **[Vehicle](/#tag/Vehicle)**: models any means in or by which someone travels or something is carried or conveyed. This means a vehicle can be a truck, a trailer, a train, an airplane or even some means of transport that is not invented yet. Vehicles can be coupled, thus a combination of a truck and a trailer are modeled in OTM as two coupled vehicles.
+      * **[Location](/#tag/Location)**: models any location. Note that the term location is a bit deceptive. A location in OpenTripModel can also represent an area. Locations in OpenTripModel are only defined by their geograhic reference(s). Other references, such as street adresses, are modeled as 'administrative reference' and are treated as metadata.
+      * **[Shipment](/#tag/Shipment)**: models an arbitrary amount of goods that are to be transported. OpenTripModel does not say anything about minimum or maximum sizes or amounts. This means that a shipment might be as small as a letter that is to be delivered at an office but also as large as a trailer full of goods that are to be delivered to e.g. a supermarket.
+      * **[Route](/#tag/Route)**: A route describes _how_ a vehicle can move between two points. It is not much more than a (series of) georeferences.
+      * **[Trip](/#tag/Trip)**: A trip models the idea that goods will be transported between two (or more) locations. A trip may me linked to a route. A trip entity itself does not contain much data, all details of a trip are modeled as events that are published on a trip entity.
+      * **[Actor](/#tag/Actor)**: A `Actor` can represent a company or an indiviual.
+
+    Apart from these entities, perhaps the most important entity in OpenTripModel is the **[Event](/#tag/Event)**. All dynamic behaviour is modeled as (a series of) event(s).
+
+    ## Life cycle phases
+    Apart from the entities described above, _life cycle phases_ are another important concept in OpenTripModel. There are three life cycle phases defined:
+      * **planned**: this phase is all about planning. Events in this phase represent planned events; a _planning_ of a logistic operation can be modelled as a series of planned events in OpenTripModel. Planned events typically originate from a planning system.
+      * **actual**: this phase models the reality that is happening at present time. As opposed to planned events, actual events typically originate from GPS tracking devices or traffic information systems.
+      * **realized**: this phase can be used to view and analyze a logistic operation in retrospect. Events in this phases are recorded and archived events from the actual phase.
+
+    The entities **Vehicle**, **Location**, **Shipment**, **Route**, **Trip** and **Actor** exist in all life cycle phases. Once defined in one life cycle phase, an entity does exist in all life cycle phases and has the same properties in all phases. The only thing that differs between phases are the **Events**. Events are always happening in one life cycle phase. However, events can be related between different life cycle phases. E.g. an _actual_ event can have a related event in the _planned_ phase.
+
+    ## About IDs
+    All objects used in the OpenTripModel API will be assigned a unique ID upon creation of the object. This ID will be an automatically generated UUID. The `id` field of an object will contain a full URI, that can be used to retrieve or update the object later. The generated UUID is part of this URI.
+  version: "{{VERSION}}"
+# the domain of the service
+# host: api.opentripmodel.org #commented out so we can deploy to other host.
+# array of all schemes that your API supports
+schemes:
+  - http
+  - https
+basePath: /api/public/v4
+produces:
+  - application/json
+  - application/xml
+consumes:
+  - application/json
+  - application/xml
+tags:
+  - name: Location
+    description: |
+      Locations are geometric entities which can have either the shape of a point or an area. These points and areas can be used to model delivery zones, shop and warehouse coordinates as well as environmental zones within urban areas, areas with access restrictions, etc.
+  - name: Event
+    description: |
+      An event is something occurring at a specific time (whether in the past, present, or past alike) and (optionally) at a specific location. Events are the core of this API. Events link all static objects together. The table below shows which event types are applicable to which entities in the OpenTripModel.
+      | event type                      | Location | Vehicle | Shipment | Trip  | Route | Actor | Event | life&nbsp;cycle | description
+      | ------------------------------: | :------: | :-----: | :------: | :---: | :---: | :---: | :---: | --------------- | -----------
+      | updateEvent                     | ●        | ●       | ●        | ●     | ●     |       |       |                 | &nbsp;
+      | locationUpdateEvent             |          | ●       |          |       |       |       |       | `_AR`           | Updates the location of a Vehicle
+      | startMovingEvent                |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
+      | stopMovingEvent                 |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
+      | startWaitingEvent               |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
+      | stopWaitingEvent                |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
+      | startLoadingAndUnloadingEvent   |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
+      | stopLoadingAndUnloadingEvent    |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
+      | startEngineEvent                |          | ●       |          |       |       |       |       | `_AR`           | &nbsp;
+      | stopEngineEvent                 |          | ●       |          |       |       |       |       | `_AR`           | &nbsp;
+      | coupleVehiclesEvent             |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
+      | decoupleVehiclesEvent           |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
+      | assignToTripEvent               |          | ●       |          | ●     |       |       |       | `PAR`           | &nbsp;
+      | deassignFromTripEvent           |          | ●       |          | ●     |       |       |       | `PAR`           | &nbsp;
+      | assignDriverEvent               |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
+      | deassignDriverEvent             |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
+      | sensorUpdateEvent               |          | ●       |          |       |       |       |       | `_AR`           | &nbsp;
+      | addShipmentEvent                |          | ●       | ●        |       |       |       |       | `PAR`           | &nbsp;
+      | removeShipmentEvent             |          | ●       | ●        |       |       |       |       | `PAR`           | &nbsp;
+      | receiveShipmentEvent            | ●        |         | ●        |       |       |       |       | `PAR`           | &nbsp;
+      | deliverShipmentEvent            | ●        |         | ●        |       |       |       |       | `PAR`           | &nbsp;
+      | restrictionWarningEvent         | ●        |         |          | ●     | ●     |       |       | `PAR`           | &nbsp;
+      | trafficWarningEvent             | ●        |         |          | ●     | ●     |       |       | `PAR`           | &nbsp;
+      | linkTripsEvent                  |          |         |          | ●     |       |       |       | `PAR`           | &nbsp;
+      | pickupTimeWindowStartEvent      |          |         | ●        |       |       |       |       | `P__`           | &nbsp;
+      | pickupTimeWindowEndEvent        |          |         | ●        |       |       |       |       | `P__`           | &nbsp;
+      | deliveryTimeWindowStartEvent    |          |         | ●        |       |       |       |       | `P__`           | &nbsp;
+      | deliveryTimeWindowEndEvent      |          |         | ●        |       |       |       |       | `P__`           | &nbsp;
+      | cancelEvent                     |          |         |          |       |       |       | ●     | `_AR`           | Cancel one or more event. To be canceled events should be set as `involvedObjects`.
+      | ignoreEvent                     |          |         |          |       |       |       | ●     | `_AR`           | Ignore one or more event. To be ignored events should be set as `involvedObjects`.
+      | associateWithActorEvent         | ●        | ●       | ●        |       |       | ●     |       | `PAR`           | Associate an entity with a Actor.
+  - name: Trip
+    description: |
+      A trip represents a series of events, which optionally may be linked to a route.
+  - name: Route
+    description: |
+      A route describes how to move through space in between two locations.
+  - name: Vehicle
+    description: |
+      A Vehicle is any entity which can move through space in between locations. It can be for instance a truck, a trailer, an airplane, a drone, or even something which has not been invennted yet.
+  - name: Shipment
+    description: |
+      A shipment is one (or more) item(s) being transported between locations.
+  - name: Actor
+    description: |
+      A Actor represents organisations or persons that participate in a logistic process in OpenTripModel.
+x-tagGroups:
+  - name: Operations per entity
+    tags:
+      - Location
+      - Trip
+      - Route
+      - Vehicle
+      - Shipment
+      - Actor
+  - name: Event-related operations
+    tags:
+      - Event
+
+paths:
+  /locations:
+    get:
+      summary: Get a list of locations
+      description: Get a list of locations, optionally filtered by (part of the) name
+      tags:
+        - Location
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/nameParam"
+        - $ref: "#/parameters/actorQeuryParam"
+        - $ref: "#/parameters/roleQeuryParam"
+      responses:
+        200:
+          description: |
+            A list of all defined locations, optionally filtered by (a part of) their name, using the `name` request parameter.
+          schema:
+            type:
+              array
+            items:
+              $ref: "#/definitions/location"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Create a new location
+      description: Create a location object with the given data.
+      tags:
+        - Location
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/locationParam"
+      responses:
+        201:
+          description: The location object as created. The returned object will contain the UUID that can be used to refer to this object in future calls.
+          schema: { $ref: "#/definitions/location" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        409: { $ref: "#/responses/conflict" }
+        500: { $ref: "#/responses/internalServerError" }
+  /locations/{uuid}:
+    get:
+      summary: Get a specific location by its UUID
+      description: Retrieves a single location object by its unique identifier (UUID)
+      tags:
+        - Location
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+      responses:
+        200:
+          description: An location object
+          schema: { $ref: "#/definitions/location" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    post:
+      summary: Update a location
+      description: Update a Location object with the given data.
+      tags:
+        - Location
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/locationParam"
+      responses:
+        200:
+          description: The location object with updated values.
+          schema: { $ref: "#/definitions/location" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+  /locations/{uuid}/{lifecycle}/events:
+    get:
+      summary: Get a list of events for this location
+      description: Retrieves a list of events for the location with the given UUID
+      tags:
+        - Location
+        - Event
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+      responses:
+        200:
+          description: A list of events for the given location
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/location"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Publish a new event for the given location
+      description: Publish a new event for the given location
+      tags:
+        - Event
+        - Location
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/eventParam"
+      responses:
+        201:
+          description: The created event. The returned object will contain the generated UUID that can be used to refer to this event in later requests.
+          schema: { $ref: "#/definitions/event" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+
+  /trips:
+    get:
+      summary: Get a list of trips
+      description: Retrieves a list of all trips, optionally filtered by (part of) the name, if the `name` query parameter is used.
+      tags:
+        - Trip
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/nameParam"
+      responses:
+        200:
+          description: A list of trips
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/trip"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Create a new trip
+      description: Create a Trip object with the given data.
+      tags:
+        - Trip
+        - Event
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/tripParam"
+      responses:
+        201:
+          description: The trip object as created. The returned object will contain the UUID that can be used to refer to this object in future calls.
+          schema: { $ref: "#/definitions/trip" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        409: { $ref: "#/responses/conflict" }
+        500: { $ref: "#/responses/internalServerError" }
+  /trips/{uuid}:
+    get:
+      summary: Get a specific trip by its UUID
+      description: Retrieves a Trip object by its unique identifier (UUID)
+      tags:
+        - Trip
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+      responses:
+        200:
+          description: An trip object
+          schema: { $ref: "#/definitions/trip" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    post:
+      summary: Update trip
+      description: Update a Trip object with the given data.
+      tags:
+        - Trip
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/tripParam"
+      responses:
+        200:
+          description: The updated trip object.
+          schema: { $ref: "#/definitions/trip" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+  /trips/{uuid}/{lifecycle}/events:
+    get:
+      summary: Get a list of events for this trip
+      description: Retrieves a list of events for the trip with the given UUID.
+      tags:
+        - Trip
+        - Event
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/eventTypeParam"
+      responses:
+        200:
+          description: A list of events for the given trip
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/event"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Publish a new event for the given trip
+      description: |
+        Publish a new event for the given trip. Note that a planned trip may consist of a lot of events. Therefore it is possible to create a trip with its events at once via a PUT to the `trips` endpoint.
+      tags:
+        - Event
+        - Trip
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/eventParam"
+      responses:
+        201:
+          description: The created event. The returned object will contain the generated UUID that can be used to refer to this event in later requests.
+          schema: { $ref: "#/definitions/event" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+
+  /routes:
+    get:
+      summary: Get a list of routes
+      description: Retrieves a list of all routes
+      tags:
+        - Route
+      produces:
+        - application/json
+        - application/xml
+      responses:
+        200:
+          description: A list of routes
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/route"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Create a new route
+      description: Create a new Route object
+      tags:
+        - Route
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/routeParam"
+      responses:
+        201:
+          description: The created route object. Containes the generated UUID that can be used to refer to this route in later requests.
+          schema: { $ref: "#/definitions/route" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        409: { $ref: "#/responses/conflict" }
+        500: { $ref: "#/responses/internalServerError" }
+  /routes/{uuid}:
+    get:
+      summary: Get a specific route by its UUID
+      description: Retrieves a Route object by its unique identifier (UUID)
+      tags:
+        - Route
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+      responses:
+        200:
+          description: A route object
+          schema: { $ref: "#/definitions/route" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    post:
+      summary: Update a route
+      description: Updates a Route object with the posted data.
+      tags:
+        - Route
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/routeParam"
+      responses:
+        200:
+          description: The updated route object
+          schema: { $ref: "#/definitions/route" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+  /routes/{uuid}/{lifecycle}/events:
+    get:
+      summary: Get events on a route
+      description: |
+        Retrieves a list of events on the Route, identified by its UUID. The behaviour of this call is slightly different, depending on the `lifecycle` phase:
+        - **planned**: The `endDateTime` query parameter is mandatory. The `startDateTime` query parameter is optional; if it is ommitted, the default value is _now_. The returned list is a list of planned events on the route in the given time window, that are known at the time of the request.
+        - **actual**: Both the `endDateTime` and `startDateTime` query parameters are mandatory. The returned list contains planned _and_ actual events on the given route, within the given time window.
+        - **realized**: The `startDateTime` query parameter is mandatory. The `endDateTime` query parameter is optional; when ommitted, the default value is _now_. The returned list is a list of actual events that took place on the given route in the given time window.
+      tags:
+        - Route
+        - Event
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/startDateTimeParam"
+        - $ref: "#/parameters/endDateTimeParam"
+        - $ref: "#/parameters/eventTypeParam"
+      responses:
+        200:
+          description: A list of events for the given trip, optionally filtered according to the request parameters.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/event"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Publish a new event for the given route
+      description: Publish a new event for the given route.
+      tags:
+        - Event
+        - Route
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/eventParam"
+      responses:
+        201:
+          description: The created event. The returned object will contain the generated UUID that can be used to refer to this event in later requests.
+          schema: { $ref: "#/definitions/event" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+
+  /vehicles:
+    get:
+      summary: Get a list of vehicles
+      description: Retrieves a list of vehicle objects, optionally filtered by (part of the) name.
+      tags:
+        - Vehicle
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/nameParam"
+        - $ref: "#/parameters/actorQeuryParam"
+        - $ref: "#/parameters/roleQeuryParam"
+      responses:
+        200:
+          description: A list of vehicles
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/vehicle"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Create a new vehicle
+      description: Create a new vehicle object
+      tags:
+        - Vehicle
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/vehicleParam"
+      responses:
+        201:
+          description: The created vehicle object. Containes the generated UUID that can be used to refer to this vehicle in later requests.
+          schema: { $ref: "#/definitions/vehicle" }
+          examples:
+            application/json:
+              {
+                "id": "https://opentripmodel.org/planned/vehicles/5b156b91-8e61-45aa-b5e7-d6d560870c29",
+                "name": "My first trailer",
+                "type": {
+                  "type": "trailer"
+                },
+                "maxLinks": 1,
+                "externalIds": [{
+                    "schema": "https://opentripmodel.org/types/licensePlate/nl",
+                    "value": "AB-12-YZ"
+                }],
+                "fuelType": {
+                  "type": "not-applicable"
+                }
+              }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        409: { $ref: "#/responses/conflict" }
+        500: { $ref: "#/responses/internalServerError" }
+  /vehicles/{uuid}:
+    get:
+      summary: Get a specific vehicle by its UUID
+      description: Retrieves a Vehicle object by its unique identifier (UUID)
+      tags:
+        - Vehicle
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+      responses:
+        200:
+          description: An vehicle object
+          schema: { $ref: "#/definitions/vehicle" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    post:
+      summary: Update a vehicle
+      description: Updates the vehicle identified by the UUID with the POSTed data.
+      tags:
+        - Vehicle
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/vehicleParam"
+      responses:
+        200:
+          description: The updated vehicle object.
+          schema: { $ref: "#/definitions/vehicle" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+  /vehicles/{uuid}/{lifecycle}/events:
+    get:
+      summary: Get a list of events for this vehicle
+      description: Retrieves a list of events for the vehicle with the given UUID
+      tags:
+        - Vehicle
+        - Event
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+      responses:
+        200:
+          description: A list of events for the given vehicle
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/event"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Publish a new event for the given vehicle
+      description: Publish a new event for the given vehicle
+      tags:
+        - Event
+        - Vehicle
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/eventParam"
+      responses:
+        201:
+          description: The created event object. Containes the generated UUID that can be used to refer to this vehicle in later requests.
+          schema: { $ref: "#/definitions/event" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+
+  /shipments:
+    get:
+      summary: Get a list of shipments
+      description: Retrieves a list of shipment objects, optionally filtered by (part of the) name.
+      tags:
+        - Shipment
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/nameParam"
+        - $ref: "#/parameters/actorQeuryParam"
+        - $ref: "#/parameters/roleQeuryParam"
+      responses:
+        200:
+          description: A list of shipments
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/shipment"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Create a new shipment
+      description: Create a new shipment object
+      tags:
+        - Shipment
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/shipmentParam"
+      responses:
+        201:
+          description: The created shipment object. Containes the generated UUID that can be used to refer to this shipment in later requests.
+          schema: { $ref: "#/definitions/shipment" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        409: { $ref: "#/responses/conflict" }
+        500: { $ref: "#/responses/internalServerError" }
+  /shipments/{uuid}:
+    get:
+      summary: Get a specific shipment by its UUID
+      description: Retrieves a Shipment object by its unique identifier (UUID)
+      tags:
+        - Shipment
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+      responses:
+        200:
+          description: An shipment object
+          schema: { $ref: "#/definitions/shipment" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    post:
+      summary: Update a shipment
+      description: Updates the shipment identified by the UUID with the POSTed data.
+      tags:
+        - Shipment
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/shipmentParam"
+      responses:
+        200:
+          description: The updated shipment object.
+          schema: { $ref: "#/definitions/shipment" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+  /shipments/{uuid}/{lifecycle}/events:
+    get:
+      summary: Get a list of events for this shipment
+      description: Retrieves a list of events for the shipment with the given UUID
+      tags:
+        - Shipment
+        - Event
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+      responses:
+        200:
+          description: A list of events for the given shipment
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/event"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Publish a new event for the given shipment
+      description: Publish a new event for the given shipment
+      tags:
+        - Event
+        - Shipment
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/eventParam"
+      responses:
+        201:
+          description: The created event object. Containes the generated UUID that can be used to refer to this event in later requests.
+          schema: { $ref: "#/definitions/event" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+
+  /legalEntities:
+    get:
+      summary: Get a list of `LegalEntities`
+      description: Retrieves all known `LegalEntities`, optionally filtered by (part of the) name.
+      tags:
+        - Actor
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/nameParam"
+      responses:
+        200:
+          description: A list of `LegalEntities`
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/actor"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Create a new `Actor`
+      description: Create a new `Actor` object
+      tags:
+        - Actor
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/actorParam"
+      responses:
+        201:
+          description: |
+            The created `Actor` object. Containes the generated UUID that can be used to refer to this `Actor` in later requests.
+          schema: { $ref: "#/definitions/actor" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        409: { $ref: "#/responses/conflict" }
+        500: { $ref: "#/responses/internalServerError" }
+  /legalEntities/{uuid}:
+    get:
+      summary: Get a specific `Actor` by its UUID
+      description: Retrieves a `Actor` object by its unique identifier (UUID)
+      tags:
+        - Actor
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+      responses:
+        200:
+          description: An `Actor` object
+          schema: { $ref: "#/definitions/actor" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    post:
+      summary: Update a `Actor`
+      description: Updates the `Actor` identified by the UUID with the POSTed data.
+      tags:
+        - Actor
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/actorParam"
+      responses:
+        200:
+          description: The updated `Actor` object.
+          schema: { $ref: "#/definitions/actor" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+  /legalEntities/{uuid}/{lifecycle}/events:
+    get:
+      summary: Get a list of events for this `Actor`
+      description: Retrieves a list of events for the `Actor` with the given UUID
+      tags:
+        - Actor
+        - Event
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+      responses:
+        200:
+          description: A list of events for the given `Actor`
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/event"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Publish a new event for the given `Actor`
+      description: Publish a new event for the `Actor` with the given UUID
+      tags:
+        - Event
+        - Actor
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/eventParam"
+      responses:
+        201:
+          description: The created event object. Containes the generated UUID that can be used to refer to this event in later requests.
+          schema: { $ref: "#/definitions/event" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+
+
+parameters:
+  lifecycle:
+    name: lifecycle
+    in: path
+    type: string
+    enum:
+      - planned
+      - actual
+      - realized
+    required: true
+    description: The lifecycle phase the request applies to
+  eventParam:
+    name: eventParam
+    in: body
+    schema: { $ref: "#/definitions/event" }
+    required: true
+    description: JSON object describing an event
+  tripParam:
+    name: tripParam
+    in: body
+    schema: { $ref: "#/definitions/tripWithEvents" }
+    required: true
+    description: JSON object describing a trip
+  locationParam:
+    name: locationParam
+    in: body
+    schema: { $ref: "#/definitions/location" }
+    required: true
+    description: JSON object describing a location
+  routeParam:
+    name: routeParam
+    in: body
+    schema: { $ref: "#/definitions/route" }
+    required: true
+    description: JSON object describing a route
+  vehicleParam:
+    name: vehicleParam
+    in: body
+    schema: { $ref: "#/definitions/vehicle" }
+    required: true
+    description: JSON object describing a vehicle
+  shipmentParam:
+    name: shipmentParam
+    in: body
+    schema: { $ref: "#/definitions/shipment" }
+    required: true
+    description: JSON object describing a shipment
+  actorParam:
+    name: actorParam
+    in: body
+    schema: { $ref: "#/definitions/actor" }
+    required: true
+    description: JSON object describing a Actor
+  uuidParam:
+    name: uuid
+    in: path
+    type: string
+    required: true
+    description: A uuid, identifying some pre-defined object.
+  nameParam:
+    name: name
+    in: query
+    type: string
+    required: false
+    description: A name or a part of a name, to search objects by their name.
+  startDateTimeParam:
+    name: startDateTime
+    in: query
+    type: string
+    format: date-time
+    description: |
+      The start date and time to query for. Only events on or after the `start-date-time` will be returned.
+  endDateTimeParam:
+    name: endDateTime
+    in: query
+    type: string
+    format: date-time
+    description: |
+      The end date and time to query for. Only events before or on the `end-date-time` will be returned.
+  eventTypeParam:
+    name: eventType
+    in: query
+    type: string
+    format: comma-separated
+    description: |
+      Comma-separated list of event types. The resulting list will only have events of the given types, events of other types will be ommitted.
+    required: false
+  actorQeuryParam:
+    name: actor
+    in: query
+    type: string
+    format: uuid
+    description: |
+      Filter the query by Actor. Only objects that are associated to the `Actor` identified by the given UUID will be shwon.
+    required: false
+  roleQeuryParam:
+    name: role
+    in: query
+    type: string
+    description: |
+      Filter the query by role and Actor. Only objects that are associated to the `Actor` identified by the given UUID and are associated by the given role will be shwon. This parameter is only valid in combination with the `actor` parameter.
+    required: false
+
+
+responses:
+  badRequest:
+    description: The request was invalid or cannot be otherwise served. Possible causes are invalid JSON objects or missing required parameters. An accompanying error message will explain further.
+    schema:
+      type: string
+      description: error message
+      example: The body of the request could not be parsed.
+  unauthorized:
+    description: Authentication credentials were missing or incorrect.
+    schema:
+      type: string
+      description: error message
+      example: Authentication credentials were missing or incorrect.
+  forbidden:
+    description: The request is understood, but it has been refused or access is not allowed. An accompanying error message will explain why.
+    schema:
+      type: string
+      description: error message
+      example: Access to this resource is not allowed.
+  notFound:
+    description: The URI requested is invalid or the resource requested does not exists. Also returned when the requested format is not supported by the requested method.
+    schema:
+      type: string
+      description: error message
+      example: The requested resource was not found.
+  conflict:
+    description: System was not able to create an object as requested, because an object with the same properties already exists.
+    schema:
+      type: string
+      description: error message
+      example: An object with the same properties alreayd exists.
+  internalServerError:
+    description: An unexpected server error has occured, which needs further investigation. Please contact support.
+    schema:
+      type: string
+      description: error message
+      example: An unexpected error occured while processing the request.
+
+
+definitions:
+
+####### LegalEntities #######
+  actor:
+    type: object
+    description: |
+      A `Actor` can be an organisation or a person that somehow needs to be represented in the OpenTripModel. LegalEntities can be used e.g. to group all locations that belong to an organisation, or to address an OpenTripModel message to a specific person or organisation. The use of LegalEntities is optional, and is not necessary to use OpenTripModel.
+    properties:
+      id:
+        type: string
+        format: uri
+        readOnly: true
+        description: Uniquely identifies this `Actor`. A URI will be assigned upon creation and can't be changed.
+        example: http://api.opentripmodel.org/api/public/v4/actual/legalEntities/45db6ed0-28a7-4e4a-baba-3d5f8d171103
+      name:
+        type: string
+        description: Name of the `Actor`. For display purposes only.
+        example: My awesome company, Ltd.
+
+####### Locations #######
+
+  location:
+    type: object
+    description: Object describing a geographic location. A location can either be a point or an area.
+    properties:
+      id:
+        type: string
+        format: uri
+        readOnly: true
+        description: Uniquely identifies this location. A URI will be assigned upon creation and can't be changed.
+        example: http://api.opentripmodel.org/api/public/v4/actual/locations/11c11d75-e114-4b5f-9751-b3a4afa23ecf
+      externalIds:
+        type: array
+        description: An optional array of IDs by which the location may be known in other systems.
+        items:
+          $ref: "#/definitions/idReference"
+      type:
+        type: string
+        enum:
+          - warehouse
+          - shop
+          - environmental_zone
+          - restricted_area
+          - customer
+      geoReference:
+        $ref: "#/definitions/geoReference"
+      administrative-reference:
+        $ref: "#/definitions/address"
+      contactDetails:
+        type: array
+        items:
+          $ref: "#/definitions/contactDetail"
+      constraints:
+        type: array
+        description: Constraints that apply to this location.
+        items:
+          $ref: "#/definitions/constraint"
+    required:
+      - geoReference
+
+  contactDetail:
+    type: object
+    description: Contact detail
+    properties:
+      type:
+        type: string
+        enum:
+          - phone
+          - email
+          - other
+        description: Type of contact detail
+      value:
+        type: string
+        description: |
+          The contact detail itself. Depending on the `type`, this can be a phone number, email address or some other address to contact a location or person.
+      remarks:
+        type: string
+        description: Remarks about the contact detail.
+    example:
+      {
+        "type": "phone",
+        "value": "+312012345678",
+        "remarks": "private cellphone of the CEO"
+      }
+    required:
+      - type
+      - value
+
+  geoReference:
+    type: object
+    description: Describes a geographic reference, which can be part of a location or route.
+    properties:
+      type:
+        type: string
+        description: Type of geographic reference
+    discriminator: type
+    required:
+      - type
+    example:
+      {
+        "type": "latLongPointGeoReference",
+        "lat": 52.0838333,
+        "lon": 5.8318803
+      }
+
+  latLongPoint:
+    properties:
+      lat:
+        type: number
+        format: double
+        example: 52.192294
+      lon:
+        type: number
+        format: double
+        example: 5.410124
+    required:
+      - lat
+      - lon
+    example:
+      {
+        "lat": 52.0838333,
+        "lon": 5.8318803
+      }
+
+
+  latLongPointGeoReference:
+    allOf:
+      - $ref: "#/definitions/geoReference"
+      - $ref: "#/definitions/latLongPoint"
+    example:
+      {
+        "type": "latLongPointGeoReference",
+        "lat": 52.0838333,
+        "lon": 5.8318803
+      }
+
+  latLongArrayGeoReference:
+    allOf:
+      - $ref: "#/definitions/geoReference"
+      - properties:
+          points:
+            type: array
+            minLength: 1
+            items:
+              $ref: "#/definitions/latLongPoint"
+    required:
+      - points
+    example:
+      {
+        "type": "latLongArrayGeoReference",
+        "points":
+          [
+            {
+              "lat": 52.0838333,
+              "lon": 5.8318803
+            },
+            {
+              "lat": 52.192294,
+              "lon": 5.410124
+            },
+            {
+              "lat": 52.188841,
+              "lon": 5.414857
+            }
+          ]
+      }
+
+  point2D:
+    type: array
+    maxItems: 2
+    minItems: 2
+    items:
+      type: number
+      format: double
+    example:
+      [
+        5.408910512924194,
+        52.19404109179293
+      ]
+
+  geoJSONPoint:
+    type: object
+    description: GeoJSon geometry
+    externalDocs:
+      url: http://geojson.org/geojson-spec.html#id2
+    allOf:
+      - $ref: "#/definitions/geoReference"
+      - properties:
+          coordinates:
+            $ref: '#/definitions/point2D'
+    required:
+      - coordinates
+
+  geoJSONLineString:
+    type: object
+    description: GeoJSon geometry
+    externalDocs:
+      url: http://geojson.org/geojson-spec.html#id3
+    allOf:
+      - $ref: "#/definitions/geoReference"
+      - properties:
+          coordinates:
+            type: array
+            minLength: 1
+            items:
+              $ref: '#/definitions/point2D'
+    required:
+      - coordinates
+
+  geoJSONPolygon:
+    type: object
+    description: GeoJSon geometry
+    externalDocs:
+      url: http://geojson.org/geojson-spec.html#id4
+    allOf:
+      - $ref: "#/definitions/geoReference"
+      - properties:
+          coordinates:
+            type: array
+            items:
+              type: array
+              items:
+                $ref: '#/definitions/point2D'
+    required:
+      - coordinates
+
+  geoJSONMultiPoint:
+    type: object
+    description: GeoJSon geometry
+    externalDocs:
+      url: http://geojson.org/geojson-spec.html#id5
+    allOf:
+      - $ref: "#/definitions/geoReference"
+      - properties:
+          coordinates:
+            type: array
+            items:
+              $ref: '#/definitions/point2D'
+    required:
+      - coordinates
+
+  geoJSONMultiLineString:
+    type: object
+    description: GeoJSon geometry
+    externalDocs:
+      url: http://geojson.org/geojson-spec.html#id6
+    allOf:
+      - $ref: "#/definitions/geoReference"
+      - properties:
+          coordinates:
+            type: array
+            items:
+              type: array
+              items:
+                $ref: '#/definitions/point2D'
+    required:
+      - coordinates
+
+  geoJSONMultiPolygon:
+    type: object
+    description: GeoJSon geometry
+    externalDocs:
+      url: http://geojson.org/geojson-spec.html#id6
+    allOf:
+      - $ref: "#/definitions/geoReference"
+      - properties:
+          coordinates:
+            type: array
+            items:
+              type: array
+              items:
+                type: array
+                items:
+                  $ref: '#/definitions/point2D'
+    required:
+      - coordinates
+
+  openLRGeoReference:
+    allOf:
+      - $ref: "#/definitions/geoReference"
+      - properties:
+          openLRString:
+            type: string
+            format: openLR
+            description: A base64 encoded binary OpenLR string
+            example: CgOkbyUN6COJAwEB/8YjGQ==
+    required:
+      - openLRString
+    example:
+      {
+        "type": "openLRGeoReference",
+        "openLRString": "CgOkbyUN6COJAwEB/8YjGQ=="
+      }
+
+  tmcPoint:
+    properties:
+      locationCode:
+        description: TMC location code
+        type: string
+      direction:
+        description: TMC direction
+        type: string
+        default: positive
+        enum:
+          - positive
+          - negative
+
+  tmcLocation:
+    properties:
+      countryCode:
+        description: TMC country code
+        type: string
+      tableId:
+        description: TMC table ID
+        type: string
+      tableVersionId:
+        description: TMC table version ID
+        type: string
+      locationCode:
+        description: TMC location code
+        type: string
+      direction:
+        description: TMC direction
+        type: string
+        default: positive
+        enum:
+          - positive
+          - negative
+      offset:
+        description: Offset from the TMC location in meters
+        type: number
+        format: integer32
+        default: 0
+    required:
+      - countryCode
+      - tableId
+      - tableVersionId
+      - locationCode
+
+  tmcLocationArray:
+    properties:
+      countryCode:
+        description: TMC country code
+        type: string
+      tableId:
+        description: TMC table ID
+        type: string
+      tableVersionId:
+        description: TMC table version ID
+        type: string
+      points:
+        type: array
+        minLength: 1
+        items:
+          $ref: "#/definitions/tmcPoint"
+      startOffset:
+        description: Offset from the first TMC location in meters
+        type: number
+        format: integer32
+        default: 0
+      endOffset:
+        description: Offset from the last TMC location in meters
+        type: number
+        format: integer32
+        default: 0
+    required:
+      - countryCode
+      - tableId
+      - tableVersionId
+      - points
+
+  tmcLocationGeoReference:
+    allOf:
+      - $ref: "#/definitions/geoReference"
+      - $ref: "#/definitions/tmcLocation"
+
+  tmcArrayGeoReference:
+    allOf:
+      - $ref: "#/definitions/geoReference"
+      - $ref: "#/definitions/tmcLocationArray"
+
+  address:
+    type: object
+    description: |
+      Administrative references are street addresses, only available for reference and for improved human readability. Administrative references are **not** intended to be used for identifying locations; always use a geoReference for that purpose.
+    properties:
+      name:
+        type: string
+        description: The name can be sent to the mobile device of the driver, in order to properly address the client.
+      street:
+        type: string
+        description: Street of the address.
+      houseNumber:
+        type: string
+        description: Housenumber
+      houseNumberAddition:
+        type: string
+        description: Addition to the houseNumber.
+      zipCode:
+        type: string
+        description: The zipcode of the address.
+      city:
+        type: string
+        description: The city of the address
+      country:
+        type: string
+        description: |
+          [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1) country code.
+    example:
+      {
+        "name": "Main entrance of shop",
+        "street": "Langestraat",
+        "houseNumber": "3a",
+        "zipCode": "1234AB",
+        "city": "Amersfoort",
+        "country": "nl"
+      }
+
+####### Constraints #######
+
+  constraint:
+    type: object
+    description: constraint
+    properties:
+      type:
+        description: The constraint type
+        type: string
+      startDateTime:
+        type: string
+        format: date-time
+        description: Optional start date/time of this constraint.
+        example: "2012-01-01T00:00:00Z"
+      endDateTime:
+        type: string
+        format: date-time
+        description: Optional end date/time of this constraint.
+        example: "2028-12-31T23:59:59Z"
+      timeRanges:
+        description: |
+          Time ranges that this constraint is in effect. If no ranges are given, the constraint is in effect 7 days a week, 24 hours per day between `startDateTime` and `endDateTime`.
+        type: array
+        example:
+          [
+            {
+              "dayOfWeek": 1,
+              "ranges": ["07:00:00/09:00:00","17:00:00/18:00:00"]
+            },
+            {
+              "dayOfWeek": 2,
+              "ranges": ["07:00:00/09:00:00","17:00:00/18:00:00"]
+            },
+            {
+              "dayOfWeek": 3,
+              "ranges": ["07:00:00/09:00:00","17:00:00/18:00:00"]
+            },
+            {
+              "dayOfWeek": 4,
+              "ranges": ["07:00:00/09:00:00","17:00:00/18:00:00"]
+            },
+            {
+              "dayOfWeek": 5,
+              "ranges": ["07:00:00/09:00:00","17:00:00/18:00:00"]
+            },
+          ]
+        items:
+          $ref: "#/definitions/dayOfWeekTimeRange"
+    discriminator: type
+    required:
+      - type
+
+  accessConstraint:
+    allOf:
+      - $ref: "#/definitions/constraint"
+      - properties:
+          accessConstraintType:
+            description: |
+              The type of access constraint. Available types are:
+                - `allow`: access is allowed when this constraint is in effect
+                - `deny`: access is denied when this constraint is in effect
+            type: string
+            enum:
+              - allow
+              - deny
+
+  sizeConstraint:
+    allOf:
+      - $ref: "#/definitions/constraint"
+      - properties:
+          sizeConstraintType:
+            description: |
+              The type of size constraint. Available types are:
+                - `maximum`: All sizes below and including the maximum value are allowed.
+                - `minimum`: All sizes above and including the minimum value are allowed.
+                - `range`: All sizes in between and including the minimum and maximum values are allowed.
+            type: string
+            enum:
+              - maximum
+              - minimum
+              - range
+          sizeConstraint:
+            type: string
+            enum:
+              - vehicle-length
+              - vehicle-height
+              - vehicle-weight
+          maxSize:
+            description: Maximum size allowed
+            $ref: "#/definitions/valueWithUnit"
+          minSize:
+            description: Minimum size allowed
+            $ref: "#/definitions/valueWithUnit"
+
+  speedConstraint:
+    allOf:
+      - $ref: "#/definitions/constraint"
+      - properties:
+          speedConstraintType:
+            description: |
+              The type of speed constraint. Available types are:
+                - `maximum`: All speeds below and including the maximum value are allowed.
+                - `minimum`: All speeds above and including the minimum value are allowed.
+                - `range`: All speeds in between and including the minimum and maximum values are allowed.
+            type: string
+            enum:
+              - maximum
+              - minimum
+              - range
+          maxSpeed:
+            description: Maximum speed allowed
+            $ref: "#/definitions/valueWithUnit"
+          minSpeed:
+            description: Minimum speed allowed
+            $ref: "#/definitions/valueWithUnit"
+
+  fuelTypeConstraint:
+    allOf:
+      - $ref: "#/definitions/constraint"
+      - properties:
+          fuelTypeConstraintType:
+            description: |
+              The type of fuel type constraint. Available types are:
+                - `allow`: only the given fuel types are allowed
+                - `deny`: the given fuel types are denied
+            type: string
+            enum:
+              - allow
+              - deny
+          fuelTypes:
+            description: The fuel types that are allowed or denied.
+            type: array
+            items:
+              $ref: "#/definitions/fuelType"
+
+  vehicleTypeConstraint:
+    allOf:
+      - $ref: "#/definitions/constraint"
+      - properties:
+          vehicleTypeConstraintType:
+            description: |
+              The type of vehicle type constraint. Available types are:
+                - `allow`: only the given vehicle types are allowed
+                - `deny`: the given vehicle types are denied, all others are allowed
+            type: string
+            enum:
+              - allow
+              - deny
+          vehicleTypes:
+            description: The vehicle types that are allowed or denied.
+            type: array
+            items:
+              $ref: "#/definitions/vehicleType"
+
+  routeConstraint:
+    allOf:
+      - $ref: "#/definitions/constraint"
+      - properties:
+          routeConstraintType:
+            description: |
+              The type of route constraint. Available types are:
+                - `allow`: only the given route is allowed
+                - `deny`: any part of the given route is denied, all others are allowed
+            type: string
+            enum:
+              - allow
+              - deny
+          route:
+            $ref: "#/definitions/geoReference"
+
+
+  dayOfWeekTimeRange:
+    type: object
+    description: A time range for a specific day of the week.
+    properties:
+      dayOfWeek:
+        type: integer
+        format: int32
+        minimum: 0
+        maximum: 7
+        description: |
+          Day of the week, where
+          - 1 = Monday
+          - 2 = Tuesday
+          - 3 = Wednesday
+          - 4 = Thursday
+          - 5 = Friday
+          - 6 = Saturday
+          - 7 = Sunday
+        example: 1
+      ranges:
+        type: array
+        minLength: 1
+        items:
+          $ref: "#/definitions/timeRange"
+    required:
+      - dayOfWeek
+      - ranges
+
+  timeRange:
+    type: object
+    description: Time range with start and end time.
+    properties:
+      range:
+        type: string
+        format: time-range
+        description: |
+          Time interval in the format `hh:MM:ss/hh:MM:ss`, where the value before the `/` is the start time and the value after the `/` is the end time.
+        example: 09:00:00/17:00:00
+    required:
+      - range
+
+
+####### Vehicles #######
+
+  vehicle:
+    type: object
+    description: Vehicle
+    properties:
+      id:
+        type: string
+        format: uri
+        readOnly: true
+        description: |
+          Unique ID for this `Vehicle`. UUIDs are automatically assigned upon creating a `Vehicle` object.
+      name:
+        type: string
+        description: |
+          Name of the `Vehicle`, mainly used for display and search purposes.
+      externalIds:
+        type: array
+        items:
+          $ref: "#/definitions/idReference"
+      vehicle:
+        $ref: "#/definitions/vehicleType"
+      fuel:
+        $ref: "#/definitions/fuelType"
+      maxLinks:
+        type: integer
+        format: int32
+        description: |
+          Maximum number of links to other `Vehicle` s. Typical values are 0, 1 or 2.
+      links:
+        type: array
+        readOnly: true
+        description: list of URIs, pointing to vehicles this vehicle is linked to
+        items:
+          type: string
+          format: uri
+          example: http://api.opentripmodel.org/api/public/v4/vehicles/dc47d2b1-4a88-4f3e-a3f9-cb379dee3f1b
+      loadCapacities:
+        type: array
+        items:
+          $ref: "#/definitions/valueWithUnit"
+      currentLoad:
+        readOnly: true
+        type: array
+        description: |
+          The current load of the `Vehicle`. This value is only available in the `actual` lifecycle phase.
+        items:
+          type: string
+          format: uri
+          example: http://api.opentripmodel.org/api/public/v4/planned/shipments/68b367e0-017e-476f-9fe1-848557f807d0
+    required:
+      - maxLinks
+      - type
+
+  vehicleType:
+    type: object
+    description: The type of vehicle
+    properties:
+      type:
+        type: string
+        enum:
+          - boxtruck
+          - tractor
+          - trailer
+          - airplane
+          - ship
+          - unknown
+          - other
+      other:
+        type: string
+        description: |
+          Name of the vehcile type if `other` is chosen in the `type` field.
+        example: teletransporter
+    example:
+      {
+        "type": "tractor"
+      }
+    required:
+      - type
+
+  fuelType:
+    type: object
+    description: |
+      The type of fuel the vehicle runs on. For vehicle without an engine of their own, such as a trailer, you may choose `not-applicable`. For trailers with cooling capabilities, choose the fuel type of the cooling engine.
+    properties:
+      type:
+        type: string
+        enum:
+          - diesel
+          - biodiesel
+          - gasoline
+          - kerosene
+          - LPG
+          - natural-gas
+          - bio-ethanol
+          - hydrogen
+          - electricity
+          - not-applicable
+          - unknown
+          - other
+      other:
+        type: string
+        description: |
+          Name of the fuel type if `other` is chosen in the `type` field.
+        example: nuclear-fusion
+    example:
+      {
+        "type": "diesel"
+      }
+    required:
+      - type
+
+####### Shipments #######
+
+  shipment:
+    type: object
+    description: |
+      A shipment object has at lease a `physicalSender` and `physicalAddressee` location. If no `legalSender` or `legalAddressee` are given, those are considered equal to their physical counterparts. All sender/addressee values can be given either as embedded location object or as URI of a pre-defined location. In the latter case, you can use the field ending with `Id` instead. A `physicalSender` or `physicalSenderId` is required, as is a `physicalAddressee` or `physicalAddresseeId`.
+    properties:
+      id:
+        type: string
+        format: uri
+        readOnly: true
+        description: Uniquely identifies the shipment
+        example: http://api.opentripmodel.org/api/public/v4/shipments/ddb488f2-9082-4ec9-bd88-3c4e703a103d
+      physicalSenderId:
+        type: string
+        format: uri
+        description: The URI of an already defined location for the physical location of the sender.
+        example: http://api.opentripmodel.org/api/public/v4/locations/ebf47d6b-b976-438f-bf0a-5161d04bf981
+      physicalSender:
+        $ref: "#/definitions/location"
+      legalSenderId:
+        type: string
+        format: uri
+        description: The URI of an already defined location for the legal location of the sender.
+        example: http://api.opentripmodel.org/api/public/v4/locations/62da797a-bc58-40c1-a9ee-5e90813144a9
+      legalSender:
+        $ref: "#/definitions/location"
+      physicalAddresseeId:
+        type: string
+        format: uri
+        description: The URI of an already defined location for the physical location of the addressee.
+        example: http://api.opentripmodel.org/api/public/v4/locations/a1ed8116-94c5-4f00-a17d-7b96998a0795
+      physicalAddressee:
+        $ref: "#/definitions/location"
+      legalAddresseeId:
+        type: string
+        format: uri
+        description: The URI of an already defined location for the legal location of the addressee.
+        example: http://api.opentripmodel.org/api/public/v4/locations/cef100b7-9867-424d-a9a7-350fa823d609
+      legalAddressee:
+        $ref: "#/definitions/location"
+      freightDocument:
+        type: string
+        format: uri
+        description: URI to the official freight document for this shipment.
+        example: http://partner.transfollow.com/api/freightdocuments/abc001
+      dimensions:
+        $ref: "#/definitions/dimensions"
+      weight:
+        $ref: "#/definitions/valueWithUnit"
+      packaging:
+        type: string
+        description: |
+          Description of the packaging (type) of this shipment
+        example: pallet
+      type:
+        type: string
+        description: |
+          This field can be used to categorize and/or group shipments by type, depending on the needs of a specific logistic process.
+        example: fresh goods
+      description:
+        type: string
+        description: |
+          Free format text field that can be used to describe the contents of this shipment.
+        example: 50 boxes of bananas
+
+
+####### Trips #######
+
+  trip:
+    type: object
+    description: |
+      Trip object. A trip object consists of a list of events and an optional route. The sequence of events defines the trip. Each trip has an associated `events` endpoint that can be used to get the events for this trip or to publish new events on the trip. A Trip object only exists in one single lifecycle phase. There can be linked trip objects in other lifecycle phases. E.g. a Trip in the `planned` phase can have a linked Trip object in the `actual` phase. The planned trip only has planned events, and the actual trip only has actuals events. The list of events on the actual trip will grow in time, as more actual events happen.
+    properties:
+      id:
+        type: string
+        format: uri
+        readOnly: true
+        description: |
+          Uniquely identifies the `Trip`
+      name:
+        type: string
+        description: |
+          Name of the `Trip`, only used for display and search purposes.
+      linkedTrips:
+        type: array
+        readOnly: true
+        items:
+          type: string
+          format: uri
+          description: |
+            URI of an endpoint to access trip that is linked to this `Trip`. A linked `Trip` can be a `Trip` that precedes or succeeds this `Trip`.
+      route:
+        type: string
+        format: uri
+        description: |
+          URI of an endpoint that can be used to retrieve the route of this `Trip`.
+        readOnly: true
+      events:
+        type: string
+        format: uri
+        readOnly: true
+        description: |
+          URI that can be used to retrieve a list of events for this `Trip` or to publish events to.
+
+  tripWithEvents:
+    type: object
+    description: |
+      `Trip` object that can be send to the API to create an event with associated route (optional) and events.
+    properties:
+      name:
+        type: string
+        description: |
+          Name of this `Trip`, only used for display and search purposes. Can also be used for reference name or id in another system.
+      route:
+        $ref: "#/definitions/route"
+      events:
+        type: array
+        items:
+          $ref: "#/definitions/event"
+
+####### Routes #######
+
+  route:
+    type: object
+    description: Route
+    properties:
+      id:
+        type: string
+        format: uri
+        description: |
+          Uniquely identifies the `Route`
+      geoReferences:
+        $ref: "#/definitions/geoReference"
+    required:
+      - geoReferences
+
+####### Events #######
+
+  event:
+    type: object
+    description: Event
+    properties:
+      id:
+        type: string
+        format: uri
+        readOnly: true
+        description: |
+          Uniquely identifies the `Event`
+      lifecyclePhase:
+        $ref: "#/definitions/lifecyclePhase"
+      involvedObjects:
+        type: array
+        description: |
+          A list of URI's, each one pointing to an endpoint representing an object that is involved in this `Event`. The maximum number of objects is defined by the `Event`'s type.
+        items:
+          type: string
+          format: uri
+      type:
+        type: string
+        description: |
+          The type of the `Event`. Depending on this type, additional fields may be required for this object.
+      time:
+        type: string
+        format: date-time
+        description: |
+          The date and time this `Event` happens. The exact meaning depends on the `lifecyclePhase`:
+          - `planned`: The date and time this event is planned to happen. This is always in the future.
+          - `actual`: The date and time this event actually happens. This is always in the near past.
+          - `realized`: The date and time this event did actually happen. This is always in the past.
+      estimatedTime:
+        type: string
+        format: date-time
+        readOnly: true
+        description: |
+          The date and time this `Event` is estimated to happen. Note that this is not a planned time, but an estimated time, that is calculated based on previous events. This means that the `estimatedTime` might not be available at all times. E.g. if there are no previous events, not `estimatedTime` can be calculated. The exact meaning of this field depends on the `lifecyclePhase`:
+          - `planned`: The estimated time may be calculated based on typical travel times. This can be helpful in validating or fine tuning a planning.
+          - `actual`: The estimated time is calculated based on travel times that take into account current traffic conditions. Note that the estimated time can change often, based on various conditions.
+          - `realized`: In realized there is no estimated time.
+      reason:
+        type: string
+        description: |
+          Reason for or cause of this event.
+      remarks:
+        type: string
+        description: |
+          Remarks for this event.
+    discriminator: type
+    required:
+      - type
+
+  updateEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - properties:
+          location:
+            $ref: "#/definitions/updateEvent_location"
+
+  # This is a work around for a swagger rendering bug.
+  updateEvent_location:
+    type: object
+    description: Either reference a pre-defined location by its ID or give an inline location as geoReference.
+    properties:
+      id:
+        type: string
+        format: uri
+        description: reference to a pre-defined location
+      location:
+        $ref: "#/definitions/geoReference"
+
+  locationUpdateEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/updateEvent"
+    required:
+      - location
+
+  startMovingEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/locationUpdateEvent"
+
+  stopMovingEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/locationUpdateEvent"
+
+  startWaitingEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/updateEvent"
+
+  stopWaitingEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/updateEvent"
+
+  startLoadingAndUnloadingEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/locationUpdateEvent"
+
+  stopLoadingAndUnloadingEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/locationUpdateEvent"
+
+  startEngineEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/updateEvent"
+
+  stopEngineEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/updateEvent"
+
+  coupleVehiclesEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/updateEvent"
+
+  assignToTripEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+
+  deassignFromTripEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+
+  decoupleVehiclesEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/locationUpdateEvent"
+
+  assignDriverEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/updateEvent"
+
+  deassignDriverEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/updateEvent"
+
+  sensorUpdateEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/updateEvent"
+      - properties:
+          sensorId:
+            type: string
+            description: |
+              ID of the sensor, must be unique within the `Vechicle` that is referenced in the `involvedObjects`.
+          sensorValue:
+            $ref: "#/definitions/valueWithUnit"
+
+  addShipmentEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/updateEvent"
+
+  removeShipmentEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/updateEvent"
+
+  receiveShipmentEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/locationUpdateEvent"
+
+  deliverShipmentEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/locationUpdateEvent"
+
+  restrictionWarningEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/locationUpdateEvent"
+      - properties:
+          warning:
+            type: string #TODO: define warning type
+            description: Restriction warning description
+    required:
+      - warning
+
+  trafficWarningEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/locationUpdateEvent"
+      - properties:
+          warning:
+            type: string #TODO: define warning type
+            description: Traffic warning description
+    required:
+      - warning
+
+  linkTripsEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+
+  pickupTimeWindowStartEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/updateEvent"
+
+  pickupTimeWindowEndEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/updateEvent"
+
+  deliveryTimeWindowStartEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/updateEvent"
+
+  deliveryTimeWindowEndEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/updateEvent"
+
+  cancelEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+
+  ignoreEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+
+  associateWithActorEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - properties:
+          actor:
+            type: string
+            format: uri
+            description: |
+              Reference to the `Actor` to which the `involvedObjects` are to be associated
+            example: http://api.opentripmodel.org/api/public/v4/actual/legalEntities/45db6ed0-28a7-4e4a-baba-3d5f8d171103
+          role:
+            type: string
+            description: |
+              The role of the `Actor` with respect to the `involvedObjects`. There are no pre-defined roles, and the role does not have any special meaning in OpenTripModel.
+            example: "owner"
+
+
+####### Lifecycle phases #######
+
+  lifecyclePhase:
+    type: object
+    description: |
+      Lifecycle phase, can be one of `planned`, `actual` or `realized`. All entities except `Event` exist in all life cycle phases. But the events on an entity differ depending on the lifecycle phase. E.g. a vehicle in the `planned` life cycle phase has different events compared to the same vehicle in the `actual` phase.
+    properties:
+      phase:
+        type: string
+        description: phase in the lifecycle
+        readOnly: true
+        enum:
+          - planned
+          - actual
+          - realized
+
+####### General #######
+
+  valueWithUnit:
+    type: object
+    description: Value with unit
+    properties:
+      unit:
+        type: string
+        description: measurement unit of this value
+      value:
+        type: integer
+        format: int32
+        description: value in the given unit
+    required:
+      - unit
+      - value
+
+  dimensions:
+    type: object
+    description: Dimensions of an object.
+    properties:
+      width:
+        $ref: "#/definitions/valueWithUnit"
+      height:
+        $ref: "#/definitions/valueWithUnit"
+      length:
+        $ref: "#/definitions/valueWithUnit"
+    required:
+      - width
+      - height
+      - length
+
+  idReference:
+    type: object
+    description: Reference to an ID of an object in another system or according to another standard.
+    properties:
+      schema:
+        type: string
+        format: uri
+        description: |
+          URI, uniquely identifying the scheme of the identifier. Examples:
+          - `https://opentripmodel.org/types/gln`, **[Global Location Number](http://en.wikipedia.org/wiki/Global_Location_Number)**: See http://en.wikipedia.org/wiki/Global_Location_Number and http://www.gs1.org/gln.
+          - `https://opentripmodel.org/types/licensePlate/<countryCode>`, **License plate**: Licence plate identifier. Use the [international vehicle registration code](https://en.wikipedia.org/wiki/List_of_international_vehicle_registration_codes) in the URI,
+          - `https://opentripmodel.org/types/name`, **Name**: Just a name
+        example: https://opentripmodel.org/types/licensePlate/nl
+      value:
+        type: string
+        description: The unique identifier (ID) in the format defined by the schema.
+        example: AB-12-CD
+    required:
+      - schema
+      - value
