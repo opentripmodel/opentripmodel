@@ -14,7 +14,7 @@ VERSION=`git describe | sed -e 's/\//_/g'`
 #Deploy it as a application version
 ./create-application-version.sh ${VERSION} ${DATE}
 
-#Deploy it to the configured environment if deploy = true
+#Deploy it to the configured environment 
 aws elasticbeanstalk update-environment \
   --application-name opentripmodel-server \
   --environment-name opentripmodel-stub-server \

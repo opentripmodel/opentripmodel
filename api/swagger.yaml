@@ -37,6 +37,12 @@ info:
 
     ## About IDs
     All objects used in the OpenTripModel API will be assigned a unique ID upon creation of the object. This ID will be an automatically generated UUID. The `id` field of an object will contain a full URI, that can be used to retrieve or update the object later. The generated UUID is part of this URI.
+
+    # Further reading
+    Please refer to [the OpenTripModel website](https://opentripmodel.org) for more general documentation as well as updates on OpenTripModel.
+
+    # Licence
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />All OpenTripModel documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
   version: "{{VERSION}}"
 # the domain of the service
 # host: api.opentripmodel.org #commented out so we can deploy to other host.
