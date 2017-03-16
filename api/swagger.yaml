@@ -1151,7 +1151,12 @@ definitions:
         format: uri
         readOnly: true
         description: Uniquely identifies this `Actor`. A URI will be assigned upon creation and can't be changed.
-        example: http://api.opentripmodel.org/api/public/v4/actual/legalEntities/45db6ed0-28a7-4e4a-baba-3d5f8d171103
+        example: http://api.opentripmodel.org/api/public/v4/actual/actors/45db6ed0-28a7-4e4a-baba-3d5f8d171103
+      externalIds:
+        type: array
+        description: An optional array of IDs by which the actor may be known in other systems.
+        items:
+          $ref: "#/definitions/idReference"
       name:
         type: string
         description: Name of the `Actor`. For display purposes only.
@@ -1894,6 +1899,11 @@ definitions:
         readOnly: true
         description: Uniquely identifies the shipment
         example: http://api.opentripmodel.org/api/public/v4/shipments/ddb488f2-9082-4ec9-bd88-3c4e703a103d
+      externalIds:
+        type: array
+        description: An optional array of IDs by which the location may be known in other systems.
+        items:
+          $ref: "#/definitions/idReference"
       physicalSenderId:
         type: string
         format: uri
@@ -1961,6 +1971,11 @@ definitions:
         readOnly: true
         description: |
           Uniquely identifies the `Trip`
+      externalIds:
+        type: array
+        description: An optional array of IDs by which the location may be known in other systems.
+        items:
+          $ref: "#/definitions/idReference"
       name:
         type: string
         description: |
@@ -2013,6 +2028,11 @@ definitions:
         format: uri
         description: |
           Uniquely identifies the `Route`
+      externalIds:
+        type: array
+        description: An optional array of IDs by which the location may be known in other systems.
+        items:
+          $ref: "#/definitions/idReference"
       geoReferences:
         $ref: "#/definitions/geoReference"
     required:
@@ -2326,14 +2346,24 @@ definitions:
         format: uri
         description: |
           URI, uniquely identifying the scheme of the identifier. Examples:
-          - `https://opentripmodel.org/types/gln`, **[Global Location Number](http://en.wikipedia.org/wiki/Global_Location_Number)**: See http://en.wikipedia.org/wiki/Global_Location_Number and http://www.gs1.org/gln.
+          - `http://www.gs1.org/gln`, **[Global Location Number](http://en.wikipedia.org/wiki/Global_Location_Number)**: See http://en.wikipedia.org/wiki/Global_Location_Number and http://www.gs1.org/gln.
           - `https://opentripmodel.org/types/licensePlate/<countryCode>`, **License plate**: Licence plate identifier. Use the [international vehicle registration code](https://en.wikipedia.org/wiki/List_of_international_vehicle_registration_codes) in the URI,
           - `https://opentripmodel.org/types/name`, **Name**: Just a name
+          - `https://opentripmodel.org/types/kvknummer`, **Dutch Chamber of Commerce number**: Can be used to identify a company.
+          - `http://www.gs1.org/gsin`, **GSIN**, [Global Shipment Identification Number](http://www.gs1.org/gsin) - identifies a shipment, according to the [GS1 standard](https://en.wikipedia.org/wiki/GS1).
+          - `http://www.gs1.org/sscc`, **SSCC**, [Serial Shipping Container Code](http://www.gs1.org/sscc) - identifies a container within a shipment, in case a shipment consists of more than one container, according to the [GS1 standard](https://en.wikipedia.org/wiki/GS1).
+          - `http://www.gs1.org/gtin`, **GTIN**, [Global Trade Item Number](http://www.gs1.org/gtin), identifies an item in an container within a shipment, according to the [GS1 standard](https://en.wikipedia.org/wiki/GS1).
+          Note that the list above is just a list of examples. E.g. in case of shipments, OpenTripModel doesn't define the granularity of a Shipment, while the GS1-references might suggest otherwise. In GS1 terms, a Shipment in OpenTripModel can either be a Shipment, or a Shipping Container or a Trade Item or neither of those. It all depends on the needs of the logistics operation that is to be modeled in OpenTripModel.
         example: https://opentripmodel.org/types/licensePlate/nl
       value:
         type: string
         description: The unique identifier (ID) in the format defined by the schema.
         example: AB-12-CD
+      uri:
+        type: string
+        format: uri
+        description: The (optional) URI that can be used to get additional information about the referenced identifier in an external system.
+        example: https://www.kvk.nl/zoeken/#!zoeken&q=57084173
     required:
       - schema
       - value
