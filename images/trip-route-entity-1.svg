@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 667 142" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style id="bx-google-fonts">@import url(https://fonts.googleapis.com/css?family=Source+Code+Pro:400,600);</style>
+  </defs>
+  <rect x="0" y="0" width="285" height="142" style="stroke-width: 0; fill: #fec052;"/>
+  <g>
+    <text x="10" y="30"  style="fill: rgb(255, 255, 255); font-family: 'Source Code Pro'; font-size: 24px; font-weight: 600; white-space: pre;">Trip:</text>
+    <text x="10" y="60" style="fill: rgb(255, 255, 255); font-family: 'Source Code Pro'; font-size: 24px; white-space: pre;">  id: 1</text>
+    <text x="10" y="90" style="fill: rgb(255, 255, 255); font-family: 'Source Code Pro'; font-size: 24px; white-space: pre;">  from: location A</text>
+    <text x="10" y="120" style="fill: rgb(255, 255, 255); font-family: 'Source Code Pro'; font-size: 24px; white-space: pre;">  to: location B</text>
+  </g>
+  <path d="M 285 60 L 380 60" style="fill: none; stroke: #fec052; stroke-width: 3;"/>
+  <rect x="380" y="0" width="285" height="142" style="fill: rgba(255, 255, 255, 0); stroke: #fec052; stroke-width: 3;"/>
+  <g>
+    <text x="390" y="30" style="fill: #fec052; font-family: 'Source Code Pro'; font-size: 24px; font-weight: 600; white-space: pre;">Route:</text>
+    <text x="390" y="60" style="fill: #fec052; font-family: 'Source Code Pro'; font-size: 24px; white-space: pre;">  id: 1</text>
+    <text x="390" y="90" style="fill: #fec052; font-family: 'Source Code Pro'; font-size: 24px; white-space: pre;">  from: location A</text>
+    <text x="390" y="120" style="fill: #fec052; font-family: 'Source Code Pro'; font-size: 24px; white-space: pre;">  to: location B</text>
+  </g>
+  <g transform="translate(575, 15)">
+    <ellipse cx="0"  cy="0"  rx="5.86" ry="5.86" style="fill: rgba(255, 255, 255, 0); stroke: #fec052; stroke-width: 2;"/>
+    <ellipse cx="74" cy="22" rx="5.86" ry="5.86" style="fill: rgba(255, 255, 255, 0); stroke: #fec052; stroke-width: 2;"/>
+    <ellipse cx="43" cy="12" rx="5.86" ry="5.86" style="fill: rgba(255, 255, 255, 0); stroke: #fec052; stroke-width: 2;"/>
+    <ellipse cx="21" cy="35" rx="5.86" ry="5.86" style="fill: rgba(255, 255, 255, 0); stroke: #fec052; stroke-width: 2;"/>
+    <path d="M 3 10  L 12 26" style="fill: none; stroke: #fec052; stroke-width: 2;"/>
+    <path d="M 35 20 L 26 28" style="fill: none; stroke: #fec052; stroke-width: 2;"/>
+    <path d="M 52 15 L 64 19" style="fill: none; stroke: #fec052; stroke-width: 2;"/>
+  </g>
+</svg>

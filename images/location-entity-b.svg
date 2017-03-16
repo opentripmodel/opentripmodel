@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<svg viewBox="0 0 440 110" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <style>@import url(https://fonts.googleapis.com/css?family=Source+Code+Pro:400,600);</style>
+  </defs>
+  <rect x="0" y="0" width="440" height="110" style="stroke-width: 0; fill: #f36f39;"/>
+  <g>
+    <text x="10" y="30"  style="fill: white; font-family: 'Source Code Pro'; font-size: 24px; font-weight: 600; white-space: pre;">Location:</text>
+    <text x="10" y="60"  style="fill: white; font-family: 'Source Code Pro'; font-size: 24px; white-space: pre;">  id: B</text>
+    <text x="10" y="90"  style="fill: white; font-family: 'Source Code Pro'; font-size: 24px; white-space: pre;">  name: shop B, loading bay</text>
+  </g>
+</svg>
