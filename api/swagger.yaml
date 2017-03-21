@@ -60,7 +60,7 @@ consumes:
 tags:
   - name: Location
     description: |
-      Locations are geometric entities which can have either the shape of a point or an area. These points and areas can be used to model delivery zones, shop and warehouse coordinates as well as environmental zones within urban areas, areas with access restrictions, etc.
+      Locations are geometric entities which can have either the shape of a point or an area. These points and areas can be used to model delivery zones, store and warehouse coordinates as well as environmental zones within urban areas, areas with access restrictions, etc.
   - name: Event
     description: |
       An event is something occurring at a specific time (whether in the past, present, or past alike) and (optionally) at a specific location. Events are the core of this API. Events link all static objects together. The table below shows which event types are applicable to which entities in the OpenTripModel.
@@ -1186,13 +1186,7 @@ definitions:
         items:
           $ref: "#/definitions/idReference"
       type:
-        type: string
-        enum:
-          - warehouse
-          - shop
-          - environmental_zone
-          - restricted_area
-          - customer
+        $ref: "#/definitions/locationType"
       geoReference:
         $ref: "#/definitions/geoReference"
       administrative-reference:
@@ -1208,6 +1202,32 @@ definitions:
           $ref: "#/definitions/constraint"
     required:
       - geoReference
+
+    locationType:
+      type: object
+      description: The type of location
+      properties:
+        type:
+          type: string
+          enum:
+            - warehouse
+            - store
+            - environmental_zone
+            - restricted_area
+            - customer
+            - other
+        other:
+          type: string
+          description: |
+            Name of the location type if `other` is chosen in the `type` field.
+          example: playground
+      example:
+        {
+          "type": "warehouse"
+        }
+      required:
+        - type
+
 
   contactDetail:
     type: object
@@ -1559,7 +1579,7 @@ definitions:
           [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1) country code.
     example:
       {
-        "name": "Main entrance of shop",
+        "name": "Main entrance of store",
         "street": "Langestraat",
         "houseNumber": "3a",
         "zipCode": "1234AB",
