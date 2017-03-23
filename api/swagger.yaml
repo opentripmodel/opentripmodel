@@ -4,48 +4,20 @@ info:
   description: |
     # Introduction
 
-    ## What is OpenTripModel?
-    OpenTripModel is a simple, free (as in both “free speech” and “free beer”), lightweight and easy-to-use data model, used to exchange real-time logistic trip data on the web, and making it easier for shippers, carriers, software vendors, OEMs, and truck manufacturers to create new multi-brand application and services.
-
-    OpenTripModel is currently used and implemented by over 20 carriers providing transport services to the largest retailer in the Netherlands and the Dutch postal service provider. OpenTripModel is initiated and developed by Simacan and currently used in the Simacan Control Tower, where it has been in production since early 2014.
-
-    In order to speed up innovation in the market, Simacan decided to open up OpenTripModel specification for everyone to use, modify, and enrich. Ultimately, this will make it cheaper and easier for everyone in the logistics sector to exchange data, and develop and use new applications and services.
-
-    ## OpenTripModel sponsors
-    The [Platform Beter Benutten](http://www.beterbenutten.nl) project funds the open-source project related activities such as fine tuning and internationalising the documentation, the reference API, conduct extensive user evaluation and feedback sessions and the creation and maintenance of this website.
+    You are viewing the **API Reference Documentation** of OpenTripModel. This reference documentation is targetted at developers that are writing client or server code for an OpenTripModel implementation. For a general introduction to OpenTripModel, please refer to the [main website of OpenTripModel](https://www.opentripmodel.org/).
 
     # The model
     <iframe src="images/otm-model.svg" height="300" width="425" style="border:0px;"></iframe>
 
-    OpenTripModel defines entities, displayed yellow in the image. The entities are:
-      * **[Vehicle](/#tag/Vehicle)**: models any means in or by which someone travels or something is carried or conveyed. This means a vehicle can be a truck, a trailer, a train, an airplane or even some means of transport that is not invented yet. Vehicles can be coupled, thus a combination of a truck and a trailer are modeled in OTM as two coupled vehicles.
-      * **[Location](/#tag/Location)**: models any location. Note that the term location is a bit deceptive. A location in OpenTripModel can also represent an area. Locations in OpenTripModel are only defined by their geograhic reference(s). Other references, such as street adresses, are modeled as 'administrative reference' and are treated as metadata.
-      * **[Shipment](/#tag/Shipment)**: models an arbitrary amount of goods that are to be transported. OpenTripModel does not say anything about minimum or maximum sizes or amounts. This means that a shipment might be as small as a letter that is to be delivered at an office but also as large as a trailer full of goods that are to be delivered to e.g. a supermarket.
-      * **[Route](/#tag/Route)**: A route describes _how_ a vehicle can move between two points. It is not much more than a (series of) georeferences.
-      * **[Trip](/#tag/Trip)**: A trip models the idea that goods will be transported between two (or more) locations. A trip may me linked to a route. A trip entity itself does not contain much data, all details of a trip are modeled as events that are published on a trip entity.
-      * **[Actor](/#tag/Actor)**: A `Actor` can represent a company or an indiviual.
+    OpenTripModel defines entities, displayed yellow in the image. You can click on the boxes in the image to jump to the corresponding section in this API Reference Documentation. For a more conceptual introduction to the entities, please read the [Introducing the model](https://www.opentripmodel.org/docs/the-model) section of the documentation. There's also an [introduction to lifecycles](https://www.opentripmodel.org/docs/lifecycles) available. (Lifecycles are displayed as green boxes in the image.)
 
-    Apart from these entities, perhaps the most important entity in OpenTripModel is the **[Event](/#tag/Event)**. All dynamic behaviour is modeled as (a series of) event(s).
-
-    ## Life cycle phases
-    Apart from the entities described above, _life cycle phases_ are another important concept in OpenTripModel. There are three life cycle phases defined:
-      * "planned": this phase is all about planning. Events in this phase represent planned events; a _planning_ of a logistic operation can be modelled as a series of planned events in OpenTripModel. Planned events typically originate from a planning system.
-      * "actual": this phase models the reality that is happening at present time. As opposed to planned events, actual events typically originate from GPS tracking devices or traffic information systems.
-      * "realized": this phase can be used to view and analyze a logistic operation in retrospect. Events in this phases are recorded and archived events from the actual phase.
-
-    The entities **Vehicle**, **Location**, **Shipment**, **Route**, **Trip** and **Actor** exist in all life cycle phases. Once defined in one life cycle phase, an entity does exist in all life cycle phases and has the same properties in all phases. The only thing that differs between phases are the **Events**. Events are always happening in one life cycle phase. However, events can be related between different life cycle phases. E.g. an "actual" event can have a related event in the "planned" phase.
-
-    ## About IDs
-    All objects used in the OpenTripModel API will be assigned a unique ID upon creation of the object. This ID will be an automatically generated UUID. The `id` field of an object will contain a full URI, that can be used to retrieve or update the object later. The generated UUID is part of this URI.
-
-    # Further reading
-    Please refer to [the OpenTripModel website](https://opentripmodel.org) for more general documentation as well as updates on OpenTripModel.
+    Apart from these entities, perhaps the most important entity in OpenTripModel is the **[Event](/#tag/Event)**. All dynamic behaviour is modeled as (a series of) event(s). Please refer to the sections [Important Concepts](https://www.opentripmodel.org/docs/concepts) and [Event entity](https://www.opentripmodel.org/docs/event-entity) of the general documentation for an introduction.
 
     # Licence
     <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />All OpenTripModel documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
   version: "{{VERSION}}"
 # the domain of the service
-# host: api.opentripmodel.org #commented out so we can deploy to other host.
+# host: api.opentripmodel.org #commented out so we can deploy to other hosts.
 # array of all schemes that your API supports
 schemes:
   - http
@@ -1989,7 +1961,7 @@ definitions:
   trip:
     type: object
     description: |
-      `Trip` entity. A `Trip` entity consists of a list of `Events` and an optional `Route`. The sequence of `Events` defines the trip. Each `Trip` has an associated `events` endpoint that can be used to get the events for this trip or to publish new events on the trip. Once defined, a `Trip` entity exists in all single lifecycle phases, just like the other entities. However, the events of the `Trip` differ between the different lifecycle phases. 
+      `Trip` entity. A `Trip` entity consists of a list of `Events` and an optional `Route`. The sequence of `Events` defines the trip. Each `Trip` has an associated `events` endpoint that can be used to get the events for this trip or to publish new events on the trip. Once defined, a `Trip` entity exists in all single lifecycle phases, just like the other entities. However, the events of the `Trip` differ between the different lifecycle phases.
     properties:
       id:
         type: string
