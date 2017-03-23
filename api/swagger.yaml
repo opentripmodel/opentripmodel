@@ -29,11 +29,11 @@ info:
 
     ## Life cycle phases
     Apart from the entities described above, _life cycle phases_ are another important concept in OpenTripModel. There are three life cycle phases defined:
-      * **planned**: this phase is all about planning. Events in this phase represent planned events; a _planning_ of a logistic operation can be modelled as a series of planned events in OpenTripModel. Planned events typically originate from a planning system.
-      * **actual**: this phase models the reality that is happening at present time. As opposed to planned events, actual events typically originate from GPS tracking devices or traffic information systems.
-      * **realized**: this phase can be used to view and analyze a logistic operation in retrospect. Events in this phases are recorded and archived events from the actual phase.
+      * "planned": this phase is all about planning. Events in this phase represent planned events; a _planning_ of a logistic operation can be modelled as a series of planned events in OpenTripModel. Planned events typically originate from a planning system.
+      * "actual": this phase models the reality that is happening at present time. As opposed to planned events, actual events typically originate from GPS tracking devices or traffic information systems.
+      * "realized": this phase can be used to view and analyze a logistic operation in retrospect. Events in this phases are recorded and archived events from the actual phase.
 
-    The entities **Vehicle**, **Location**, **Shipment**, **Route**, **Trip** and **Actor** exist in all life cycle phases. Once defined in one life cycle phase, an entity does exist in all life cycle phases and has the same properties in all phases. The only thing that differs between phases are the **Events**. Events are always happening in one life cycle phase. However, events can be related between different life cycle phases. E.g. an _actual_ event can have a related event in the _planned_ phase.
+    The entities **Vehicle**, **Location**, **Shipment**, **Route**, **Trip** and **Actor** exist in all life cycle phases. Once defined in one life cycle phase, an entity does exist in all life cycle phases and has the same properties in all phases. The only thing that differs between phases are the **Events**. Events are always happening in one life cycle phase. However, events can be related between different life cycle phases. E.g. an "actual" event can have a related event in the "planned" phase.
 
     ## About IDs
     All objects used in the OpenTripModel API will be assigned a unique ID upon creation of the object. This ID will be an automatically generated UUID. The `id` field of an object will contain a full URI, that can be used to retrieve or update the object later. The generated UUID is part of this URI.
@@ -505,9 +505,9 @@ paths:
       summary: Get events on a route
       description: |
         Retrieves a list of events on the Route, identified by its UUID. The behaviour of this call is slightly different, depending on the `lifecycle` phase:
-        - **planned**: The `endDateTime` query parameter is mandatory. The `startDateTime` query parameter is optional; if it is ommitted, the default value is _now_. The returned list is a list of planned events on the route in the given time window, that are known at the time of the request.
-        - **actual**: Both the `endDateTime` and `startDateTime` query parameters are mandatory. The returned list contains planned _and_ actual events on the given route, within the given time window.
-        - **realized**: The `startDateTime` query parameter is mandatory. The `endDateTime` query parameter is optional; when ommitted, the default value is _now_. The returned list is a list of actual events that took place on the given route in the given time window.
+        - "planned": The `endDateTime` query parameter is mandatory. The `startDateTime` query parameter is optional; if it is ommitted, the default value is _now_. The returned list is a list of planned events on the route in the given time window, that are known at the time of the request.
+        - "actual": Both the `endDateTime` and `startDateTime` query parameters are mandatory. The returned list contains planned _and_ actual events on the given route, within the given time window.
+        - "realized": The `startDateTime` query parameter is mandatory. The `endDateTime` query parameter is optional; when ommitted, the default value is "now". The returned list is a list of actual events that took place on the given route in the given time window.
       tags:
         - Route
         - Event
@@ -1094,14 +1094,14 @@ parameters:
     type: string
     format: uuid
     description: |
-      Filter the query by Actor. Only objects that are associated to the `Actor` identified by the given UUID will be shwon.
+      Filter the query by Actor. Only objects that are associated to the `Actor` identified by the given UUID will be shown.
     required: false
   roleQeuryParam:
     name: role
     in: query
     type: string
     description: |
-      Filter the query by role and Actor. Only objects that are associated to the `Actor` identified by the given UUID and are associated by the given role will be shwon. This parameter is only valid in combination with the `actor` parameter.
+      Filter the query by role and Actor. Only objects that are associated to the `Actor` identified by the given UUID and are associated by the given role will be shown. This parameter is only valid in combination with the `actor` parameter.
     required: false
 
 
@@ -1845,7 +1845,7 @@ definitions:
         readOnly: true
         type: array
         description: |
-          The current load of the `Vehicle`. This value is only available in the `actual` lifecycle phase.
+          The current load of the `Vehicle`. This value is only available in the "actual" lifecycle phase.
         items:
           type: string
           format: uri
@@ -1989,7 +1989,7 @@ definitions:
   trip:
     type: object
     description: |
-      Trip object. A trip object consists of a list of events and an optional route. The sequence of events defines the trip. Each trip has an associated `events` endpoint that can be used to get the events for this trip or to publish new events on the trip. A Trip object only exists in one single lifecycle phase. There can be linked trip objects in other lifecycle phases. E.g. a Trip in the `planned` phase can have a linked Trip object in the `actual` phase. The planned trip only has planned events, and the actual trip only has actuals events. The list of events on the actual trip will grow in time, as more actual events happen.
+      Trip object. A trip object consists of a list of events and an optional route. The sequence of events defines the trip. Each trip has an associated `events` endpoint that can be used to get the events for this trip or to publish new events on the trip. A Trip object only exists in one single lifecycle phase. There can be linked trip objects in other lifecycle phases. E.g. a Trip in the "planned" phase can have a linked Trip object in the "actual" phase. The "planned" trip only has planned events, and the "actual" trip only has actuals events. The list of events on the actual trip will grow in time, as more actual events happen.
     properties:
       id:
         type: string
@@ -2094,18 +2094,18 @@ definitions:
         format: date-time
         description: |
           The date and time this `Event` happens. The exact meaning depends on the `lifecyclePhase`:
-          - `planned`: The date and time this event is planned to happen. This is always in the future.
-          - `actual`: The date and time this event actually happens. This is always in the near past.
-          - `realized`: The date and time this event did actually happen. This is always in the past.
+          - "planned": The date and time this event is planned to happen. This is always in the future.
+          - "actual": The date and time this event actually happens. This is always in the near past.
+          - "realized": The date and time this event did actually happen. This is always in the past.
       estimatedTime:
         type: string
         format: date-time
         readOnly: true
         description: |
           The date and time this `Event` is estimated to happen. Note that this is not a planned time, but an estimated time, that is calculated based on previous events. This means that the `estimatedTime` might not be available at all times. E.g. if there are no previous events, not `estimatedTime` can be calculated. The exact meaning of this field depends on the `lifecyclePhase`:
-          - `planned`: The estimated time may be calculated based on typical travel times. This can be helpful in validating or fine tuning a planning.
-          - `actual`: The estimated time is calculated based on travel times that take into account current traffic conditions. Note that the estimated time can change often, based on various conditions.
-          - `realized`: In realized there is no estimated time.
+          - "planned": The estimated time may be calculated based on typical travel times. This can be helpful in validating or fine tuning a planning.
+          - "actual": The estimated time is calculated based on travel times that take into account current traffic conditions. Note that the estimated time can change often, based on various conditions.
+          - "realized": In realized there is no estimated time.
       reason:
         type: string
         description: |
@@ -2320,7 +2320,7 @@ definitions:
   lifecyclePhase:
     type: object
     description: |
-      Lifecycle phase, can be one of `planned`, `actual` or `realized`. All entities except `Event` exist in all life cycle phases. But the events on an entity differ depending on the lifecycle phase. E.g. a vehicle in the `planned` life cycle phase has different events compared to the same vehicle in the `actual` phase.
+      Lifecycle phase, can be one of "planned", "actual" or "realized". All entities except `Event` exist in all life cycle phases. But the events on an entity differ depending on the lifecycle phase. E.g. a vehicle in the "planned" life cycle phase has different events compared to the same vehicle in the "actual" phase.
     properties:
       phase:
         type: string
