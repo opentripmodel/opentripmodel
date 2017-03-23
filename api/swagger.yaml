@@ -1989,7 +1989,7 @@ definitions:
   trip:
     type: object
     description: |
-      Trip object. A trip object consists of a list of events and an optional route. The sequence of events defines the trip. Each trip has an associated `events` endpoint that can be used to get the events for this trip or to publish new events on the trip. A Trip object only exists in one single lifecycle phase. There can be linked trip objects in other lifecycle phases. E.g. a Trip in the `planned` phase can have a linked Trip object in the `actual` phase. The planned trip only has planned events, and the actual trip only has actuals events. The list of events on the actual trip will grow in time, as more actual events happen.
+      `Trip` entity. A `Trip` entity consists of a list of `Events` and an optional `Route`. The sequence of `Events` defines the trip. Each `Trip` has an associated `events` endpoint that can be used to get the events for this trip or to publish new events on the trip. Once defined, a `Trip` entity exists in all single lifecycle phases, just like the other entities. However, the events of the `Trip` differ between the different lifecycle phases. 
     properties:
       id:
         type: string
