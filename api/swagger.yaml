@@ -1172,6 +1172,10 @@ definitions:
         description: Constraints that apply to this location.
         items:
           $ref: "#/definitions/constraint"
+      remarks:
+        type: string
+        description: Remarks about the location. Please don't misuse this field for external references, use the `externalIds` field instead.
+
     required:
       - geoReference
 
