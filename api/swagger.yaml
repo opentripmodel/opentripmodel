@@ -4,7 +4,7 @@ info:
   description: |
     # Introduction
 
-    You are viewing the **API Reference Documentation** of OpenTripModel. This reference documentation is targetted at developers that are writing client or server code for an OpenTripModel implementation. For a general introduction to OpenTripModel, please refer to the [main website of OpenTripModel](https://www.opentripmodel.org/).
+    You are viewing the **API Reference Documentation** of OpenTripModel. This reference documentation is targetted at developers that are writing client or server code for an OpenTripModel implementation. For a general introduction to OpenTripModel, please refer to the [main website of OpenTripModel](https://www.opentripmodel.org/). This documentation is generated from the OpenTripModel API specification, the source of which can be found at [OpenTripModels GitHub repository](https://github.com/opentripmodel/opentripmodel).
 
     # The model
     <iframe src="images/otm-model.svg" height="300" width="425" style="border:0px;"></iframe>
