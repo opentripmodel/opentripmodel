@@ -1160,6 +1160,10 @@ definitions:
         readOnly: true
         description: Uniquely identifies this location. A URI will be assigned upon creation and can't be changed.
         example: http://api.opentripmodel.org/api/public/v4/actual/locations/11c11d75-e114-4b5f-9751-b3a4afa23ecf
+      name:
+        type: string
+        description: Name of the location. Used for display, filtering and display.
+        example: "Main warehouse"
       externalIds:
         type: array
         description: An optional array of IDs by which the location may be known in other systems.
