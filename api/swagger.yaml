@@ -13,6 +13,14 @@ info:
 
     Apart from these entities, perhaps the most important entity in OpenTripModel is the **[Event](/#tag/Event)**. All dynamic behaviour is modeled as (a series of) event(s). Please refer to the sections [Important Concepts](https://www.opentripmodel.org/docs/concepts) and [Event entity](https://www.opentripmodel.org/docs/event-entity) of the general documentation for an introduction.
 
+    # Technical notes
+
+    ## Unique identifiers
+    This section has been moved to the [Implementation guide](https://www.opentripmodel.org/docs/unique-identifiers) on the main OpenTripModel website.
+
+    ## Time values
+    This section has been moved to the [Implementation guide](https://www.opentripmodel.org/docs/time-and-date-representation) on the main OpenTripModel website.
+
     # Licence
     <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />All OpenTripModel documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
   version: "{{VERSION}}"
@@ -1044,14 +1052,14 @@ parameters:
     type: string
     format: date-time
     description: |
-      The start date and time to query for. Only events on or after the `start-date-time` will be returned.
+      The start date and time to query for. Only events on or after the `start-date-time` will be returned. All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation: `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
   endDateTimeParam:
     name: endDateTime
     in: query
     type: string
     format: date-time
     description: |
-      The end date and time to query for. Only events before or on the `end-date-time` will be returned.
+      The end date and time to query for. Only events before or on the `end-date-time` will be returned. All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation: `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
   eventTypeParam:
     name: eventType
     in: query
@@ -1575,13 +1583,15 @@ definitions:
       startDateTime:
         type: string
         format: date-time
-        description: Optional start date/time of this constraint.
-        example: "2012-01-01T00:00:00Z"
+        description: |
+          Optional start date/time of this constraint. All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation: `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
+        example: "2012-01-01T00:00:00.000Z"
       endDateTime:
         type: string
         format: date-time
-        description: Optional end date/time of this constraint.
-        example: "2028-12-31T23:59:59Z"
+        description: |
+          Optional end date/time of this constraint. All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation: `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
+        example: "2028-12-31T23:59:59.000Z"
       timeRanges:
         description: |
           Time ranges that this constraint is in effect. If no ranges are given, the constraint is in effect 7 days a week, 24 hours per day between `startDateTime` and `endDateTime`.
@@ -1741,7 +1751,7 @@ definitions:
       dayOfWeek:
         type: integer
         format: int32
-        minimum: 0
+        minimum: 1
         maximum: 7
         description: |
           Day of the week, where
@@ -1770,7 +1780,7 @@ definitions:
         type: string
         format: time-range
         description: |
-          Time interval in the format `hh:MM:ss/hh:MM:ss`, where the value before the `/` is the start time and the value after the `/` is the end time.
+          Time interval in the format `hh:mm:ss/hh:mm:ss`, where the value before the `/` is the start time and the value after the `/` is the end time. This follows the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) time interval notation. Note that the time values are in the local time zone of the `Location`. This is because it would be impractical to convert time intervals related to a location to UTC, given that the intervals are linked to a weekday (as opposed to a specific date) and thus the UTC time could change in time zones where [Daylight Saving Time (DST)](https://en.wikipedia.org/wiki/Daylight_saving_time) is used. See the [Time values](/#section/Technical-notes/Time-values) section for details.
         example: 09:00:00/17:00:00
     required:
       - range
@@ -2073,6 +2083,8 @@ definitions:
           - "planned": The date and time this event is planned to happen. This is always in the future.
           - "actual": The date and time this event actually happens. This is always in the near past.
           - "realized": The date and time this event did actually happen. This is always in the past.
+
+          All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation: `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
       estimatedTime:
         type: string
         format: date-time
@@ -2082,6 +2094,8 @@ definitions:
           - "planned": The estimated time may be calculated based on typical travel times. This can be helpful in validating or fine tuning a planning.
           - "actual": The estimated time is calculated based on travel times that take into account current traffic conditions. Note that the estimated time can change often, based on various conditions.
           - "realized": In realized there is no estimated time.
+
+          All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation: `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
       reason:
         type: string
         description: |
