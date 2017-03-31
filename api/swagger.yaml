@@ -2010,12 +2010,6 @@ definitions:
         description: |
           URI of an endpoint that can be used to retrieve the route of this `Trip`.
         readOnly: true
-      events:
-        type: string
-        format: uri
-        readOnly: true
-        description: |
-          URI that can be used to retrieve a list of events for this `Trip` or to publish events to.
 
   tripWithEvents:
     type: object
