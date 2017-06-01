@@ -841,8 +841,8 @@ paths:
 
   /legalEntities:
     get:
-      summary: Get a list of `LegalEntities`
-      description: Retrieves all known `LegalEntities`, optionally filtered by (part of the) name.
+      summary: Get a list of `Actors`
+      description: Retrieves all known `Actors`, optionally filtered by (part of the) name.
       tags:
         - Actor
       produces:
@@ -852,7 +852,7 @@ paths:
         - $ref: "#/parameters/nameParam"
       responses:
         200:
-          description: A list of `LegalEntities`
+          description: A list of `Actors`
           schema:
             type: array
             items:
@@ -1126,11 +1126,11 @@ responses:
 
 definitions:
 
-####### LegalEntities #######
+####### Actors #######
   actor:
     type: object
     description: |
-      A `Actor` can be an organisation or a person that somehow needs to be represented in the OpenTripModel. LegalEntities can be used e.g. to group all locations that belong to an organisation, or to address an OpenTripModel message to a specific person or organisation. The use of LegalEntities is optional, and is not necessary to use OpenTripModel.
+      A `Actor` can be an organisation or a person that somehow needs to be represented in the OpenTripModel. Actors can be used e.g. to group all locations that belong to an organisation, or to address an OpenTripModel message to a specific person or organisation. The use of Actors is optional, and is not necessary to use OpenTripModel.
     properties:
       id:
         type: string
