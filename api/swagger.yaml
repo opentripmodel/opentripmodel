@@ -74,24 +74,28 @@ tags:
       | pickupTimeWindowEndEvent        |          |         | ●        |       |       |       |       | `P__`           | &nbsp;
       | deliveryTimeWindowStartEvent    |          |         | ●        |       |       |       |       | `P__`           | &nbsp;
       | deliveryTimeWindowEndEvent      |          |         | ●        |       |       |       |       | `P__`           | &nbsp;
+      | constraintViolationEvent        | ●        |         |          | ●     |       |       |       | `PAR`           | &nbsp;
       | cancelEvent                     |          |         |          |       |       |       | ●     | `_AR`           | Cancel one or more event. To be canceled events should be set as `involvedObjects`.
       | ignoreEvent                     |          |         |          |       |       |       | ●     | `_AR`           | Ignore one or more event. To be ignored events should be set as `involvedObjects`.
       | associateWithActorEvent         | ●        | ●       | ●        |       |       | ●     |       | `PAR`           | Associate an entity with a Actor.
   - name: Trip
     description: |
-      A trip represents a series of events, which optionally may be linked to a route.
+      A `Trip` represents a series of events, which optionally may be linked to a route.
   - name: Route
     description: |
-      A route describes how to move through space in between two locations.
+      A `Route` describes how to move through space in between two locations.
   - name: Vehicle
     description: |
-      A Vehicle is any entity which can move through space in between locations. It can be for instance a truck, a trailer, an airplane, a drone, or even something which has not been invennted yet.
+      A `Vehicle` is any entity which can move through space in between locations. It can be for instance a truck, a trailer, an airplane, a drone, or even something which has not been invennted yet.
   - name: Shipment
     description: |
-      A shipment is one (or more) item(s) being transported between locations.
+      A `Shipment` is one (or more) item(s) being transported between locations.
   - name: Actor
     description: |
-      A Actor represents organisations or persons that participate in a logistic process in OpenTripModel.
+      An `Actor` represents organisations or persons that participate in a logistic process in OpenTripModel.
+  - name: Constraint
+    description: |
+      A `Constraint` can be used to model `Locations` with limited access or `Trips` with conditions that have to stay within a given range.
 x-tagGroups:
   - name: Operations per entity
     tags:
@@ -101,6 +105,7 @@ x-tagGroups:
       - Vehicle
       - Shipment
       - Actor
+      - Constraint
   - name: Event-related operations
     tags:
       - Event
@@ -108,8 +113,8 @@ x-tagGroups:
 paths:
   /locations:
     get:
-      summary: Get a list of locations
-      description: Get a list of locations, optionally filtered by (part of the) name
+      summary: Get a list of Locations
+      description: Get a list of `Locations`, optionally filtered by (part of the) name
       tags:
         - Location
       produces:
@@ -122,7 +127,7 @@ paths:
       responses:
         200:
           description: |
-            A list of all defined locations, optionally filtered by (a part of) their name, using the `name` request parameter.
+            A list of all defined `Locations`, optionally filtered by (a part of) their name, using the `name` request parameter.
           schema:
             type:
               array
@@ -134,8 +139,8 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     put:
-      summary: Create a new location
-      description: Create a location object with the given data.
+      summary: Create a new Location
+      description: Create a `Location` object with the given data.
       tags:
         - Location
       consumes:
@@ -148,7 +153,7 @@ paths:
         - $ref: "#/parameters/locationParam"
       responses:
         201:
-          description: The location object as created. The returned object will contain the UUID that can be used to refer to this object in future calls.
+          description: The `Location` object as created. The returned object will contain the UUID that can be used to refer to this object in future calls.
           schema: { $ref: "#/definitions/location" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -158,8 +163,8 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
   /locations/{uuid}:
     get:
-      summary: Get a specific location by its UUID
-      description: Retrieves a single location object by its unique identifier (UUID)
+      summary: Get a specific Location by its UUID
+      description: Retrieves a single `Location` object by its unique identifier (UUID)
       tags:
         - Location
       produces:
@@ -169,7 +174,7 @@ paths:
         - $ref: "#/parameters/uuidParam"
       responses:
         200:
-          description: An location object
+          description: An `Location` object
           schema: { $ref: "#/definitions/location" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -177,8 +182,8 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     post:
-      summary: Update a location
-      description: Update a Location object with the given data.
+      summary: Update a Location
+      description: Update a `Location` object with the given data.
       tags:
         - Location
       consumes:
@@ -192,7 +197,7 @@ paths:
         - $ref: "#/parameters/locationParam"
       responses:
         200:
-          description: The location object with updated values.
+          description: The `Location` object with updated values.
           schema: { $ref: "#/definitions/location" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -201,8 +206,8 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
   /locations/{uuid}/{lifecycle}/events:
     get:
-      summary: Get a list of events for this location
-      description: Retrieves a list of events for the location with the given UUID
+      summary: Get a list of Events for this Location
+      description: Retrieves a list of `Events` for the `Location` with the given UUID
       tags:
         - Location
         - Event
@@ -214,7 +219,7 @@ paths:
         - $ref: "#/parameters/uuidParam"
       responses:
         200:
-          description: A list of events for the given location
+          description: A list of `Events` for the given `Location`.
           schema:
             type: array
             items:
@@ -225,8 +230,8 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     put:
-      summary: Publish a new event for the given location
-      description: Publish a new event for the given location
+      summary: Publish a new Event for the given Location
+      description: Publish a new `Event` for the given `Location`
       tags:
         - Event
         - Location
@@ -242,7 +247,7 @@ paths:
         - $ref: "#/parameters/eventParam"
       responses:
         201:
-          description: The created event. The returned object will contain the generated UUID that can be used to refer to this event in later requests.
+          description: The created `Event`. The returned object will contain the generated UUID that can be used to refer to this `Event` in later requests.
           schema: { $ref: "#/definitions/event" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -252,8 +257,8 @@ paths:
 
   /trips:
     get:
-      summary: Get a list of trips
-      description: Retrieves a list of all trips, optionally filtered by (part of) the name, if the `name` query parameter is used.
+      summary: Get a list of Trips
+      description: Retrieves a list of all `Trips`, optionally filtered by (part of) the name, if the `name` query parameter is used.
       tags:
         - Trip
       produces:
@@ -274,8 +279,8 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     put:
-      summary: Create a new trip
-      description: Create a Trip object with the given data.
+      summary: Create a new Trip
+      description: Create a `Trip` object with the given data.
       tags:
         - Trip
         - Event
@@ -289,7 +294,7 @@ paths:
         - $ref: "#/parameters/tripParam"
       responses:
         201:
-          description: The trip object as created. The returned object will contain the UUID that can be used to refer to this object in future calls.
+          description: The `Trip` object as created. The returned object will contain the UUID that can be used to refer to this object in future calls.
           schema: { $ref: "#/definitions/trip" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -299,8 +304,8 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
   /trips/{uuid}:
     get:
-      summary: Get a specific trip by its UUID
-      description: Retrieves a Trip object by its unique identifier (UUID)
+      summary: Get a specific Trip by its UUID
+      description: Retrieves a `Trip` object by its unique identifier (UUID)
       tags:
         - Trip
       produces:
@@ -310,7 +315,7 @@ paths:
         - $ref: "#/parameters/uuidParam"
       responses:
         200:
-          description: An trip object
+          description: A `Trip` object
           schema: { $ref: "#/definitions/trip" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -318,8 +323,8 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     post:
-      summary: Update trip
-      description: Update a Trip object with the given data.
+      summary: Update Trip
+      description: Update a `Trip` object with the given data.
       tags:
         - Trip
       consumes:
@@ -342,8 +347,8 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
   /trips/{uuid}/{lifecycle}/events:
     get:
-      summary: Get a list of events for this trip
-      description: Retrieves a list of events for the trip with the given UUID.
+      summary: Get Events for this Trip
+      description: Retrieves a list of `Events` for the trip with the given UUID.
       tags:
         - Trip
         - Event
@@ -356,7 +361,7 @@ paths:
         - $ref: "#/parameters/eventTypeParam"
       responses:
         200:
-          description: A list of events for the given trip
+          description: A list of Events for the given trip
           schema:
             type: array
             items:
@@ -367,9 +372,9 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     put:
-      summary: Publish a new event for the given trip
+      summary: Publish a new Event for the given trip
       description: |
-        Publish a new event for the given trip. Note that a planned trip may consist of a lot of events. Therefore it is possible to create a trip with its events at once via a PUT to the `trips` endpoint.
+        Publish a new `Event` for the given trip. Note that a planned `Trip` may consist of a lot of `Events`. Therefore it is possible to create a `Trip` with its events at once via a `PUT` to the `trips` endpoint.
       tags:
         - Event
         - Trip
@@ -385,7 +390,7 @@ paths:
         - $ref: "#/parameters/eventParam"
       responses:
         201:
-          description: The created event. The returned object will contain the generated UUID that can be used to refer to this event in later requests.
+          description: The created `Event`. The returned object will contain the generated UUID that can be used to refer to this `Event` in later requests.
           schema: { $ref: "#/definitions/event" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -395,8 +400,8 @@ paths:
 
   /routes:
     get:
-      summary: Get a list of routes
-      description: Retrieves a list of all routes
+      summary: Get a list of Routes
+      description: Retrieves a list of all `Routes`
       tags:
         - Route
       produces:
@@ -404,7 +409,7 @@ paths:
         - application/xml
       responses:
         200:
-          description: A list of routes
+          description: A list of `Routes`
           schema:
             type: array
             items:
@@ -415,8 +420,8 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     put:
-      summary: Create a new route
-      description: Create a new Route object
+      summary: Create a new Route
+      description: Create a new `Route` object
       tags:
         - Route
       consumes:
@@ -429,7 +434,7 @@ paths:
         - $ref: "#/parameters/routeParam"
       responses:
         201:
-          description: The created route object. Containes the generated UUID that can be used to refer to this route in later requests.
+          description: The created `Route` object. Containes the generated UUID that can be used to refer to this `Route` in later requests.
           schema: { $ref: "#/definitions/route" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -439,8 +444,8 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
   /routes/{uuid}:
     get:
-      summary: Get a specific route by its UUID
-      description: Retrieves a Route object by its unique identifier (UUID)
+      summary: Get a specific Route by its UUID
+      description: Retrieves a `Route` object by its unique identifier (UUID)
       tags:
         - Route
       produces:
@@ -450,7 +455,7 @@ paths:
         - $ref: "#/parameters/uuidParam"
       responses:
         200:
-          description: A route object
+          description: A `Route` object
           schema: { $ref: "#/definitions/route" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -458,8 +463,8 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     post:
-      summary: Update a route
-      description: Updates a Route object with the posted data.
+      summary: Update a Route
+      description: Updates a `Route` object with the posted data.
       tags:
         - Route
       consumes:
@@ -473,7 +478,7 @@ paths:
         - $ref: "#/parameters/routeParam"
       responses:
         200:
-          description: The updated route object
+          description: The updated `Route` object
           schema: { $ref: "#/definitions/route" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -482,12 +487,12 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
   /routes/{uuid}/{lifecycle}/events:
     get:
-      summary: Get events on a route
+      summary: Get Events on a Route
       description: |
-        Retrieves a list of events on the Route, identified by its UUID. The behaviour of this call is slightly different, depending on the `lifecycle` phase:
-        - "planned": The `endDateTime` query parameter is mandatory. The `startDateTime` query parameter is optional; if it is ommitted, the default value is _now_. The returned list is a list of planned events on the route in the given time window, that are known at the time of the request.
-        - "actual": Both the `endDateTime` and `startDateTime` query parameters are mandatory. The returned list contains planned _and_ actual events on the given route, within the given time window.
-        - "realized": The `startDateTime` query parameter is mandatory. The `endDateTime` query parameter is optional; when ommitted, the default value is "now". The returned list is a list of actual events that took place on the given route in the given time window.
+        Retrieves a list of `Events` on the `Route`, identified by its UUID. The behaviour of this call is slightly different, depending on the `lifecycle` phase:
+        - "planned": The `endDateTime` query parameter is mandatory. The `startDateTime` query parameter is optional; if it is ommitted, the default value is _now_. The returned list is a list of planned `Events` on the `Route` in the given time window, that are known at the time of the request.
+        - "actual": Both the `endDateTime` and `startDateTime` query parameters are mandatory. The returned list contains planned _and_ actual `Events` on the given `Route`, within the given time window.
+        - "realized": The `startDateTime` query parameter is mandatory. The `endDateTime` query parameter is optional; when ommitted, the default value is "now". The returned list is a list of actual `Events` that took place on the given `Route` in the given time window.
       tags:
         - Route
         - Event
@@ -502,7 +507,7 @@ paths:
         - $ref: "#/parameters/eventTypeParam"
       responses:
         200:
-          description: A list of events for the given trip, optionally filtered according to the request parameters.
+          description: A list of `Events` for the given `Trip`, optionally filtered according to the request parameters.
           schema:
             type: array
             items:
@@ -513,8 +518,8 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     put:
-      summary: Publish a new event for the given route
-      description: Publish a new event for the given route.
+      summary: Publish a new Event on a Route
+      description: Publish a new `Event` for the given `Route`.
       tags:
         - Event
         - Route
@@ -530,7 +535,7 @@ paths:
         - $ref: "#/parameters/eventParam"
       responses:
         201:
-          description: The created event. The returned object will contain the generated UUID that can be used to refer to this event in later requests.
+          description: The created `Event`. The returned object will contain the generated UUID that can be used to refer to this `Event` in later requests.
           schema: { $ref: "#/definitions/event" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -540,8 +545,8 @@ paths:
 
   /vehicles:
     get:
-      summary: Get a list of vehicles
-      description: Retrieves a list of vehicle objects, optionally filtered by (part of the) name.
+      summary: Get a list of Vehicles
+      description: Retrieves a list of `Vehicle` objects, optionally filtered by (part of the) name.
       tags:
         - Vehicle
       produces:
@@ -553,7 +558,7 @@ paths:
         - $ref: "#/parameters/roleQeuryParam"
       responses:
         200:
-          description: A list of vehicles
+          description: A list of `Vehicles`
           schema:
             type: array
             items:
@@ -564,8 +569,8 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     put:
-      summary: Create a new vehicle
-      description: Create a new vehicle object
+      summary: Create a new Vehicle
+      description: Create a new `Vehicle` object
       tags:
         - Vehicle
       consumes:
@@ -578,12 +583,12 @@ paths:
         - $ref: "#/parameters/vehicleParam"
       responses:
         201:
-          description: The created vehicle object. Containes the generated UUID that can be used to refer to this vehicle in later requests.
+          description: The created `Vehicle` object. Containes the generated UUID that can be used to refer to this `Vehicle` in later requests.
           schema: { $ref: "#/definitions/vehicle" }
           examples:
             application/json:
               {
-                "id": "https://opentripmodel.org/planned/vehicles/5b156b91-8e61-45aa-b5e7-d6d560870c29",
+                "id": "https://opentripmodel.org/vehicles/5b156b91-8e61-45aa-b5e7-d6d560870c29",
                 "name": "My first trailer",
                 "type": {
                   "type": "trailer"
@@ -605,8 +610,8 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
   /vehicles/{uuid}:
     get:
-      summary: Get a specific vehicle by its UUID
-      description: Retrieves a Vehicle object by its unique identifier (UUID)
+      summary: Get a Vehicle by its UUID
+      description: Retrieves a specific `Vehicle` object by its unique identifier (UUID)
       tags:
         - Vehicle
       produces:
@@ -616,7 +621,7 @@ paths:
         - $ref: "#/parameters/uuidParam"
       responses:
         200:
-          description: An vehicle object
+          description: An `Vehicle` object
           schema: { $ref: "#/definitions/vehicle" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -624,8 +629,8 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     post:
-      summary: Update a vehicle
-      description: Updates the vehicle identified by the UUID with the POSTed data.
+      summary: Update a Vehicle
+      description: Updates the `Vehicle` identified by the UUID with the POSTed data.
       tags:
         - Vehicle
       consumes:
@@ -648,8 +653,8 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
   /vehicles/{uuid}/{lifecycle}/events:
     get:
-      summary: Get a list of events for this vehicle
-      description: Retrieves a list of events for the vehicle with the given UUID
+      summary: Get a list of Events for a Vehicle
+      description: Retrieves a list of `Events` for the `Vehicle` with the given UUID
       tags:
         - Vehicle
         - Event
@@ -661,7 +666,7 @@ paths:
         - $ref: "#/parameters/uuidParam"
       responses:
         200:
-          description: A list of events for the given vehicle
+          description: A list of `Events` for the given `Vehicle`
           schema:
             type: array
             items:
@@ -672,8 +677,8 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     put:
-      summary: Publish a new event for the given vehicle
-      description: Publish a new event for the given vehicle
+      summary: Publish an Event for a Vehicle
+      description: Publish a new `Event` for the given `Vehicle`.
       tags:
         - Event
         - Vehicle
@@ -689,7 +694,7 @@ paths:
         - $ref: "#/parameters/eventParam"
       responses:
         201:
-          description: The created event object. Containes the generated UUID that can be used to refer to this vehicle in later requests.
+          description: The created `Event` object. Containes the generated UUID that can be used to refer to this `Event` in later requests.
           schema: { $ref: "#/definitions/event" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -699,8 +704,8 @@ paths:
 
   /shipments:
     get:
-      summary: Get a list of shipments
-      description: Retrieves a list of shipment objects, optionally filtered by (part of the) name.
+      summary: Get a list of Shipments
+      description: Retrieves a list of `Shipment` objects, optionally filtered by (part of the) name.
       tags:
         - Shipment
       produces:
@@ -712,7 +717,7 @@ paths:
         - $ref: "#/parameters/roleQeuryParam"
       responses:
         200:
-          description: A list of shipments
+          description: A list of `Shipments`
           schema:
             type: array
             items:
@@ -723,8 +728,8 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     put:
-      summary: Create a new shipment
-      description: Create a new shipment object
+      summary: Create a new Shipment
+      description: Create a new `Shipment` object
       tags:
         - Shipment
       consumes:
@@ -737,7 +742,7 @@ paths:
         - $ref: "#/parameters/shipmentParam"
       responses:
         201:
-          description: The created shipment object. Containes the generated UUID that can be used to refer to this shipment in later requests.
+          description: The created `Shipment` object. Containes the generated UUID that can be used to refer to this `Shipment` in later requests.
           schema: { $ref: "#/definitions/shipment" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -747,8 +752,8 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
   /shipments/{uuid}:
     get:
-      summary: Get a specific shipment by its UUID
-      description: Retrieves a Shipment object by its unique identifier (UUID)
+      summary: Get Shipment by UUID
+      description: Retrieves a `Shipment` object by its unique identifier (UUID)
       tags:
         - Shipment
       produces:
@@ -758,7 +763,7 @@ paths:
         - $ref: "#/parameters/uuidParam"
       responses:
         200:
-          description: An shipment object
+          description: An `Shipment` object
           schema: { $ref: "#/definitions/shipment" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -766,8 +771,8 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     post:
-      summary: Update a shipment
-      description: Updates the shipment identified by the UUID with the POSTed data.
+      summary: Update a Shipment
+      description: Updates the `Shipment` identified by the UUID with the POSTed data.
       tags:
         - Shipment
       consumes:
@@ -781,7 +786,7 @@ paths:
         - $ref: "#/parameters/shipmentParam"
       responses:
         200:
-          description: The updated shipment object.
+          description: The updated `Shipment` object.
           schema: { $ref: "#/definitions/shipment" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -790,8 +795,8 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
   /shipments/{uuid}/{lifecycle}/events:
     get:
-      summary: Get a list of events for this shipment
-      description: Retrieves a list of events for the shipment with the given UUID
+      summary: Get a list of Events for a Shipment
+      description: Retrieves a list of `Events` for the `Shipment` with the given UUID
       tags:
         - Shipment
         - Event
@@ -803,7 +808,7 @@ paths:
         - $ref: "#/parameters/uuidParam"
       responses:
         200:
-          description: A list of events for the given shipment
+          description: A list of `Events` for the given `Shipment`
           schema:
             type: array
             items:
@@ -814,8 +819,8 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     put:
-      summary: Publish a new event for the given shipment
-      description: Publish a new event for the given shipment
+      summary: Publish a new Event on a Shipment
+      description: Publish a new `Event` for the given `Shipment`
       tags:
         - Event
         - Shipment
@@ -831,7 +836,7 @@ paths:
         - $ref: "#/parameters/eventParam"
       responses:
         201:
-          description: The created event object. Containes the generated UUID that can be used to refer to this event in later requests.
+          description: The created `Event` object. Containes the generated UUID that can be used to refer to this `Event` in later requests.
           schema: { $ref: "#/definitions/event" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -839,9 +844,9 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
 
-  /legalEntities:
+  /actors:
     get:
-      summary: Get a list of `Actors`
+      summary: Get a list of Actors
       description: Retrieves all known `Actors`, optionally filtered by (part of the) name.
       tags:
         - Actor
@@ -863,7 +868,7 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     put:
-      summary: Create a new `Actor`
+      summary: Create a new Actor
       description: Create a new `Actor` object
       tags:
         - Actor
@@ -878,7 +883,7 @@ paths:
       responses:
         201:
           description: |
-            The created `Actor` object. Containes the generated UUID that can be used to refer to this `Actor` in later requests.
+            The created `Actor` object. Contains the generated UUID that can be used to refer to this `Actor` in later requests.
           schema: { $ref: "#/definitions/actor" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -886,9 +891,9 @@ paths:
         404: { $ref: "#/responses/notFound" }
         409: { $ref: "#/responses/conflict" }
         500: { $ref: "#/responses/internalServerError" }
-  /legalEntities/{uuid}:
+  /actors/{uuid}:
     get:
-      summary: Get a specific `Actor` by its UUID
+      summary: Get a specific Actor by its UUID
       description: Retrieves a `Actor` object by its unique identifier (UUID)
       tags:
         - Actor
@@ -907,7 +912,7 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     post:
-      summary: Update a `Actor`
+      summary: Update an Actor
       description: Updates the `Actor` identified by the UUID with the POSTed data.
       tags:
         - Actor
@@ -929,10 +934,10 @@ paths:
         403: { $ref: "#/responses/forbidden" }
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
-  /legalEntities/{uuid}/{lifecycle}/events:
+  /actors/{uuid}/{lifecycle}/events:
     get:
-      summary: Get a list of events for this `Actor`
-      description: Retrieves a list of events for the `Actor` with the given UUID
+      summary: Get a list of Events for this Actor
+      description: Retrieves a list of `Events` for the `Actor` with the given UUID
       tags:
         - Actor
         - Event
@@ -944,7 +949,7 @@ paths:
         - $ref: "#/parameters/uuidParam"
       responses:
         200:
-          description: A list of events for the given `Actor`
+          description: A list of `Events` for the given `Actor`
           schema:
             type: array
             items:
@@ -955,8 +960,8 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
     put:
-      summary: Publish a new event for the given `Actor`
-      description: Publish a new event for the `Actor` with the given UUID
+      summary: Publish a new Event for the given Actor
+      description: Publish a new `Event` for the `Actor` with the given UUID
       tags:
         - Event
         - Actor
@@ -972,7 +977,7 @@ paths:
         - $ref: "#/parameters/eventParam"
       responses:
         201:
-          description: The created event object. Containes the generated UUID that can be used to refer to this event in later requests.
+          description: The created `Event` object. Containes the generated UUID that can be used to refer to this `Event` in later requests.
           schema: { $ref: "#/definitions/event" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -980,6 +985,146 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
 
+  /constraints:
+    get:
+      summary: Get a list of Constraints
+      description: Retrieves all known `Constraints`, optionally filtered by (part of the) name.
+      tags:
+        - Constraint
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/nameParam"
+      responses:
+        200:
+          description: A list of `Constraints`
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/constraint"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Create a new Constraint
+      description: Create a new per-defined `Constraint` object, that can be referenced to in objects that have a `constraint` member.
+      tags:
+        - Constraint
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/constraintParam"
+      responses:
+        201:
+          description: |
+            The created `Constraint` object. Contains the generated UUID that can be used to refer to this `Constraint` in later requests.
+          schema: { $ref: "#/definitions/constraint" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        409: { $ref: "#/responses/conflict" }
+        500: { $ref: "#/responses/internalServerError" }
+  /constraints/{uuid}:
+    get:
+      summary: Get a Constraint by its UUID
+      description: Retrieves a specific `Constraint` object by its unique identifier (UUID)
+      tags:
+        - Constraint
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+      responses:
+        200:
+          description: A `Constraint` object
+          schema: { $ref: "#/definitions/constraint" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    post:
+      summary: Update a Constraint
+      description: Updates the `Constraint` identified by the UUID with the POSTed data.
+      tags:
+        - Constraint
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/constraintParam"
+      responses:
+        200:
+          description: The updated `Constraint` object.
+          schema: { $ref: "#/definitions/constraint" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+  /constraints/{uuid}/{lifecycle}/events:
+    get:
+      summary: Get a list of Events for a Constraint
+      description: Retrieves a list of `Events` for the `Constraint` with the given UUID
+      tags:
+        - Constraint
+        - Event
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+      responses:
+        200:
+          description: A list of `Events` for the given `Constraint`
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/event"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Publish a new Event on a Constraint
+      description: Publish a new `Event` for the `Constraint` with the given UUID
+      tags:
+        - Event
+        - Constraint
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/eventParam"
+      responses:
+        201:
+          description: The created `Event` object. Containes the generated UUID that can be used to refer to this `Event` in later requests.
+          schema: { $ref: "#/definitions/event" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
 
 parameters:
   lifecycle:
@@ -997,43 +1142,49 @@ parameters:
     in: body
     schema: { $ref: "#/definitions/event" }
     required: true
-    description: JSON object describing an event
+    description: JSON object describing an `Event`
   tripParam:
     name: tripParam
     in: body
     schema: { $ref: "#/definitions/tripWithEvents" }
     required: true
-    description: JSON object describing a trip
+    description: JSON object describing a `Trip`
   locationParam:
     name: locationParam
     in: body
     schema: { $ref: "#/definitions/location" }
     required: true
-    description: JSON object describing a location
+    description: JSON object describing a `Location`.
   routeParam:
     name: routeParam
     in: body
     schema: { $ref: "#/definitions/route" }
     required: true
-    description: JSON object describing a route
+    description: JSON object describing a `Route`.
   vehicleParam:
     name: vehicleParam
     in: body
     schema: { $ref: "#/definitions/vehicle" }
     required: true
-    description: JSON object describing a vehicle
+    description: JSON object describing a `Vehicle`.
   shipmentParam:
     name: shipmentParam
     in: body
     schema: { $ref: "#/definitions/shipment" }
     required: true
-    description: JSON object describing a shipment
+    description: JSON object describing a `Shipment`.
   actorParam:
     name: actorParam
     in: body
     schema: { $ref: "#/definitions/actor" }
     required: true
-    description: JSON object describing a Actor
+    description: JSON object describing an `Actor`.
+  constraintParam:
+    name: constraintParam
+    in: body
+    schema: { $ref: "#/definitions/constraint" }
+    required: true
+    description: JSON object describing a `Constraint`.
   uuidParam:
     name: uuid
     in: path
@@ -1179,11 +1330,8 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/contactDetail"
-      constraints:
-        type: array
-        description: Constraints that apply to this location.
-        items:
-          $ref: "#/definitions/constraint"
+      constraint:
+        $ref: "#/definitions/constraint"
       remarks:
         type: string
         description: Remarks about the location. Please don't misuse this field for external references, use the `externalIds` field instead.
@@ -1579,69 +1727,106 @@ definitions:
 
   constraint:
     type: object
-    description: constraint
+    description: |
+      Constraints can do different things, depending on the context they're used in:
+        - In the context of a `Location`, access to the location is only allowed if the given constraint applies.
+        - In the context of a `Trip`, constraints can be used to define constraints that have to be met during the trip, e.g. if the temperature in a refridgerated trailer has to stay below a given maximum during the trip.
+
+      Note that constraints can be nested and combined using the `andConstraint`, `orConstraint` and `notConstraint`.
     properties:
       type:
         description: The constraint type
         type: string
-      startDateTime:
-        type: string
-        format: date-time
-        description: |
-          Optional start date/time of this constraint. All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation: `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
-        example: "2012-01-01T00:00:00.000Z"
-      endDateTime:
-        type: string
-        format: date-time
-        description: |
-          Optional end date/time of this constraint. All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation: `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
-        example: "2028-12-31T23:59:59.000Z"
-      timeRanges:
-        description: |
-          Time ranges that this constraint is in effect. If no ranges are given, the constraint is in effect 7 days a week, 24 hours per day between `startDateTime` and `endDateTime`.
-        type: array
-        example:
-          [
-            {
-              "dayOfWeek": 1,
-              "ranges": ["07:00:00/09:00:00","17:00:00/18:00:00"]
-            },
-            {
-              "dayOfWeek": 2,
-              "ranges": ["07:00:00/09:00:00","17:00:00/18:00:00"]
-            },
-            {
-              "dayOfWeek": 3,
-              "ranges": ["07:00:00/09:00:00","17:00:00/18:00:00"]
-            },
-            {
-              "dayOfWeek": 4,
-              "ranges": ["07:00:00/09:00:00","17:00:00/18:00:00"]
-            },
-            {
-              "dayOfWeek": 5,
-              "ranges": ["07:00:00/09:00:00","17:00:00/18:00:00"]
-            },
-          ]
-        items:
-          $ref: "#/definitions/dayOfWeekTimeRange"
     discriminator: type
     required:
       - type
+    example:
+      {
+        "type": "andConstraint",
+        "and": [{
+            "type": "startDateTimeConstraint",
+            "startDateTime": "2017-01-01T00:00:00Z"
+          },{
+            "type": "endDateTimeConstraint",
+            "endDateTime": "2018-12-31T23:59:59Z"
+          },{
+            "type": "notConstraint",
+            "not": {
+                "type": "fuelTypeConstraint",
+                "fuelTypes": [diesel, bioDiesel]
+              }
+          }
+        ]
+      }
 
-  accessConstraint:
+  constraintReference:
     allOf:
       - $ref: "#/definitions/constraint"
       - properties:
-          accessConstraintType:
-            description: |
-              The type of access constraint. Available types are:
-                - `allow`: access is allowed when this constraint is in effect
-                - `deny`: access is denied when this constraint is in effect
+          reference:
             type: string
-            enum:
-              - allow
-              - deny
+            format: uri
+            description: |
+              URI of a pre-defined constraint
+            example: http://api.opentripmodel.org/api/public/v4/constraints/60daad43-5705-490a-bb55-e1edba5c499f
+
+  andConstraint:
+    allOf:
+      - $ref: "#/definitions/constraint"
+      - properties:
+          and:
+            description: |
+              All constraints in the array are combined using a boolean AND relation. This means that the resulting constraint will only apply if all constraints in the array would apply.
+            type: array
+            items:
+              $ref: "#/definitions/constraint"
+
+  orConstraint:
+    allOf:
+      - $ref: "#/definitions/constraint"
+      - properties:
+          or:
+            description: |
+              All constraints in the array are combined using a boolean OR relation. This means that the resulting constraint will apply if any of the constraints in the array would apply.
+            type: array
+            items:
+              $ref: "#/definitions/constraint"
+
+  notConstraint:
+    allOf:
+      - $ref: "#/definitions/constraint"
+      - properties:
+          not:
+            description: |
+              This inverts the given constraint, like a boolean NOT operation. This means the resulting constraint will apply if the underlying constraint would not.
+            $ref: "#/definitions/constraint"
+
+  startDateTimeConstraint:
+    allOf:
+      - $ref: "#/definitions/constraint"
+      - properties:
+          startDateTime:
+            type: string
+            format: date-time
+            description: This constraint applies from the given start date/time.
+            example: "2012-01-01T00:00:00Z"
+
+  endDateTimeConstraint:
+    allOf:
+      - $ref: "#/definitions/constraint"
+      - properties:
+          endDateTime:
+            type: string
+            format: date-time
+            description: This constraint applies until the given end date/time.
+            example: "2028-12-31T23:59:59Z"
+
+  timeRangeConstraint:
+    allOf:
+      - $ref: "#/definitions/constraint"
+      - properties:
+          timeRange:
+            $ref: "#/definitions/dayOfWeekTimeRange"
 
   sizeConstraint:
     allOf:
@@ -1680,12 +1865,10 @@ definitions:
               The type of speed constraint. Available types are:
                 - `maximum`: All speeds below and including the maximum value are allowed.
                 - `minimum`: All speeds above and including the minimum value are allowed.
-                - `range`: All speeds in between and including the minimum and maximum values are allowed.
             type: string
             enum:
               - maximum
               - minimum
-              - range
           maxSpeed:
             description: Maximum speed allowed
             $ref: "#/definitions/valueWithUnit"
@@ -1693,21 +1876,37 @@ definitions:
             description: Minimum speed allowed
             $ref: "#/definitions/valueWithUnit"
 
+  sensorValueConstraint:
+    allOf:
+      - $ref: "#/definitions/constraint"
+      - properties:
+          sensorValueConstraintType:
+            description: |
+              The type of sensor value constraint. Available types are:
+                - `maximum`: All sensor values below and including the maximum value are allowed.
+                - `minimum`: All sensor values above and including the minimum value are allowed.
+            type: string
+            enum:
+              - maximum
+              - minimum
+          sensorName:
+            type: string
+            description: Name of the sensor, for display purpose only.
+          sensorId:
+            $ref: "#/definitions/idReference"
+          maxValue:
+            description: Maximum sensor value allowed
+            $ref: "#/definitions/valueWithUnit"
+          minValue:
+            description: Minimum sensor value allowed
+            $ref: "#/definitions/valueWithUnit"
+
   fuelTypeConstraint:
     allOf:
       - $ref: "#/definitions/constraint"
       - properties:
-          fuelTypeConstraintType:
-            description: |
-              The type of fuel type constraint. Available types are:
-                - `allow`: only the given fuel types are allowed
-                - `deny`: the given fuel types are denied
-            type: string
-            enum:
-              - allow
-              - deny
           fuelTypes:
-            description: The fuel types that are allowed or denied.
+            description: The fuel types to which this constraint apply.
             type: array
             items:
               $ref: "#/definitions/fuelType"
@@ -1716,17 +1915,8 @@ definitions:
     allOf:
       - $ref: "#/definitions/constraint"
       - properties:
-          vehicleTypeConstraintType:
-            description: |
-              The type of vehicle type constraint. Available types are:
-                - `allow`: only the given vehicle types are allowed
-                - `deny`: the given vehicle types are denied, all others are allowed
-            type: string
-            enum:
-              - allow
-              - deny
           vehicleTypes:
-            description: The vehicle types that are allowed or denied.
+            description: The vehicle types that this constraint apply to.
             type: array
             items:
               $ref: "#/definitions/vehicleType"
@@ -1735,22 +1925,13 @@ definitions:
     allOf:
       - $ref: "#/definitions/constraint"
       - properties:
-          routeConstraintType:
-            description: |
-              The type of route constraint. Available types are:
-                - `allow`: only the given route is allowed
-                - `deny`: any part of the given route is denied, all others are allowed
-            type: string
-            enum:
-              - allow
-              - deny
           route:
             $ref: "#/definitions/geoReference"
 
 
   dayOfWeekTimeRange:
     type: object
-    description: A time range for a specific day of the week.
+    description: A time range for a specific day of the week, for which the constraint will be applicable.
     properties:
       dayOfWeek:
         type: integer
@@ -1878,16 +2059,20 @@ definitions:
       type:
         type: string
         enum:
-          - diesel
+          - battery
           - biodiesel
-          - gasoline
-          - kerosene
-          - LPG
-          - natural-gas
-          - bio-ethanol
+          - diesel
+          - dieselBatteryHybrid
+          - ethanol
+          - bioEthanol
           - hydrogen
-          - electricity
-          - not-applicable
+          - liquidGas
+          - naturalGas
+          - lpg
+          - methane
+          - petrol
+          - petrolBatteryHybrid
+          - notApplicable
           - unknown
           - other
       other:
@@ -2010,6 +2195,14 @@ definitions:
         description: |
           URI of an endpoint that can be used to retrieve the route of this `Trip`.
         readOnly: true
+      constraint:
+        $ref: "#/definitions/constraint"
+      events:
+        type: string
+        format: uri
+        readOnly: true
+        description: |
+          URI that can be used to retrieve a list of events for this `Trip` or to publish events to.
 
   tripWithEvents:
     type: object
@@ -2278,6 +2471,14 @@ definitions:
       - $ref: "#/definitions/event"
       - $ref: "#/definitions/updateEvent"
 
+  constraintViolationEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+      - $ref: "#/definitions/updateEvent"
+      - properties:
+          violatedConstraint:
+            $ref: "#/definitions/constraint"
+
   cancelEvent:
     allOf:
       - $ref: "#/definitions/event"
@@ -2295,7 +2496,7 @@ definitions:
             format: uri
             description: |
               Reference to the `Actor` to which the `involvedObjects` are to be associated
-            example: http://api.opentripmodel.org/api/public/v4/actual/legalEntities/45db6ed0-28a7-4e4a-baba-3d5f8d171103
+            example: http://api.opentripmodel.org/api/public/v4/actual/actors/45db6ed0-28a7-4e4a-baba-3d5f8d171103
           role:
             type: string
             description: |
