@@ -63,13 +63,13 @@ tags:
       | decoupleVehiclesEvent           |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
       | assignToTripEvent               |          | ●       |          | ●     |       |       |       | `PAR`           | &nbsp;
       | deassignFromTripEvent           |          | ●       |          | ●     |       |       |       | `PAR`           | &nbsp;
-      | assignDriverEvent               |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
-      | deassignDriverEvent             |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
+      | assignDriverEvent               |          | ●       |          |       |       | ●     |       | `PAR`           | &nbsp;
+      | deassignDriverEvent             |          | ●       |          |       |       | ●     |       | `PAR`           | &nbsp;
       | sensorUpdateEvent               |          | ●       |          |       |       |       |       | `_AR`           | &nbsp;
-      | addShipmentEvent                |          | ●       | ●        |       |       |       |       | `PAR`           | &nbsp;
-      | removeShipmentEvent             |          | ●       | ●        |       |       |       |       | `PAR`           | &nbsp;
-      | receiveShipmentEvent            | ●        |         | ●        |       |       |       |       | `PAR`           | &nbsp;
-      | deliverShipmentEvent            | ●        |         | ●        |       |       |       |       | `PAR`           | &nbsp;
+      | loadShipmentEvent               |          | ●       | ●        |       |       |       |       | `PAR`           | Load a `Shipment` in a `Vehicle`
+      | unloadShipmentEvent             |          | ●       | ●        |       |       |       |       | `PAR`           | Unload a `Shipment` from a `Vehicle`
+      | receiveShipmentEvent            | ●        |         | ●        |       |       |       |       | `PAR`           | Receive a `Shipment` on a `Location`
+      | releaseShipmentEvent            | ●        |         | ●        |       |       |       |       | `PAR`           | Release a `Shipment` from a `Location`
       | restrictionWarningEvent         | ●        |         |          | ●     | ●     |       |       | `PAR`           | &nbsp;
       | trafficWarningEvent             | ●        |         |          | ●     | ●     |       |       | `PAR`           | &nbsp;
       | linkTripsEvent                  |          |         |          | ●     |       |       |       | `PAR`           | &nbsp;
@@ -2535,12 +2535,12 @@ definitions:
           sensorValue:
             $ref: "#/definitions/valueWithUnit"
 
-  addShipmentEvent:
+  loadShipmentEvent:
     allOf:
       - $ref: "#/definitions/event"
       - $ref: "#/definitions/updateEvent"
 
-  removeShipmentEvent:
+  unloadShipmentEvent:
     allOf:
       - $ref: "#/definitions/event"
       - $ref: "#/definitions/updateEvent"
@@ -2550,7 +2550,7 @@ definitions:
       - $ref: "#/definitions/event"
       - $ref: "#/definitions/locationUpdateEvent"
 
-  deliverShipmentEvent:
+  releaseShipmentEvent:
     allOf:
       - $ref: "#/definitions/event"
       - $ref: "#/definitions/locationUpdateEvent"
