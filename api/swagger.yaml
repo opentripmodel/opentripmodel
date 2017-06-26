@@ -1378,7 +1378,7 @@ definitions:
       geoReference:
         $ref: "#/definitions/geoReference"
       administrative-reference:
-        $ref: "#/definitions/address"
+        $ref: "#/definitions/administrativeReference"
       contactDetails:
         type: array
         items:
@@ -1420,7 +1420,7 @@ definitions:
 
   contactDetail:
     type: object
-    description: Contact detail
+    description: Contact details, like phone numbers and email addresses.
     properties:
       type:
         type: string
@@ -1739,14 +1739,14 @@ definitions:
       - $ref: "#/definitions/geoReference"
       - $ref: "#/definitions/tmcLocationArray"
 
+  addressGeoReference:
+    allOf:
+      - $ref: "#/definitions/geoReference"
+      - $ref: "#/definitions/address"
+
   address:
     type: object
-    description: |
-      Administrative references are street addresses, only available for reference and for improved human readability. Administrative references are **not** intended to be used for identifying locations; always use a geoReference for that purpose.
     properties:
-      name:
-        type: string
-        description: The name can be sent to the mobile device of the driver, in order to properly address the client.
       street:
         type: string
         description: Street of the address.
@@ -1766,6 +1766,24 @@ definitions:
         type: string
         description: |
           [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1) country code.
+    example:
+      {
+        "street": "Langestraat",
+        "houseNumber": "3a",
+        "zipCode": "1234AB",
+        "city": "Amersfoort",
+        "country": "nl"
+      }
+
+  administrativeReference:
+    description: |
+      Administrative references are street addresses, only available for reference and for improved human readability. Administrative references are **not** intended to be used for identifying locations; always use a geoReference for that purpose. While this is not advised, you _can_ use an address as georeference. To do so, add the address as `geoReference` via the `addressGeoReference` type.
+    allOf:
+      - $ref: "#/definitions/address"
+      - properties:
+          name:
+            type: string
+            description: The name can be sent to the mobile device of the driver, in order to properly address the client.
     example:
       {
         "name": "Main entrance of store",
