@@ -503,8 +503,8 @@ paths:
       summary: Get Events on a Route
       description: |
         Retrieves a list of `Events` on the `Route`, identified by its UUID. The behaviour of this call is slightly different, depending on the `lifecycle` phase:
-        - "planned": The `endDateTime` query parameter is mandatory. The `startDateTime` query parameter is optional; if it is ommitted, the default value is _now_. The returned list is a list of planned `Events` on the `Route` in the given time window, that are known at the time of the request.
-        - "actual": Both the `endDateTime` and `startDateTime` query parameters are mandatory. The returned list contains planned _and_ actual `Events` on the given `Route`, within the given time window.
+        - "planned" and "projected": The `endDateTime` query parameter is mandatory. The `startDateTime` query parameter is optional; if it is ommitted, the default value is _now_. The returned list is a list of planned or projected `Events` on the `Route` in the given time window, that are known at the time of the request.
+        - "actual": Both the `endDateTime` and `startDateTime` query parameters are mandatory. The returned list contains actual `Events` on the given `Route`, within the given time window.
         - "realized": The `startDateTime` query parameter is mandatory. The `endDateTime` query parameter is optional; when ommitted, the default value is "now". The returned list is a list of actual `Events` that took place on the given `Route` in the given time window.
       tags:
         - Route
@@ -1176,6 +1176,7 @@ parameters:
     type: string
     enum:
       - planned
+      - projected
       - actual
       - realized
     required: true
@@ -2317,16 +2318,7 @@ definitions:
     description: Bundle
     properties:
       meta:
-        type: object
-        description: Meta-information about this bundle.
-        properties:
-          generator:
-            type: string
-            description: Description of the generator of this bundle
-          creationTime:
-            type: string
-            format: date-time
-            description: Date and time this bundle was generated
+        $ref: "#/definitions/bundle_meta"
       entities:
         type: array
         items:
@@ -2335,6 +2327,18 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/event"
+
+  bundle_meta:
+    type: object
+    description: Meta-information about this bundle.
+    properties:
+      generator:
+        type: string
+        description: Description of the generator of this bundle
+      creationTime:
+        type: string
+        format: date-time
+        description: Date and time this bundle was generated
 
   bundledEntity:
     type: object
@@ -2419,20 +2423,9 @@ definitions:
         format: date-time
         description: |
           The date and time this `Event` happens. The exact meaning depends on the `lifecyclePhase`:
-          - "planned": The date and time this event is planned to happen. This is always in the future.
+          - "planned" and "projected": The date and time this event is planned or projected to happen. This is always in the future.
           - "actual": The date and time this event actually happens. This is always in the near past.
           - "realized": The date and time this event did actually happen. This is always in the past.
-
-          All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation: `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
-      estimatedTime:
-        type: string
-        format: date-time
-        readOnly: true
-        description: |
-          The date and time this `Event` is estimated to happen. Note that this is not a planned time, but an estimated time, that is calculated based on previous events. This means that the `estimatedTime` might not be available at all times. E.g. if there are no previous events, not `estimatedTime` can be calculated. The exact meaning of this field depends on the `lifecyclePhase`:
-          - "planned": The estimated time may be calculated based on typical travel times. This can be helpful in validating or fine tuning a planning.
-          - "actual": The estimated time is calculated based on travel times that take into account current traffic conditions. Note that the estimated time can change often, based on various conditions.
-          - "realized": In realized there is no estimated time.
 
           All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation: `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
       reason:
@@ -2657,7 +2650,7 @@ definitions:
   lifecyclePhase:
     type: object
     description: |
-      Lifecycle phase, can be one of "planned", "actual" or "realized". All entities except `Event` exist in all life cycle phases. But the events on an entity differ depending on the lifecycle phase. E.g. a vehicle in the "planned" life cycle phase has different events compared to the same vehicle in the "actual" phase.
+      Lifecycle phase, can be one of "planned", "projected", "actual" or "realized". All entities except `Event` exist in all life cycle phases. The events on an entity differ depending on the lifecycle phase. E.g. a vehicle in the "planned" life cycle phase has different events compared to the same vehicle in the "actual" phase.
     properties:
       phase:
         type: string
@@ -2665,6 +2658,7 @@ definitions:
         readOnly: true
         enum:
           - planned
+          - projected
           - actual
           - realized
 
