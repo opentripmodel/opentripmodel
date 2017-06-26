@@ -21,6 +21,9 @@ info:
     ## Time values
     This section has been moved to the [Implementation guide](https://www.opentripmodel.org/docs/time-and-date-representation) on the main OpenTripModel website.
 
+    ## Bundles
+    It is possible to create multiple entities and events in one call. A typical use case is when the originating system is not event based, and you have to communicate an entire "planning" at once. To create all needed entities and events in one call, you can use a **[Bundle](/#tag/Bundle)**. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
+
     # Licence
     <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />All OpenTripModel documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
   version: "{{VERSION}}"
@@ -96,6 +99,9 @@ tags:
   - name: Constraint
     description: |
       A `Constraint` can be used to model `Locations` with limited access or `Trips` with conditions that have to stay within a given range.
+  - name: Bundle
+    description: |
+      A `Bundle` can be used to create multpile entities in one call.
 x-tagGroups:
   - name: Operations per entity
     tags:
@@ -106,6 +112,9 @@ x-tagGroups:
       - Shipment
       - Actor
       - Constraint
+  - name: Bundle operations
+    tags:
+      - Bundle
   - name: Event-related operations
     tags:
       - Event
@@ -1126,6 +1135,33 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
 
+  /bundles:
+    put:
+      summary: Create or update multiple entities
+      description: By putting a bundle on the server, a client can create or update multiple entities in one call. This can bring down the number of calls, thus reducing network traffic. It also ensures all entities in the bundle are validated at the same time and no entities are created or updated if there is an error in the bundle. This can be sees as a simple form of transaction. Bundles are not saved as an entity of their own. This means there's no `GET` call on the bundle endpoint.
+      tags:
+        - Bundle
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/bundleParam"
+      responses:
+        201:
+          description: |
+            The original `Bundle`, with added generated UUIDs that can be used to refer to the generated Entities in later requests.
+          schema: { $ref: "#/definitions/bundle" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        409: { $ref: "#/responses/conflict" }
+        500: { $ref: "#/responses/internalServerError" }
+
+
 parameters:
   lifecycle:
     name: lifecycle
@@ -1185,6 +1221,12 @@ parameters:
     schema: { $ref: "#/definitions/constraint" }
     required: true
     description: JSON object describing a `Constraint`.
+  bundleParam:
+    name: bundleParam
+    in: body
+    schema: { $ref: "#/definitions/bundle" }
+    required: true
+    description: JSON object describing a `Bundle`.
   uuidParam:
     name: uuid
     in: path
@@ -2240,6 +2282,85 @@ definitions:
         $ref: "#/definitions/geoReference"
     required:
       - geoReferences
+
+####### Bundles #######
+
+  bundle:
+    type: object
+    description: Bundle
+    properties:
+      meta:
+        type: object
+        properties:
+          generator:
+            type: string
+            description: Description of the generator of this bundle
+          creationTime:
+            type: string
+            format: date-time
+            description: Date and time this bundle was generated
+      entities:
+        type: array
+        items:
+          $ref: "#/definitions/bundledEntity"
+      events:
+        type: array
+        items:
+          $ref: "#/definitions/event"
+
+  bundledEntity:
+    type: object
+    description: Entity that is part of a `Bundle`.
+    properties:
+      entityType:
+        type: string
+        description: The type of entity. This is needed, since the type cannot be derived from the endpoint in a `Bundle`.
+    discriminator: entityType
+    required:
+      - entityType
+
+  vehicleEntity:
+    type: object
+    allOf:
+      - $ref: "#/definitions/bundledEntity"
+      - $ref: "#/definitions/vehicle"
+
+  locationEntity:
+    type: object
+    allOf:
+      - $ref: "#/definitions/bundledEntity"
+      - $ref: "#/definitions/location"
+
+  tripEntity:
+    type: object
+    allOf:
+      - $ref: "#/definitions/bundledEntity"
+      - $ref: "#/definitions/trip"
+
+  routeEntity:
+    type: object
+    allOf:
+      - $ref: "#/definitions/bundledEntity"
+      - $ref: "#/definitions/route"
+
+  shipmentEntity:
+    type: object
+    allOf:
+      - $ref: "#/definitions/bundledEntity"
+      - $ref: "#/definitions/shipment"
+
+  actorEntity:
+    type: object
+    allOf:
+      - $ref: "#/definitions/bundledEntity"
+      - $ref: "#/definitions/actor"
+
+  constraintEntity:
+    type: object
+    allOf:
+      - $ref: "#/definitions/bundledEntity"
+      - $ref: "#/definitions/constraint"
+
 
 ####### Events #######
 
