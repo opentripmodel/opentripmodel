@@ -123,7 +123,7 @@ paths:
   /locations:
     get:
       summary: Get a list of Locations
-      description: Get a list of `Locations`, optionally filtered by (part of the) name
+      description: Get a list of `Locations`, optionally filtered by query parameters
       tags:
         - Location
       produces:
@@ -131,12 +131,13 @@ paths:
         - application/xml
       parameters:
         - $ref: "#/parameters/nameParam"
-        - $ref: "#/parameters/actorQeuryParam"
-        - $ref: "#/parameters/roleQeuryParam"
+        - $ref: "#/parameters/externalIdParam"
+        - $ref: "#/parameters/actorQueryParam"
+        - $ref: "#/parameters/roleQueryParam"
       responses:
         200:
           description: |
-            A list of all defined `Locations`, optionally filtered by (a part of) their name, using the `name` request parameter.
+            A list of all defined `Locations`, optionally filtered by one of the query parameters.
           schema:
             type:
               array
@@ -267,7 +268,7 @@ paths:
   /trips:
     get:
       summary: Get a list of Trips
-      description: Retrieves a list of all `Trips`, optionally filtered by (part of) the name, if the `name` query parameter is used.
+      description: Retrieves a list of all `Trips`, optionally filtered by one of the query parameters.
       tags:
         - Trip
       produces:
@@ -275,9 +276,10 @@ paths:
         - application/xml
       parameters:
         - $ref: "#/parameters/nameParam"
+        - $ref: "#/parameters/externalIdParam"
       responses:
         200:
-          description: A list of trips
+          description: A list of trips, optionally filtered by one of the query parameters.
           schema:
             type: array
             items:
@@ -410,15 +412,17 @@ paths:
   /routes:
     get:
       summary: Get a list of Routes
-      description: Retrieves a list of all `Routes`
+      description: Retrieves a list of all `Routes`, optionally filtered by one of the query parameters.
       tags:
         - Route
+      parameters:
+        - $ref: "#/parameters/externalIdParam"
       produces:
         - application/json
         - application/xml
       responses:
         200:
-          description: A list of `Routes`
+          description: A list of `Routes`, optionally filtered by one of the query parameters.
           schema:
             type: array
             items:
@@ -555,7 +559,7 @@ paths:
   /vehicles:
     get:
       summary: Get a list of Vehicles
-      description: Retrieves a list of `Vehicle` objects, optionally filtered by (part of the) name.
+      description: Retrieves a list of `Vehicle` objects, optionally filtered by one of the query parameters.
       tags:
         - Vehicle
       produces:
@@ -563,11 +567,12 @@ paths:
         - application/xml
       parameters:
         - $ref: "#/parameters/nameParam"
-        - $ref: "#/parameters/actorQeuryParam"
-        - $ref: "#/parameters/roleQeuryParam"
+        - $ref: "#/parameters/externalIdParam"
+        - $ref: "#/parameters/actorQueryParam"
+        - $ref: "#/parameters/roleQueryParam"
       responses:
         200:
-          description: A list of `Vehicles`
+          description: A list of `Vehicles`, optionally filtered by one of the query parameters.
           schema:
             type: array
             items:
@@ -714,7 +719,7 @@ paths:
   /shipments:
     get:
       summary: Get a list of Shipments
-      description: Retrieves a list of `Shipment` objects, optionally filtered by (part of the) name.
+      description: Retrieves a list of `Shipment` objects, optionally filtered by one of the query parameters.
       tags:
         - Shipment
       produces:
@@ -722,11 +727,12 @@ paths:
         - application/xml
       parameters:
         - $ref: "#/parameters/nameParam"
-        - $ref: "#/parameters/actorQeuryParam"
-        - $ref: "#/parameters/roleQeuryParam"
+        - $ref: "#/parameters/externalIdParam"
+        - $ref: "#/parameters/actorQueryParam"
+        - $ref: "#/parameters/roleQueryParam"
       responses:
         200:
-          description: A list of `Shipments`
+          description: A list of `Shipments`, optionally filtered by one of the query parameters.
           schema:
             type: array
             items:
@@ -856,7 +862,7 @@ paths:
   /actors:
     get:
       summary: Get a list of Actors
-      description: Retrieves all known `Actors`, optionally filtered by (part of the) name.
+      description: Retrieves all known `Actors`, optionally filtered by one of the query parameters.
       tags:
         - Actor
       produces:
@@ -864,9 +870,10 @@ paths:
         - application/xml
       parameters:
         - $ref: "#/parameters/nameParam"
+        - $ref: "#/parameters/externalIdParam"
       responses:
         200:
-          description: A list of `Actors`
+          description: A list of `Actors`, optionally filtered by one of the query parameters.
           schema:
             type: array
             items:
@@ -1232,13 +1239,19 @@ parameters:
     in: path
     type: string
     required: true
-    description: A uuid, identifying some pre-defined object.
+    description: A uuid, identifying some pre-defined entity.
   nameParam:
     name: name
     in: query
     type: string
     required: false
-    description: A name or a part of a name, to search objects by their name.
+    description: A name or a part of a name, to search entities by their name.
+  externalIdParam:
+    name: externalId
+    in: query
+    type: string
+    required: false
+    description: An external ID, a part of it, to search for entities by their external IDs.
   startDateTimeParam:
     name: startDateTime
     in: query
@@ -1261,7 +1274,7 @@ parameters:
     description: |
       Comma-separated list of event types. The resulting list will only have events of the given types, events of other types will be ommitted.
     required: false
-  actorQeuryParam:
+  actorQueryParam:
     name: actor
     in: query
     type: string
@@ -1269,7 +1282,7 @@ parameters:
     description: |
       Filter the query by Actor. Only objects that are associated to the `Actor` identified by the given UUID will be shown.
     required: false
-  roleQeuryParam:
+  roleQueryParam:
     name: role
     in: query
     type: string
