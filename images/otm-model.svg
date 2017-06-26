@@ -9,8 +9,12 @@
   <path fill="#366092" stroke="#666" d="M116.28 25.464L87.335 58.39V43.917C41 56.87 6.8 99.357 1.275 150.827c-6.678-62.203 30.062-120.2 86.06-135.855V.5z"/>
   <path fill="#2b4c74" stroke="#666" d="M.5 136.354c0 69.235 51.836 125.362 115.78 125.362v28.945c-30.707 0-60.156-13.205-81.87-36.715C12.7 230.435.5 198.547.5 165.3z"/>
   <a target="_top" xlink:href="/#section/The-model/Life-cycle-phases">
-    <rect fill="#4bb84c" stroke="#666" x="117" y="7" width="192" height="29" />
-    <text x="213" y="21.5" fill="#fff" font-size="20" font-family="Montserrat, sans-serif" text-anchor="middle" dominant-baseline="central">actual</text>
+    <rect fill="#4bb84c" stroke="#666" x="117" y="7" width="95" height="29" />
+    <text x="163.5" y="21.5" fill="#fff" font-size="20" font-family="Montserrat, sans-serif" text-anchor="middle" dominant-baseline="central">projected</text>
+  </a>
+  <a target="_top" xlink:href="/#section/The-model/Life-cycle-phases">
+    <rect fill="#4bb84c" stroke="#666" x="213" y="7" width="95" height="29" />
+    <text x="261.5" y="21.5" fill="#fff" font-size="20" font-family="Montserrat, sans-serif" text-anchor="middle" dominant-baseline="central">actual</text>
   </a>
   <a target="_top" xlink:href="/#section/The-model/Life-cycle-phases">
     <rect fill="#4bb84c" stroke="#666" x="117" y="261" width="95" height="29" />
