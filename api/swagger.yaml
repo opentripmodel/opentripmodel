@@ -50,37 +50,37 @@ tags:
       | event type                      | Location | Vehicle | Shipment | Trip  | Route | Actor | Event | life&nbsp;cycle | description
       | ------------------------------: | :------: | :-----: | :------: | :---: | :---: | :---: | :---: | --------------- | -----------
       | updateEvent                     | ●        | ●       | ●        | ●     | ●     |       |       |                 | &nbsp;
-      | locationUpdateEvent             |          | ●       |          |       |       |       |       | `_AR`           | Updates the location of a Vehicle
-      | startMovingEvent                |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
-      | stopMovingEvent                 |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
-      | startWaitingEvent               |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
-      | stopWaitingEvent                |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
-      | startLoadingAndUnloadingEvent   |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
-      | stopLoadingAndUnloadingEvent    |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
-      | startEngineEvent                |          | ●       |          |       |       |       |       | `_AR`           | &nbsp;
-      | stopEngineEvent                 |          | ●       |          |       |       |       |       | `_AR`           | &nbsp;
-      | coupleVehiclesEvent             |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
-      | decoupleVehiclesEvent           |          | ●       |          |       |       |       |       | `PAR`           | &nbsp;
-      | assignToTripEvent               |          | ●       |          | ●     |       |       |       | `PAR`           | &nbsp;
-      | deassignFromTripEvent           |          | ●       |          | ●     |       |       |       | `PAR`           | &nbsp;
-      | assignDriverEvent               |          | ●       |          |       |       | ●     |       | `PAR`           | &nbsp;
-      | deassignDriverEvent             |          | ●       |          |       |       | ●     |       | `PAR`           | &nbsp;
-      | sensorUpdateEvent               |          | ●       |          |       |       |       |       | `_AR`           | &nbsp;
-      | loadShipmentEvent               |          | ●       | ●        |       |       |       |       | `PAR`           | Load a `Shipment` in a `Vehicle`
-      | unloadShipmentEvent             |          | ●       | ●        |       |       |       |       | `PAR`           | Unload a `Shipment` from a `Vehicle`
-      | receiveShipmentEvent            | ●        |         | ●        |       |       |       |       | `PAR`           | Receive a `Shipment` on a `Location`
-      | releaseShipmentEvent            | ●        |         | ●        |       |       |       |       | `PAR`           | Release a `Shipment` from a `Location`
-      | restrictionWarningEvent         | ●        |         |          | ●     | ●     |       |       | `PAR`           | &nbsp;
-      | trafficWarningEvent             | ●        |         |          | ●     | ●     |       |       | `PAR`           | &nbsp;
-      | linkTripsEvent                  |          |         |          | ●     |       |       |       | `PAR`           | &nbsp;
-      | pickupTimeWindowStartEvent      |          |         | ●        |       |       |       |       | `P__`           | &nbsp;
-      | pickupTimeWindowEndEvent        |          |         | ●        |       |       |       |       | `P__`           | &nbsp;
-      | deliveryTimeWindowStartEvent    |          |         | ●        |       |       |       |       | `P__`           | &nbsp;
-      | deliveryTimeWindowEndEvent      |          |         | ●        |       |       |       |       | `P__`           | &nbsp;
-      | constraintViolationEvent        | ●        |         |          | ●     |       |       |       | `PAR`           | &nbsp;
-      | cancelEvent                     |          |         |          |       |       |       | ●     | `_AR`           | Cancel one or more event. To be canceled events should be set as `involvedObjects`.
-      | ignoreEvent                     |          |         |          |       |       |       | ●     | `_AR`           | Ignore one or more event. To be ignored events should be set as `involvedObjects`.
-      | associateWithActorEvent         | ●        | ●       | ●        | ●     | ●     | ●     |       | `PAR`           | Associate an entity with an `Actor`.
+      | locationUpdateEvent             |          | ●       |          |       |       |       |       | `__AR`          | Updates the location of a Vehicle
+      | startMovingEvent                |          | ●       |          |       |       |       |       | `PPAR`          | &nbsp;
+      | stopMovingEvent                 |          | ●       |          |       |       |       |       | `PPAR`          | &nbsp;
+      | startWaitingEvent               |          | ●       |          |       |       |       |       | `PPAR`          | &nbsp;
+      | stopWaitingEvent                |          | ●       |          |       |       |       |       | `PPAR`          | &nbsp;
+      | startLoadingAndUnloadingEvent   |          | ●       |          |       |       |       |       | `PPAR`          | &nbsp;
+      | stopLoadingAndUnloadingEvent    |          | ●       |          |       |       |       |       | `PPAR`          | &nbsp;
+      | startEngineEvent                |          | ●       |          |       |       |       |       | `__AR`          | &nbsp;
+      | stopEngineEvent                 |          | ●       |          |       |       |       |       | `__AR`          | &nbsp;
+      | coupleVehiclesEvent             |          | ●       |          |       |       |       |       | `PPAR`          | &nbsp;
+      | decoupleVehiclesEvent           |          | ●       |          |       |       |       |       | `PPAR`          | &nbsp;
+      | assignToTripEvent               |          | ●       |          | ●     |       |       |       | `PPAR`          | &nbsp;
+      | deassignFromTripEvent           |          | ●       |          | ●     |       |       |       | `PPAR`          | &nbsp;
+      | assignDriverEvent               |          | ●       |          |       |       | ●     |       | `PPAR`          | &nbsp;
+      | deassignDriverEvent             |          | ●       |          |       |       | ●     |       | `PPAR`          | &nbsp;
+      | sensorUpdateEvent               |          | ●       |          |       |       |       |       | `__AR`          | &nbsp;
+      | loadShipmentEvent               |          | ●       | ●        |       |       |       |       | `PPAR`          | Load a `Shipment` in a `Vehicle`P
+      | unloadShipmentEvent             |          | ●       | ●        |       |       |       |       | `PPAR`          | Unload a `Shipment` from a `Vehicle`P
+      | receiveShipmentEvent            | ●        |         | ●        |       |       |       |       | `PPAR`          | Receive a `Shipment` on a `Location`P
+      | releaseShipmentEvent            | ●        |         | ●        |       |       |       |       | `PPAR`          | Release a `Shipment` from a `Location`P
+      | restrictionWarningEvent         | ●        |         |          | ●     | ●     |       |       | `PPAR`          | &nbsp;
+      | trafficWarningEvent             | ●        |         |          | ●     | ●     |       |       | `PPAR`          | &nbsp;
+      | linkTripsEvent                  |          |         |          | ●     |       |       |       | `PPAR`          | &nbsp;
+      | pickupTimeWindowStartEvent      |          |         | ●        |       |       |       |       | `PP__`          | &nbsp;
+      | pickupTimeWindowEndEvent        |          |         | ●        |       |       |       |       | `PP__`          | &nbsp;
+      | deliveryTimeWindowStartEvent    |          |         | ●        |       |       |       |       | `PP__`          | &nbsp;
+      | deliveryTimeWindowEndEvent      |          |         | ●        |       |       |       |       | `PP__`          | &nbsp;
+      | constraintViolationEvent        | ●        |         |          | ●     |       |       |       | `PPAR`          | &nbsp;
+      | cancelEvent                     |          |         |          |       |       |       | ●     | `__AR`          | Cancel one or more event. To be canceled events should be set as `involvedObjects`.
+      | ignoreEvent                     |          |         |          |       |       |       | ●     | `__AR`          | Ignore one or more event. To be ignored events should be set as `involvedObjects`.
+      | associateWithActorEvent         | ●        | ●       | ●        | ●     | ●     | ●     |       | `_PAR`          | Associate an entity with an `Actor`.
   - name: Trip
     description: |
       A `Trip` represents a series of events, which optionally may be linked to a route.
