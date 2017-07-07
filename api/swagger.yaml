@@ -22,7 +22,7 @@ info:
     This section has been moved to the [Implementation guide](https://www.opentripmodel.org/docs/time-and-date-representation) on the main OpenTripModel website.
 
     ## Bundles
-    It is possible to create multiple entities and events in one call. A typical use case is when the originating system is not event based, and you have to communicate an entire "planning" at once. To create all needed entities and events in one call, you can use a **[Bundle](/#tag/Bundle)**. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
+    To create multiple entities and events in one request, use a **[Bundle](/#tag/Bundle)** call. This provides transactional guarantees, preventing roll-back scenario's. A typical use case is when the originating system is not event based, and it has to communicate an entire "planning" at once. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
 
     # Licence
     <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />All OpenTripModel documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
@@ -101,7 +101,7 @@ tags:
       A `Constraint` can be used to model `Locations` with limited access or `Trips` with conditions that have to stay within a given range.
   - name: Bundle
     description: |
-      A `Bundle` can be used to create multpile entities in one call.
+      A `Bundle` creates multiple entities and events in one request.
 x-tagGroups:
   - name: Operations per entity
     tags:
@@ -131,13 +131,14 @@ paths:
         - application/xml
       parameters:
         - $ref: "#/parameters/nameParam"
-        - $ref: "#/parameters/externalIdParam"
+        - $ref: "#/parameters/externalIdSchemaParam"
+        - $ref: "#/parameters/externalIdValueParam"
         - $ref: "#/parameters/actorQueryParam"
         - $ref: "#/parameters/roleQueryParam"
       responses:
         200:
           description: |
-            A list of all defined `Locations`, optionally filtered by one of the query parameters.
+            A list of all defined `Locations`, optionally filtered by query parameters.
           schema:
             type:
               array
@@ -268,7 +269,7 @@ paths:
   /trips:
     get:
       summary: Get a list of Trips
-      description: Retrieves a list of all `Trips`, optionally filtered by one of the query parameters.
+      description: Retrieves a list of all `Trips`, optionally filtered by query parameters.
       tags:
         - Trip
       produces:
@@ -277,10 +278,11 @@ paths:
       parameters:
         - $ref: "#/parameters/nameParam"
         - $ref: "#/parameters/actorQueryParam"
-        - $ref: "#/parameters/externalIdParam"
+        - $ref: "#/parameters/externalIdSchemaParam"
+        - $ref: "#/parameters/externalIdValueParam"
       responses:
         200:
-          description: A list of trips, optionally filtered by one of the query parameters.
+          description: A list of trips, optionally filtered by query parameters.
           schema:
             type: array
             items:
@@ -413,18 +415,19 @@ paths:
   /routes:
     get:
       summary: Get a list of Routes
-      description: Retrieves a list of all `Routes`, optionally filtered by one of the query parameters.
+      description: Retrieves a list of all `Routes`, optionally filtered by query parameters.
       tags:
         - Route
       parameters:
         - $ref: "#/parameters/actorQueryParam"
-        - $ref: "#/parameters/externalIdParam"
+        - $ref: "#/parameters/externalIdSchemaParam"
+        - $ref: "#/parameters/externalIdValueParam"
       produces:
         - application/json
         - application/xml
       responses:
         200:
-          description: A list of `Routes`, optionally filtered by one of the query parameters.
+          description: A list of `Routes`, optionally filtered by query parameters.
           schema:
             type: array
             items:
@@ -561,7 +564,7 @@ paths:
   /vehicles:
     get:
       summary: Get a list of Vehicles
-      description: Retrieves a list of `Vehicle` objects, optionally filtered by one of the query parameters.
+      description: Retrieves a list of `Vehicle` objects, optionally filtered by query parameters.
       tags:
         - Vehicle
       produces:
@@ -569,12 +572,13 @@ paths:
         - application/xml
       parameters:
         - $ref: "#/parameters/nameParam"
-        - $ref: "#/parameters/externalIdParam"
+        - $ref: "#/parameters/externalIdSchemaParam"
+        - $ref: "#/parameters/externalIdValueParam"
         - $ref: "#/parameters/actorQueryParam"
         - $ref: "#/parameters/roleQueryParam"
       responses:
         200:
-          description: A list of `Vehicles`, optionally filtered by one of the query parameters.
+          description: A list of `Vehicles`, optionally filtered by query parameters.
           schema:
             type: array
             items:
@@ -721,7 +725,7 @@ paths:
   /shipments:
     get:
       summary: Get a list of Shipments
-      description: Retrieves a list of `Shipment` objects, optionally filtered by one of the query parameters.
+      description: Retrieves a list of `Shipment` objects, optionally filtered by query parameters.
       tags:
         - Shipment
       produces:
@@ -729,12 +733,13 @@ paths:
         - application/xml
       parameters:
         - $ref: "#/parameters/nameParam"
-        - $ref: "#/parameters/externalIdParam"
+        - $ref: "#/parameters/externalIdSchemaParam"
+        - $ref: "#/parameters/externalIdValueParam"
         - $ref: "#/parameters/actorQueryParam"
         - $ref: "#/parameters/roleQueryParam"
       responses:
         200:
-          description: A list of `Shipments`, optionally filtered by one of the query parameters.
+          description: A list of `Shipments`, optionally filtered by query parameters.
           schema:
             type: array
             items:
@@ -864,7 +869,7 @@ paths:
   /actors:
     get:
       summary: Get a list of Actors
-      description: Retrieves all known `Actors`, optionally filtered by one of the query parameters.
+      description: Retrieves all known `Actors`, optionally filtered by query parameters.
       tags:
         - Actor
       produces:
@@ -872,10 +877,11 @@ paths:
         - application/xml
       parameters:
         - $ref: "#/parameters/nameParam"
-        - $ref: "#/parameters/externalIdParam"
+        - $ref: "#/parameters/externalIdSchemaParam"
+        - $ref: "#/parameters/externalIdValueParam"
       responses:
         200:
-          description: A list of `Actors`, optionally filtered by one of the query parameters.
+          description: A list of `Actors`, optionally filtered by query parameters.
           schema:
             type: array
             items:
@@ -1249,12 +1255,18 @@ parameters:
     type: string
     required: false
     description: A name or a part of a name, to search entities by their name.
-  externalIdParam:
-    name: externalId
+  externalIdSchemaParam:
+    name: externalIdSchema
     in: query
     type: string
     required: false
-    description: An external ID, a part of it, to search for entities by their external IDs.
+    description: The schema of external ID, to search for entities by their external IDs. This would return all entities that have an external ID reference with the given schema. This could still be a lot of entities. Combine with the `externalIdSchema` query parameter to limit the number of results further.
+  externalIdValueParam:
+    name: externalIdValue
+    in: query
+    type: string
+    required: false
+    description: An external ID value, a part of it, to search for entities by their external IDs. This parameter should be combined with the `externalIdSchema` parameter.
   startDateTimeParam:
     name: startDateTime
     in: query
@@ -1339,7 +1351,7 @@ definitions:
   actor:
     type: object
     description: |
-      An `Actor` can be an organisation or a person that somehow needs to be represented in the OpenTripModel. Actors can be used e.g. to group all locations that belong to an organisation, or to address an OpenTripModel message to a specific person or organisation. The use of Actors is optional, and is not necessary to use OpenTripModel.
+      An Actor models a legal entity. A legal entity is an individual, company, or organization that has legal rights and obligations. The use of Actors is optional, and is not necessary to use OpenTripModel. Actors can be used e.g. to group all locations that belong to an organisation, or to address an OpenTripModel message to a specific person or organisation.
     properties:
       id:
         type: string
@@ -1423,7 +1435,7 @@ definitions:
 
   contactDetail:
     type: object
-    description: Contact details, like phone numbers and email addresses.
+    description: Contact details, such as phone numbers and email addresses.
     properties:
       type:
         type: string
@@ -1759,9 +1771,9 @@ definitions:
       houseNumberAddition:
         type: string
         description: Addition to the houseNumber.
-      zipCode:
+      postalCode:
         type: string
-        description: The zipcode of the address.
+        description: The postal code of the address.
       city:
         type: string
         description: The city of the address
@@ -1773,7 +1785,7 @@ definitions:
       {
         "street": "Langestraat",
         "houseNumber": "3a",
-        "zipCode": "1234AB",
+        "postalCode": "1234AB",
         "city": "Amersfoort",
         "country": "nl"
       }
@@ -1792,7 +1804,7 @@ definitions:
         "name": "Main entrance of store",
         "street": "Langestraat",
         "houseNumber": "3a",
-        "zipCode": "1234AB",
+        "postalCode": "1234AB",
         "city": "Amersfoort",
         "country": "nl"
       }
@@ -2083,15 +2095,6 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/valueWithUnit"
-      currentLoad:
-        readOnly: true
-        type: array
-        description: |
-          The current load of the `Vehicle`. This value is only available in the "actual" lifecycle phase.
-        items:
-          type: string
-          format: uri
-          example: http://api.opentripmodel.org/api/public/v4/shipments/68b367e0-017e-476f-9fe1-848557f807d0
     required:
       - maxLinks
       - type
@@ -2545,21 +2548,29 @@ definitions:
             $ref: "#/definitions/valueWithUnit"
 
   loadShipmentEvent:
+    description: |
+      This events models the loading of a `Shipment` in a `Vehicle`. This event often takes place at the same time as a `releaseShipmentEvent`.
     allOf:
       - $ref: "#/definitions/event"
       - $ref: "#/definitions/updateEvent"
 
   unloadShipmentEvent:
+    description: |
+      This events models the unloading of a `Shipment` from a `Vehicle`. This event often takes place at the same time as a `receiveShipmentEvent`.
     allOf:
       - $ref: "#/definitions/event"
       - $ref: "#/definitions/updateEvent"
 
   receiveShipmentEvent:
+    description: |
+      This event models the reception of a `Shipment` at a `Location`. This event often takes place at the same time as a `unloadShipmentEvent`.
     allOf:
       - $ref: "#/definitions/event"
       - $ref: "#/definitions/locationUpdateEvent"
 
   releaseShipmentEvent:
+    description: |
+      This event models the release (for pick up) of a `Shipment` at a `Location`. This event often takes place at the same time as a `loadShipmentEvent`.
     allOf:
       - $ref: "#/definitions/event"
       - $ref: "#/definitions/locationUpdateEvent"
@@ -2710,7 +2721,7 @@ definitions:
           - `http://www.gs1.org/gtin`, **GTIN**, [Global Trade Item Number](http://www.gs1.org/gtin), identifies an item in an container within a shipment, according to the [GS1 standard](https://en.wikipedia.org/wiki/GS1).
           Note that the list above is just a list of examples. E.g. in case of shipments, OpenTripModel doesn't define the granularity of a Shipment, while the GS1-references might suggest otherwise. In GS1 terms, a Shipment in OpenTripModel can either be a Shipment, or a Shipping Container or a Trade Item or neither of those. It all depends on the needs of the logistics operation that is to be modeled in OpenTripModel.
 
-          Note that uniqueness of external ID's is not to be enforced by an OpenTripModel server. External ID's are for reference only.
+          Note that uniqueness of external ID's should not be enforced by an OpenTripModel server. External ID's are for reference only.
         example: https://opentripmodel.org/types/licensePlate/nl
       value:
         type: string
