@@ -1839,8 +1839,16 @@ definitions:
             "type": "notConstraint",
             "not": {
                 "type": "fuelTypeConstraint",
-                "fuelTypes": [diesel, bioDiesel]
-              }
+                "fuelTypes": [{
+                  "type": "diesel",
+                },{
+                  "type": "biodiesel"
+                },{
+                  "type": "other",
+                  "other": "liquidGas"
+                }
+              ]
+            }
           }
         ]
       }
