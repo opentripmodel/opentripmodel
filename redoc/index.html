@@ -42,16 +42,18 @@
       }
 
       #header-top h1 {
-        width: 242px;
-        height: 60px;
-        padding: 0px 30px;
-        margin-top: 0px;
+        margin-left: 270px;
+        margin-top: 12px;
+        padding-left: 130px;
+        padding-top: 9px;
+        height: 30px;
+        color: rgba(255,255,255,0.8) !important;
         background-image: url('/images/opentripmodeltrans.png');
         background-size: contain;
         background-repeat: no-repeat;
-        float: left;
-        margin: 0 15px 0 260px;
-        text-indent: -99999px;
+        font-family: Roboto, sans-serif;
+        font-weight: bold;
+        font-size: 14pt;
       }
     </style>
   </head>
@@ -98,7 +100,7 @@
     </style>
 
     <div id="header-top">
-      <h1>OpenTripModel</h1>
+      <h1>OpenTripModel API specification</h1>
     </div>
 
     <redoc spec-url='/api-docs' scroll-y-offset="header-top" expand-responses="200,201" lazy-rendering="true"></redoc>
