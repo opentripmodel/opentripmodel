@@ -194,7 +194,9 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
     post:
       summary: Update a Location
-      description: Update a `Location` object with the given data.
+      description: |
+        Update a `Location` object with the given data. Note that the UUID-part of the `id` in the entity in the body of the `POST`-request should
+        equal the ID part of the endpoint where the entity is posted to, otherwise a `400` (Bad request) error will be returned.
       tags:
         - Location
       consumes:
@@ -338,7 +340,9 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
     post:
       summary: Update Trip
-      description: Update a `Trip` object with the given data.
+      description: |
+        Update a `Trip` object with the given data. Note that the UUID-part of the `id` in the entity in the body of the `POST`-request should
+        equal the ID part of the endpoint where the entity is posted to, otherwise a `400` (Bad request) error will be returned.
       tags:
         - Trip
       consumes:
@@ -482,7 +486,9 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
     post:
       summary: Update a Route
-      description: Updates a `Route` object with the posted data.
+      description: |
+        Updates a `Route` object with the posted data. Note that the UUID-part of the `id` in the entity in the body of the `POST`-request should
+        equal the ID part of the endpoint where the entity is posted to, otherwise a `400` (Bad request) error will be returned.
       tags:
         - Route
       consumes:
@@ -507,10 +513,16 @@ paths:
     get:
       summary: Get Events on a Route
       description: |
-        Retrieves a list of `Events` on the `Route`, identified by its UUID. The behaviour of this call is slightly different, depending on the `lifecycle` phase:
-        - "planned" and "projected": The `endDateTime` query parameter is mandatory. The `startDateTime` query parameter is optional; if it is ommitted, the default value is _now_. The returned list is a list of planned or projected `Events` on the `Route` in the given time window, that are known at the time of the request.
-        - "actual": Both the `endDateTime` and `startDateTime` query parameters are mandatory. The returned list contains actual `Events` on the given `Route`, within the given time window.
-        - "realized": The `startDateTime` query parameter is mandatory. The `endDateTime` query parameter is optional; when ommitted, the default value is "now". The returned list is a list of actual `Events` that took place on the given `Route` in the given time window.
+        Retrieves a list of `Events` on the `Route`, identified by its UUID. The behaviour of this call is slightly different, depending on the
+        `lifecycle` phase:
+
+        - "planned" and "projected": The `endDateTime` query parameter is mandatory. The `startDateTime` query parameter is optional; if it is
+          ommitted, the default value is _now_. The returned list is a list of planned or projected `Events` on the `Route` in the given time window,
+          that are known at the time of the request.
+        - "actual": Both the `endDateTime` and `startDateTime` query parameters are mandatory. The returned list contains actual `Events` on the given
+          `Route`, within the given time window.
+        - "realized": The `startDateTime` query parameter is mandatory. The `endDateTime` query parameter is optional; when ommitted, the default
+          value is "now". The returned list is a list of actual `Events` that took place on the given `Route` in the given time window.
       tags:
         - Route
         - Event
@@ -553,7 +565,8 @@ paths:
         - $ref: "#/parameters/eventParam"
       responses:
         201:
-          description: The created `Event`. The returned object will contain the generated UUID that can be used to refer to this `Event` in later requests.
+          description: |
+            The created `Event`. The returned object will contain the generated UUID that can be used to refer to this `Event` in later requests.
           schema: { $ref: "#/definitions/event" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -650,7 +663,9 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
     post:
       summary: Update a Vehicle
-      description: Updates the `Vehicle` identified by the UUID with the POSTed data.
+      description: |
+        Updates the `Vehicle` identified by the UUID with the POSTed data. Note that the UUID-part of the `id` in the entity in the body of the
+        `POST`-request should equal the ID part of the endpoint where the entity is posted to, otherwise a `400` (Bad request) error will be returned.
       tags:
         - Vehicle
       consumes:
@@ -794,7 +809,9 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
     post:
       summary: Update a Shipment
-      description: Updates the `Shipment` identified by the UUID with the POSTed data.
+      description: |
+        Updates the `Shipment` identified by the UUID with the POSTed data. Note that the UUID-part of the `id` in the entity in the body of the
+        `POST`-request should equal the ID part of the endpoint where the entity is posted to, otherwise a `400` (Bad request) error will be returned.
       tags:
         - Shipment
       consumes:
@@ -937,7 +954,9 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
     post:
       summary: Update an Actor
-      description: Updates the `Actor` identified by the UUID with the POSTed data.
+      description: |
+        Updates the `Actor` identified by the UUID with the POSTed data. Note that the UUID-part of the `id` in the entity in the body of the
+        `POST`-request should equal the ID part of the endpoint where the entity is posted to, otherwise a `400` (Bad request) error will be returned.
       tags:
         - Actor
       consumes:
@@ -1078,7 +1097,9 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
     post:
       summary: Update a Constraint
-      description: Updates the `Constraint` identified by the UUID with the POSTed data.
+      description: |
+        Updates the `Constraint` identified by the UUID with the POSTed data. Note that the UUID-part of the `id` in the entity in the body of the
+        `POST`-request should equal the ID part of the endpoint where the entity is posted to, otherwise a `400` (Bad request) error will be returned.
       tags:
         - Constraint
       consumes:
@@ -1260,27 +1281,36 @@ parameters:
     in: query
     type: string
     required: false
-    description: The schema of external ID, to search for entities by their external IDs. This would return all entities that have an external ID reference with the given schema. This could still be a lot of entities. Combine with the `externalIdSchema` query parameter to limit the number of results further.
+    description: |
+      The schema of external ID, to search for entities by their external IDs. This would return all entities that have an external ID reference with
+      the given schema. This could still be a lot of entities. Combine with the `externalIdSchema` query parameter to limit the number of results
+      further.
   externalIdValueParam:
     name: externalIdValue
     in: query
     type: string
     required: false
-    description: An external ID value, a part of it, to search for entities by their external IDs. This parameter should be combined with the `externalIdSchema` parameter.
+    description: |
+      An external ID value, a part of it, to search for entities by their external IDs. This parameter should be combined with the `externalIdSchema`
+      parameter.
   startDateTimeParam:
     name: startDateTime
     in: query
     type: string
     format: date-time
     description: |
-      The start date and time to query for. Only events on or after the `start-date-time` will be returned. All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation: `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
+      The start date and time to query for. Only events on or after the `start-date-time` will be returned. All date-time values in OpenTripModel are
+      UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation: `YYYY-MM-DDThh:mm:ss.sssZ`. See the
+      [Time values](/#section/Technical-notes/Time-values) section for details.
   endDateTimeParam:
     name: endDateTime
     in: query
     type: string
     format: date-time
     description: |
-      The end date and time to query for. Only events before or on the `end-date-time` will be returned. All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation: `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
+      The end date and time to query for. Only events before or on the `end-date-time` will be returned. All date-time values in OpenTripModel are
+      UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation: `YYYY-MM-DDThh:mm:ss.sssZ`. See the
+      [Time values](/#section/Technical-notes/Time-values) section for details.
   eventTypeParam:
     name: eventType
     in: query
@@ -1302,13 +1332,21 @@ parameters:
     in: query
     type: string
     description: |
-      Filter the query by role and Actor. Only objects that are associated to the `Actor` identified by the given UUID and are associated by the given role will be shown. This parameter is only valid in combination with the `actor` parameter.
+      Filter the query by role and Actor. Only objects that are associated to the `Actor` identified by the given UUID and are associated by the given
+      role will be shown. This parameter is only valid in combination with the `actor` parameter.
     required: false
 
 
 responses:
   badRequest:
-    description: The request was invalid or cannot be otherwise served. Possible causes are invalid JSON objects or missing required parameters. An accompanying error message will explain further.
+    description: |
+      The request was invalid or cannot be otherwise served. Possible causes are:
+        - invalid JSON objects;
+        - missing required parameters;
+        - when `POST`-ing an updated entity, the UUID-part of the `id` of the `POST` body is not equal to the UUID-part of the endpoint the body
+        is posted to.
+
+      An accompanying error message will explain further.
     schema:
       type: string
       description: error message
@@ -1326,7 +1364,9 @@ responses:
       description: error message
       example: Access to this resource is not allowed.
   notFound:
-    description: The URI requested is invalid or the resource requested does not exists. Also returned when the requested format is not supported by the requested method.
+    description: |
+      The URI requested is invalid or the resource requested does not exists. Also returned when the requested format is not supported by the
+      requested method.
     schema:
       type: string
       description: error message
@@ -1351,12 +1391,16 @@ definitions:
   actor:
     type: object
     description: |
-      An `Actor` models a legal entity. A legal entity is an individual, company, or organization that has legal rights and obligations. The use of Actors is optional, and is not necessary to use OpenTripModel. Actors can be used e.g. to group all locations that belong to an organisation, or to address an OpenTripModel message to a specific person or organisation.
+      An `Actor` models a legal entity. A legal entity is an individual, company, or organization that has legal rights and obligations. The use of
+      `Actors` is optional, and is not necessary to use OpenTripModel. Actors can be used e.g. to group all locations that belong to an organisation,
+      or to address an OpenTripModel message to a specific person or organisation.
     properties:
       id:
         type: string
         format: uri
-        description: Uniquely identifies this `Actor`. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it. Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
+        description: |
+          Uniquely identifies this `Actor`. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it.
+          Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
         example: https://api.opentripmodel.org/api/public/v4/actors/45db6ed0-28a7-4e4a-baba-3d5f8d171103
       externalIds:
         type: array
@@ -1377,7 +1421,9 @@ definitions:
       id:
         type: string
         format: uri
-        description: Uniquely identifies this location. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it. Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
+        description: |
+          Uniquely identifies this location. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it.
+          Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
         example: https://api.opentripmodel.org/api/public/v4/locations/11c11d75-e114-4b5f-9751-b3a4afa23ecf
       name:
         type: string
@@ -1453,7 +1499,8 @@ definitions:
       value:
         type: string
         description: |
-          The contact detail itself. Depending on the `type`, this can be a phone number, email address or some other address to contact a location or person.
+          The contact detail itself. Depending on the `type`, this can be a phone number, email address or some other address to contact a location or
+          person.
         example:
           "info@opentripmodel.org"
       remarks:
@@ -1804,7 +1851,9 @@ definitions:
 
   administrativeReference:
     description: |
-      Administrative references are street addresses, only available for reference and for improved human readability. Administrative references are **not** intended to be used for identifying locations; always use a geoReference for that purpose. While this is not advised, you _can_ use an address as georeference. To do so, add the address as `geoReference` via the `addressGeoReference` type.
+      Administrative references are street addresses, only available for reference and for improved human readability. Administrative references are
+      **not** intended to be used for identifying locations; always use a geoReference for that purpose. While this is not advised, you _can_ use an
+      address as georeference. To do so, add the address as `geoReference` via the `addressGeoReference` type.
     allOf:
       - $ref: "#/definitions/address"
       - properties:
@@ -1830,14 +1879,17 @@ definitions:
     description: |
       `Constraints` can do different things, depending on the context they're used in:
         - In the context of a `Location`, access to the location is only allowed if the given constraint applies.
-        - In the context of a `Trip`, constraints can be used to define constraints that have to be met during the trip, e.g. if the temperature in a refridgerated trailer has to stay below a given maximum during the trip.
+        - In the context of a `Trip`, constraints can be used to define constraints that have to be met during the trip, e.g. if the temperature in a
+          refridgerated trailer has to stay below a given maximum during the trip.
 
       Note that constraints can be nested and combined using the `andConstraint`, `orConstraint` and `notConstraint`.
     properties:
       id:
         type: string
         format: uri
-        description: Uniquely identifies this constraint. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it. Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
+        description: |
+          Uniquely identifies this constraint. A URI can be assigned by the client or will be generated by the server if the client doesn't provide
+          it. Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
         example: https://api.opentripmodel.org/api/public/v4/constraints/6d4b4ac8-0122-457f-89cf-15f6d82ac2ec
       type:
         description: The constraint type
@@ -1847,6 +1899,7 @@ definitions:
       - type
     example:
       {
+        "id": "https://api.opentripmodel.org/api/public/v4/constraints/acf92788-63c3-41a5-b1d4-4b30fc41c9f2",
         "type": "andConstraint",
         "and": [{
             "type": "startDateTimeConstraint",
@@ -1889,7 +1942,8 @@ definitions:
       - properties:
           and:
             description: |
-              All constraints in the array are combined using a boolean AND relation. This means that the resulting constraint will only apply if all constraints in the array would apply.
+              All constraints in the array are combined using a boolean AND relation. This means that the resulting constraint will only apply if all
+              constraints in the array would apply.
             type: array
             items:
               $ref: "#/definitions/constraint"
@@ -1900,7 +1954,8 @@ definitions:
       - properties:
           or:
             description: |
-              All constraints in the array are combined using a boolean OR relation. This means that the resulting constraint will apply if any of the constraints in the array would apply.
+              All constraints in the array are combined using a boolean OR relation. This means that the resulting constraint will apply if any of the
+              constraints in the array would apply.
             type: array
             items:
               $ref: "#/definitions/constraint"
@@ -1911,7 +1966,8 @@ definitions:
       - properties:
           not:
             description: |
-              This inverts the given constraint, like a boolean NOT operation. This means the resulting constraint will apply if the underlying constraint would not.
+              This inverts the given constraint, like a boolean NOT operation. This means the resulting constraint will apply if the underlying
+              constraint would not.
             $ref: "#/definitions/constraint"
 
   startDateTimeConstraint:
@@ -2078,7 +2134,12 @@ definitions:
         type: string
         format: time-range
         description: |
-          Time interval in the format `hh:mm:ss/hh:mm:ss`, where the value before the `/` is the start time and the value after the `/` is the end time. This follows the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) time interval notation. Note that the time values are in the local time zone of the `Location`. This is because it would be impractical to convert time intervals related to a location to UTC, given that the intervals are linked to a weekday (as opposed to a specific date) and thus the UTC time could change in time zones where [Daylight Saving Time (DST)](https://en.wikipedia.org/wiki/Daylight_saving_time) is used. See the [Time values](/#section/Technical-notes/Time-values) section for details.
+          Time interval in the format `hh:mm:ss/hh:mm:ss`, where the value before the `/` is the start time and the value after the `/` is the end
+          time. This follows the [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) time interval notation. Note that the time values are in the local
+          time zone of the `Location`. This is because it would be impractical to convert time intervals related to a location to UTC, given that the
+          intervals are linked to a weekday (as opposed to a specific date) and thus the UTC time could change in time zones where
+          [Daylight Saving Time (DST)](https://en.wikipedia.org/wiki/Daylight_saving_time) is used. See the
+          [Time values](/#section/Technical-notes/Time-values) section for details.
         example: 09:00:00/17:00:00
     required:
       - range
@@ -2094,7 +2155,8 @@ definitions:
         type: string
         format: uri
         description: |
-          Unique ID for this `Vehicle`. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it. Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
+          Unique ID for this `Vehicle`. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it.
+          Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
         example: https://api.opentripmodel.org/api/public/v4/vehicles/b9bb914d-845e-46f2-91ff-31fa4bac2fbe
       name:
         type: string
@@ -2161,7 +2223,8 @@ definitions:
   fuelType:
     type: object
     description: |
-      The type of fuel the vehicle runs on. For vehicle without an engine of their own, such as a trailer, you may choose `not-applicable`. For trailers with cooling capabilities, choose the fuel type of the cooling engine.
+      The type of fuel the vehicle runs on. For vehicle without an engine of their own, such as a trailer, you may choose `not-applicable`.
+      For trailers with cooling capabilities, choose the fuel type of the cooling engine.
     properties:
       type:
         type: string
@@ -2197,12 +2260,17 @@ definitions:
   shipment:
     type: object
     description: |
-      A shipment object has at lease a `physicalSender` and `physicalAddressee` location. If no `legalSender` or `legalAddressee` are given, those are considered equal to their physical counterparts. All sender/addressee values can be given either as embedded location object or as URI of a pre-defined location. In the latter case, you can use the field ending with `Id` instead. A `physicalSender` or `physicalSenderId` is required, as is a `physicalAddressee` or `physicalAddresseeId`.
+      A shipment object has at lease a `physicalSender` and `physicalAddressee` location. If no `legalSender` or `legalAddressee` are given, those are
+      considered equal to their physical counterparts. All sender/addressee values can be given either as embedded location object or as URI of a
+      pre-defined location. In the latter case, you can use the field ending with `Id` instead. A `physicalSender` or `physicalSenderId` is required,
+      as is a `physicalAddressee` or `physicalAddresseeId`.
     properties:
       id:
         type: string
         format: uri
-        description: Uniquely identifies the `Shipment`. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it. Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
+        description: |
+          Uniquely identifies the `Shipment`. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it.
+          Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
         example: https://api.opentripmodel.org/api/public/v4/shipments/ddb488f2-9082-4ec9-bd88-3c4e703a103d
       externalIds:
         type: array
@@ -2268,13 +2336,17 @@ definitions:
   trip:
     type: object
     description: |
-      `Trip` entity. A `Trip` entity consists of a list of `Events` and an optional `Route`. The sequence of `Events` defines the trip. Each `Trip` has an associated `events` endpoint that can be used to get the events for this trip or to publish new events on the trip. Once defined, a `Trip` entity exists in all single lifecycle phases, just like the other entities. However, the events of the `Trip` differ between the different lifecycle phases.
+      `Trip` entity. A `Trip` entity consists of a list of `Events` and an optional `Route`. The sequence of `Events` defines the trip. Each `Trip`
+      has an associated `events` endpoint that can be used to get the events for this trip or to publish new events on the trip. Once defined, a
+      `Trip` entity exists in all single lifecycle phases, just like the other entities. However, the events of the `Trip` differ between the
+      different lifecycle phases.
     properties:
       id:
         type: string
         format: uri
         description: |
-          Uniquely identifies the `Trip`. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it. Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
+          Uniquely identifies the `Trip`. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it.
+          Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
         example: https://api.opentripmodel.org/api/public/v4/trips/aa38745d-1e90-4774-bf12-05c24a6f8318
       externalIds:
         type: array
@@ -2319,7 +2391,8 @@ definitions:
         type: string
         format: uri
         description: |
-          Uniquely identifies the `Route`. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it. Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
+          Uniquely identifies the `Route`. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it.
+          Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
         example: https://api.opentripmodel.org/api/public/v4/routes/fcc0828c-591f-4b3c-bc48-7dc8856e7f2a
       externalIds:
         type: array
@@ -2426,14 +2499,16 @@ definitions:
         type: string
         format: uri
         description: |
-          Uniquely identifies the `Event`. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it. Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
+          Uniquely identifies the `Event`. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it.
+          Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
         example: https://api.opentripmodel.org/api/public/v4/vehicle/96b65c0f-9692-4b46-bd08-cac21ecabcec/actual/events/ed592f10-a753-40d9-b015-dfeed7dc0681
       lifecyclePhase:
         $ref: "#/definitions/lifecyclePhase"
       involvedObjects:
         type: array
         description: |
-          A list of URI's, each one pointing to an endpoint representing an object that is involved in this `Event`. The maximum number of objects is defined by the `Event`'s type.
+          A list of URI's, each one pointing to an endpoint representing an object that is involved in this `Event`. The maximum number of objects is
+          defined by the `Event`'s type.
         items:
           type: string
           format: uri
@@ -2454,7 +2529,8 @@ definitions:
           - "actual": The date and time this event actually happens. This is always in the near past.
           - "realized": The date and time this event did actually happen. This is always in the past.
 
-          All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation: `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
+          All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation:
+          `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
       reason:
         type: string
         description: |
@@ -2613,7 +2689,8 @@ definitions:
 
   releaseShipmentEvent:
     description: |
-      This event models the release (for pick up) of a `Shipment` at a `Location`. This event often takes place at the same time as a `loadShipmentEvent`.
+      This event models the release (for pick up) of a `Shipment` at a `Location`. This event often takes place at the same time as a
+      `loadShipmentEvent`.
     allOf:
       - $ref: "#/definitions/event"
       - $ref: "#/definitions/locationUpdateEvent_parent"
@@ -2693,7 +2770,8 @@ definitions:
           role:
             type: string
             description: |
-              The role of the `Actor` with respect to the `involvedObjects`. There are no pre-defined roles, and the role does not have any special meaning in OpenTripModel.
+              The role of the `Actor` with respect to the `involvedObjects`. There are no pre-defined roles, and the role does not have any special
+              meaning in OpenTripModel.
             example: "owner"
 
 
@@ -2702,7 +2780,9 @@ definitions:
   lifecyclePhase:
     type: object
     description: |
-      Lifecycle phase, can be one of "planned", "projected", "actual" or "realized". All entities except `Event` exist in all life cycle phases. The events on an entity differ depending on the lifecycle phase. E.g. a vehicle in the "planned" life cycle phase has different events compared to the same vehicle in the "actual" phase.
+      Lifecycle phase, can be one of "planned", "projected", "actual" or "realized". All entities except `Event` exist in all life cycle phases.
+      The events on an entity differ depending on the lifecycle phase. E.g. a vehicle in the "planned" life cycle phase has different events compared
+      to the same vehicle in the "actual" phase.
     properties:
       phase:
         type: string
@@ -2759,16 +2839,25 @@ definitions:
         format: uri
         description: |
           URI, uniquely identifying the scheme of the identifier. Examples:
-          - `http://www.gs1.org/gln`, **[Global Location Number](http://en.wikipedia.org/wiki/Global_Location_Number)**: See http://en.wikipedia.org/wiki/Global_Location_Number and http://www.gs1.org/gln.
-          - `https://opentripmodel.org/types/licensePlate/<countryCode>`, **License plate**: Licence plate identifier. Use the [international vehicle registration code](https://en.wikipedia.org/wiki/List_of_international_vehicle_registration_codes) in the URI,
+          - `http://www.gs1.org/gln`, **[Global Location Number](http://en.wikipedia.org/wiki/Global_Location_Number)**: See
+            http://en.wikipedia.org/wiki/Global_Location_Number and http://www.gs1.org/gln.
+          - `https://opentripmodel.org/types/licensePlate/<countryCode>`, **License plate**: Licence plate identifier. Use the
+            [international vehicle registration code](https://en.wikipedia.org/wiki/List_of_international_vehicle_registration_codes) in the URI,
           - `https://opentripmodel.org/types/name`, **Name**: Just a name
           - `https://opentripmodel.org/types/kvknummer`, **Dutch Chamber of Commerce number**: Can be used to identify a company.
-          - `http://www.gs1.org/gsin`, **GSIN**, [Global Shipment Identification Number](http://www.gs1.org/gsin) - identifies a shipment, according to the [GS1 standard](https://en.wikipedia.org/wiki/GS1).
-          - `http://www.gs1.org/sscc`, **SSCC**, [Serial Shipping Container Code](http://www.gs1.org/sscc) - identifies a container within a shipment, in case a shipment consists of more than one container, according to the [GS1 standard](https://en.wikipedia.org/wiki/GS1).
-          - `http://www.gs1.org/gtin`, **GTIN**, [Global Trade Item Number](http://www.gs1.org/gtin), identifies an item in a container within a shipment, according to the [GS1 standard](https://en.wikipedia.org/wiki/GS1).
-          Note that the list above is just a list of examples. E.g. in case of shipments, OpenTripModel doesn't define the granularity of a Shipment, while the GS1-references might suggest otherwise. In GS1 terms, a Shipment in OpenTripModel can either be a Shipment, or a Shipping Container or a Trade Item or neither of those. It all depends on the needs of the logistics operation that is to be modeled in OpenTripModel.
+          - `http://www.gs1.org/gsin`, **GSIN**, [Global Shipment Identification Number](http://www.gs1.org/gsin) - identifies a shipment, according
+            to the [GS1 standard](https://en.wikipedia.org/wiki/GS1).
+          - `http://www.gs1.org/sscc`, **SSCC**, [Serial Shipping Container Code](http://www.gs1.org/sscc) - identifies a container within a shipment,
+            in case a shipment consists of more than one container, according to the [GS1 standard](https://en.wikipedia.org/wiki/GS1).
+          - `http://www.gs1.org/gtin`, **GTIN**, [Global Trade Item Number](http://www.gs1.org/gtin), identifies an item in a container within a
+            shipment, according to the [GS1 standard](https://en.wikipedia.org/wiki/GS1).
 
-          Note that uniqueness of external ID's should not be enforced by an OpenTripModel server. External ID's are for reference only.
+          > Note that the list above is just a list of examples. E.g. in case of shipments, OpenTripModel doesn't define the granularity of a
+          `Shipment`, while the GS1-references might suggest otherwise. In GS1 terms, a `Shipment` in OpenTripModel can either be a _Shipment_,
+          or a _Shipping Container_ or a _Trade Item_ or neither of those. It all depends on the needs of the logistics operation that is to be
+          modeled in OpenTripModel.
+
+          Also note that uniqueness of external ID's should not be enforced by an OpenTripModel server. External ID's are for reference only.
         example: https://opentripmodel.org/types/licensePlate/nl
       value:
         type: string
@@ -2782,3 +2871,4 @@ definitions:
     required:
       - schema
       - value
+
