@@ -4,28 +4,45 @@ info:
   description: |
     # Introduction
 
-    You are viewing the **API Reference Documentation** of OpenTripModel. This reference documentation is targetted at developers that are writing client or server code for an OpenTripModel implementation. For a general introduction to OpenTripModel, please refer to the [main website of OpenTripModel](https://www.opentripmodel.org/). This documentation is generated from the OpenTripModel API specification, the source of which can be found at [OpenTripModels GitHub repository](https://github.com/opentripmodel/opentripmodel).
+    You are viewing the **API Reference Documentation** of OpenTripModel. This reference documentation is targetted at developers that are writing
+    client or server code for an OpenTripModel implementation. For a general introduction to OpenTripModel, please refer to the
+    [main website of OpenTripModel](https://www.opentripmodel.org/). This documentation is generated from the OpenTripModel API specification, the
+    source of which can be found at [OpenTripModels GitHub repository](https://github.com/opentripmodel/opentripmodel).
 
     # The model
     <iframe src="images/otm-model.svg" height="300" width="425" style="border:0px;"></iframe>
 
-    OpenTripModel defines entities, displayed yellow in the image. You can click on the boxes in the image to jump to the corresponding section in this API Reference Documentation. For a more conceptual introduction to the entities, please read the [Introducing the model](https://www.opentripmodel.org/docs/the-model) section of the documentation. There's also an [introduction to lifecycles](https://www.opentripmodel.org/docs/lifecycles) available. (Lifecycles are displayed as green boxes in the image.)
+    OpenTripModel defines entities, displayed yellow in the image. You can click on the boxes in the image to jump to the corresponding section in
+    this API Reference Documentation. For a more conceptual introduction to the entities, please read the
+    [Introducing the model](https://www.opentripmodel.org/docs/the-model) section of the documentation. There's also an
+    [introduction to lifecycles](https://www.opentripmodel.org/docs/lifecycles) available. (Lifecycles are displayed as green boxes in the image.)
 
-    Apart from these entities, perhaps the most important entity in OpenTripModel is the **[Event](/#tag/Event)**. All dynamic behaviour is modeled as (a series of) event(s). Please refer to the sections [Important Concepts](https://www.opentripmodel.org/docs/concepts) and [Event entity](https://www.opentripmodel.org/docs/event-entity) of the general documentation for an introduction.
+    Apart from these entities, perhaps the most important entity in OpenTripModel is the **[Event](/#tag/Event)**. All dynamic behaviour is modeled
+    as (a series of) event(s). Please refer to the sections [Important Concepts](https://www.opentripmodel.org/docs/concepts) and
+    [Event entity](https://www.opentripmodel.org/docs/event-entity) of the general documentation for an introduction.
 
     # Technical notes
 
     ## Unique identifiers
-    This section has been moved to the [Implementation guide](https://www.opentripmodel.org/docs/unique-identifiers) on the main OpenTripModel website.
+    This section has been moved to the [Implementation guide](https://www.opentripmodel.org/docs/unique-identifiers) on the main OpenTripModel
+    website.
 
     ## Time values
-    This section has been moved to the [Implementation guide](https://www.opentripmodel.org/docs/time-and-date-representation) on the main OpenTripModel website.
+    This section has been moved to the [Implementation guide](https://www.opentripmodel.org/docs/time-and-date-representation) on the main
+    OpenTripModel website.
 
     ## Bundles
-    To create multiple entities and events in one request, use a **[Bundle](/#tag/Bundle)** call. This provides transactional guarantees, preventing roll-back scenario's. A typical use case is when the originating system is not event based, and it has to communicate an entire "planning" at once. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
+    To create multiple entities and events in one request, use a **[Bundle](/#tag/Bundle)** call. This provides transactional guarantees, preventing
+    roll-back scenario's. A typical use case is when the originating system is not event based, and it has to communicate an entire "planning" at
+    once. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
 
     # Licence
-    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />All OpenTripModel documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
+      <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" />
+    </a>
+    <br />
+    All OpenTripModel documentation is licensed under a
+    <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
   version: "{{VERSION}}"
 # the domain of the service
 # host: api.opentripmodel.org #commented out so we can deploy to other hosts.
@@ -43,7 +60,8 @@ consumes:
 tags:
   - name: Location
     description: |
-      Locations are geometric entities which can have either the shape of a point or an area. These points and areas can be used to model delivery zones, store and warehouse coordinates as well as environmental zones within urban areas, areas with access restrictions, etc.
+      Locations are geometric entities which can have either the shape of a point or an area. These points and areas can be used to model delivery
+      zones, store and warehouse coordinates as well as environmental zones within urban areas, areas with access restrictions, etc.
   - name: Event
     description: |
       An event is something occurring at a specific time (whether in the past, present, or past alike) and (optionally) at a specific location. Events are the core of this API. Events link all static objects together. The table below shows which event types are applicable to which entities in the OpenTripModel.
@@ -89,7 +107,8 @@ tags:
       A `Route` describes how to move through space in between two locations.
   - name: Vehicle
     description: |
-      A `Vehicle` is any entity which can move through space in between locations. It can be for instance a truck, a trailer, an airplane, a drone, or even something which has not been invennted yet.
+      A `Vehicle` is any entity which can move through space in between locations. It can be for instance a truck, a trailer, an airplane, a drone, or
+      even something which has not been invennted yet.
   - name: Shipment
     description: |
       A `Shipment` is one (or more) item(s) being transported between locations.
@@ -164,7 +183,8 @@ paths:
         - $ref: "#/parameters/locationParam"
       responses:
         201:
-          description: The `Location` object as created. The returned object will contain the UUID that can be used to refer to this object in future calls.
+          description: |
+            The `Location` object as created. The returned object will contain the UUID that can be used to refer to this object in future calls.
           schema: { $ref: "#/definitions/location" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -260,7 +280,8 @@ paths:
         - $ref: "#/parameters/eventParam"
       responses:
         201:
-          description: The created `Event`. The returned object will contain the generated UUID that can be used to refer to this `Event` in later requests.
+          description: |
+            The created `Event`. The returned object will contain the generated UUID that can be used to refer to this `Event` in later requests.
           schema: { $ref: "#/definitions/event" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -309,7 +330,8 @@ paths:
         - $ref: "#/parameters/tripParam"
       responses:
         201:
-          description: The `Trip` object as created. The returned object will contain the UUID that can be used to refer to this object in future calls.
+          description: |
+            The `Trip` object as created. The returned object will contain the UUID that can be used to refer to this object in future calls.
           schema: { $ref: "#/definitions/trip" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -391,7 +413,8 @@ paths:
     put:
       summary: Publish a new Event for the given trip
       description: |
-        Publish a new `Event` for the given trip. Note that a planned `Trip` may consist of a lot of `Events`. Therefore it is possible to create a `Trip` with its events at once via a `PUT` to the `trips` endpoint.
+        Publish a new `Event` for the given trip. Note that a planned `Trip` may consist of a lot of `Events`. Therefore it is possible to create a
+        `Trip` with its events at once via a `PUT` to the `trips` endpoint.
       tags:
         - Event
         - Trip
@@ -407,7 +430,8 @@ paths:
         - $ref: "#/parameters/eventParam"
       responses:
         201:
-          description: The created `Event`. The returned object will contain the generated UUID that can be used to refer to this `Event` in later requests.
+          description: |
+            The created `Event`. The returned object will contain the generated UUID that can be used to refer to this `Event` in later requests.
           schema: { $ref: "#/definitions/event" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -2844,7 +2868,7 @@ definitions:
       The events on an entity differ depending on the lifecycle phase. E.g. a vehicle in the "planned" life cycle phase has different events compared
       to the same vehicle in the "actual" phase.
 
-      > Note that, when `PUT`-ing a new event, you always `PUT` to and endpoint specific to the lifecycle phase. Thus, the life cycle phase field
+      > Note that, when `PUT`-ing a new event, you always `PUT` to an endpoint specific to the lifecycle phase. Thus, the life cycle phase field
         is not required when `PUT`-ing an event. When `GET`-ing an event, the OTM-server will always add the field, so you can see the lifecycle
         phase in the response. It is allowed to add a redundant `lifecyclePhase` field to an event when `PUT`-ing it. Make sure the contents of that
         field correspond to the endpoint you `PUT` to, otherwise the OTM-server might respond with a `400 - Bad Request` error.
@@ -2852,7 +2876,6 @@ definitions:
       phase:
         type: string
         description: phase in the lifecycle
-        readOnly: true
         enum:
           - planned
           - projected
