@@ -299,7 +299,6 @@ paths:
       description: Create a `Trip` object with the given data.
       tags:
         - Trip
-        - Event
       consumes:
         - application/json
         - application/xml
@@ -1174,7 +1173,11 @@ paths:
   /bundles:
     put:
       summary: Create or update multiple entities
-      description: By putting a bundle on the server, a client can create or update multiple entities in one call. This can bring down the number of calls, thus reducing network traffic. It also ensures all entities in the bundle are validated at the same time and no entities are created or updated if there is an error in the bundle. This can be sees as a simple form of transaction. Bundles are not saved as an entity of their own. This means there's no `GET` call on the bundle endpoint.
+      description: |
+        By putting a bundle on the server, a client can create or update multiple entities in one call. This can bring down the number of calls, thus
+        reducing network traffic. It also ensures all entities in the bundle are validated at the same time and no entities are created or updated if
+        there is an error in the bundle. This can be sees as a simple form of transaction. Bundles are not saved as an entity of their own. This means
+        there's no `GET` call on the bundle endpoint.
       tags:
         - Bundle
       consumes:
@@ -1345,6 +1348,7 @@ responses:
         - missing required parameters;
         - when `POST`-ing an updated entity, the UUID-part of the `id` of the `POST` body is not equal to the UUID-part of the endpoint the body
         is posted to.
+        - wheb `PUT`-ing an event, the `lifecyclePhase` field of that event does not correspond to the endpoint you are `PUT`-ing it to.
 
       An accompanying error message will explain further.
     schema:
@@ -2015,12 +2019,34 @@ definitions:
             enum:
               - vehicle-length
               - vehicle-height
-              - vehicle-weight
+              - vehicle-width
           maximum:
             description: Maximum size allowed
             $ref: "#/definitions/valueWithUnit"
           minimum:
             description: Minimum size allowed
+            $ref: "#/definitions/valueWithUnit"
+
+  weightConstraint:
+    allOf:
+      - $ref: "#/definitions/constraint"
+      - properties:
+          weightConstraintType:
+            description: |
+              The type of weight constraint. Available types are:
+                - `maximum`: All weights below and including the maximum value are allowed.
+                - `minimum`: All weights above and including the minimum value are allowed.
+                - `range`: All weights in between and including the minimum and maximum values are allowed.
+            type: string
+            enum:
+              - maximum
+              - minimum
+              - range
+          maximum:
+            description: Maximum weight allowed
+            $ref: "#/definitions/valueWithUnit"
+          minimum:
+            description: Minimum weight allowed
             $ref: "#/definitions/valueWithUnit"
 
   speedConstraint:
@@ -2189,6 +2215,15 @@ definitions:
         type: array
         items:
           $ref: "#/definitions/valueWithUnit"
+      length:
+        $ref: "#/definitions/valueWithUnit"
+      height:
+        $ref: "#/definitions/valueWithUnit"
+      width:
+        $ref: "#/definitions/valueWithUnit"
+      emptyWeight:
+        $ref: "#/definitions/valueWithUnit"
+
     required:
       - maxLinks
       - type
@@ -2374,7 +2409,6 @@ definitions:
         format: uri
         description: |
           URI of an endpoint that can be used to retrieve the route of this `Trip`.
-        readOnly: true
         example:
           https://api.opentripmodel.org/api/public/v4/routes/9df853e4-1291-40de-bfc1-4e5d7b23cc76
       constraint:
@@ -2442,9 +2476,34 @@ definitions:
       entityType:
         type: string
         description: The type of entity. This is needed, since the type cannot be derived from the endpoint in a `Bundle`.
+        enum:
+          - vehicleEntity
+          - locationEntity
+          - tripEntity
+          - routeEntity
+          - shipmentEntity
+          - actorEntity
+          - constraintEntity
     discriminator: entityType
     required:
       - entityType
+    example:
+      {
+        "entityType": "vehicleEntity",
+        "id": "https://api.opentripmodel.org/api/public/v4/vehicles/635f6bd2-2568-45d8-b4e0-312f563b87de",
+        "externalIds": [
+          {
+            "schema": "https://opentripmodel.org/types/licensePlate/nl",
+            "value": "T-123-AB",
+          }
+        ],
+        "vehicleType": {
+          "type": "tractor"
+        },
+        "fuel": {
+          "type": "diesel"
+        }
+      }
 
   vehicleEntity:
     type: object
@@ -2501,7 +2560,8 @@ definitions:
         description: |
           Uniquely identifies the `Event`. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it.
           Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
-        example: https://api.opentripmodel.org/api/public/v4/vehicle/96b65c0f-9692-4b46-bd08-cac21ecabcec/actual/events/ed592f10-a753-40d9-b015-dfeed7dc0681
+        example: |
+          https://api.opentripmodel.org/api/public/v4/vehicles/96b65c0f-9692-4b46-bd08-cac21ecabcec/actual/events/ed592f10-a753-40d9-b015-dfeed7dc0681
       lifecyclePhase:
         $ref: "#/definitions/lifecyclePhase"
       involvedObjects:
@@ -2519,7 +2579,7 @@ definitions:
         description: |
           The type of the `Event`. Depending on this type, additional fields may be required for this object.
         example:
-          "locationUpdateEvent"
+          "loadShipmentEvent"
       time:
         type: string
         format: date-time
@@ -2783,6 +2843,11 @@ definitions:
       Lifecycle phase, can be one of "planned", "projected", "actual" or "realized". All entities except `Event` exist in all life cycle phases.
       The events on an entity differ depending on the lifecycle phase. E.g. a vehicle in the "planned" life cycle phase has different events compared
       to the same vehicle in the "actual" phase.
+
+      > Note that, when `PUT`-ing a new event, you always `PUT` to and endpoint specific to the lifecycle phase. Thus, the life cycle phase field
+        is not required when `PUT`-ing an event. When `GET`-ing an event, the OTM-server will always add the field, so you can see the lifecycle
+        phase in the response. It is allowed to add a redundant `lifecyclePhase` field to an event when `PUT`-ing it. Make sure the contents of that
+        field correspond to the endpoint you `PUT` to, otherwise the OTM-server might respond with a `400 - Bad Request` error.
     properties:
       phase:
         type: string
@@ -2793,6 +2858,10 @@ definitions:
           - projected
           - actual
           - realized
+    example:
+      {
+        "phase": "actual"
+      }
 
 ####### General #######
 
