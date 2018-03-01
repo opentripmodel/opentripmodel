@@ -2388,6 +2388,8 @@ definitions:
         description: |
           Free format text field that can be used to describe the contents of this shipment.
         example: 50 boxes of bananas
+      constraint:
+        $ref: "#/definitions/constraint"
 
 
 ####### Trips #######
