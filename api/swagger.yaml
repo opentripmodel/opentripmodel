@@ -117,7 +117,8 @@ tags:
       An `Actor` represents organisations or persons that participate in a logistic process in OpenTripModel.
   - name: Constraint
     description: |
-      A `Constraint` can be used to model `Locations` with limited access or `Trips` with conditions that have to stay within a given range.
+      A `Constraint` can be used to model `Locations` with limited access or `Trips` or `Shipments` with conditions that have to stay within a given
+      range.
   - name: Bundle
     description: |
       A `Bundle` creates multiple entities and events in one request.
@@ -1909,6 +1910,8 @@ definitions:
         - In the context of a `Location`, access to the location is only allowed if the given constraint applies.
         - In the context of a `Trip`, constraints can be used to define constraints that have to be met during the trip, e.g. if the temperature in a
           refridgerated trailer has to stay below a given maximum during the trip.
+        - In the context of a `Shipment`, constraints can be used to e.g. define minimum or maximum temperatures for shipments, or date time
+          constraints for delivery.
 
       Note that constraints can be nested and combined using the `andConstraint`, `orConstraint` and `notConstraint`.
     properties:
