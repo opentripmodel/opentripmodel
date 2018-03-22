@@ -257,7 +257,7 @@ paths:
           schema:
             type: array
             items:
-              $ref: "#/definitions/location"
+              $ref: "#/definitions/event"
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
         403: { $ref: "#/responses/forbidden" }
