@@ -43,6 +43,7 @@ info:
     - The `location` member of several types of `Event`s no longer accepts references to pre-defined `Location` entities, now only inline (_ad hoc_)
       entities are allowed inside an event. If you want to refer to a pre-defined `Location` inside an `Event`, either publish the event on the
       `Location`'s `event` endpoint or refer to the `Location` in the `involvedObjects` member of the `Event`.
+    - Removed the ~~`constraintReference`~~ `Constraint`-type. It was unneeded and cause ambiguity.
 
     # Licence
     <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
@@ -1966,17 +1967,6 @@ definitions:
           }
         ]
       }
-
-  constraintReference:
-    allOf:
-      - $ref: "#/definitions/constraint"
-      - properties:
-          reference:
-            type: string
-            format: uri
-            description: |
-              URI of a pre-defined constraint
-            example: https://api.opentripmodel.org/api/public/v4/constraints/60daad43-5705-490a-bb55-e1edba5c499f
 
   andConstraint:
     allOf:
