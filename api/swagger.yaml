@@ -36,6 +36,14 @@ info:
     roll-back scenario's. A typical use case is when the originating system is not event based, and it has to communicate an entire "planning" at
     once. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
 
+    ## Changes since 4.0
+    - The `administrativeReference` member of the `Location` entity is now camelCased, like all other members. In OTM 4.0 it was inconsistently
+      called ~~`administrative-reference`~~. Implementors are advised to be a [Tolerant Reader](https://martinfowler.com/bliki/TolerantReader.html),
+      that is: to accept both forms, but only write the new form.
+    - The `location` member of several types of `Event`s no longer accepts references to pre-defined `Location` entities, now only inline (_ad hoc_)
+      entities are allowed inside an event. If you want to refer to a pre-defined `Location` inside an `Event`, either publish the event on the
+      `Location`'s `event` endpoint or refer to the `Location` in the `involvedObjects` member of the `Event`.
+
     # Licence
     <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
       <img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" />
@@ -2666,13 +2674,11 @@ definitions:
   # This is a work around for a swagger rendering bug.
   updateEvent_location:
     type: object
-    description: Either reference a pre-defined location by its ID or give an inline location as geoReference.
+    description: |
+      The location on which this event is taking place. Note that only inline (_ad hoc_) locations can be used. If you wish to refer to a predefined
+      `Location`, either publish the event on the particular `Location`'s endpoint or reference the particular `Location` in the `involvedObjects`
+      array. (This is changed since version 4.1. Before 4.1 it was possible to reference a `Location` here, but that turned out to be ambiguous.)
     properties:
-      id:
-        type: string
-        format: uri
-        description: reference to a pre-defined location
-        example: https://api.opentripmodel.org/api/public/v4/locations/a3a69757-bd36-4bc2-8a2b-b2ca39fadca9
       location:
         $ref: "#/definitions/geoReference"
 
