@@ -1470,7 +1470,7 @@ definitions:
         $ref: "#/definitions/locationType"
       geoReference:
         $ref: "#/definitions/geoReference"
-      administrative-reference:
+      administrativeReference:
         $ref: "#/definitions/administrativeReference"
       contactDetails:
         type: array
