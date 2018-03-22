@@ -2620,6 +2620,17 @@ definitions:
 
           All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation:
           `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
+      eventGenerationTime:
+        type: string
+        format: date-time
+        description: |
+          This field can optionally contain the date and time this event was generated. This can be useful e.g. for events in the `projected` life
+          cycle phase, that typically are calculated. The generation (calculateion) time can be an indicator for the relevance of the event.
+
+          The `eventGenerationTime` should always be in the past.
+
+          All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation:
+          `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
       reason:
         type: string
         description: |
