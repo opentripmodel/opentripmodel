@@ -44,6 +44,9 @@ info:
       entities are allowed inside an event. If you want to refer to a pre-defined `Location` inside an `Event`, either publish the event on the
       `Location`'s `event` endpoint or refer to the `Location` in the `involvedObjects` member of the `Event`.
     - Improved the `constraintReference` documentation and removed the ambiguous `reference` field.
+    - Added the field `eventGenerationTime` to `Event`. This can be useful e.g. for events in the `projected` life cycle phase, that typically are
+      calculated.
+    - Added speed and heading info to `locationUpdateEvents` for point locations.
 
     # Licence
     <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">
@@ -1575,7 +1578,15 @@ definitions:
       {
         "type": "latLongPointGeoReference",
         "lat": 52.0838333,
-        "lon": 5.8318803
+        "lon": 5.8318803,
+        "speed": {
+          "unit": "km/h",
+          "value": 76
+        },
+        "heading": {
+          "unit": "degrees",
+          "value": 143
+        }
       }
 
   latLongPoint:
@@ -1597,16 +1608,48 @@ definitions:
         "lon": 5.8318803
       }
 
+  movingInfo:
+    properties:
+      speed:
+        description: |
+          The speed of a moving `Vehicle`.
+        $ref: "#/definitions/valueWithUnit"
+      heading:
+        description: |
+          The heading of a `Vehicle`, that is: the direction the "nose" of the `Vehicle` is pointing to.
+        $ref: "#/definitions/valueWithUnit"
+      bearing:
+        description: |
+          The bearing of a `Vehicle`, that is: the angle between the `Vehicle` and its destination. Either measured _relative_ or _absolute_. See
+          [Wikipedia](https://en.wikipedia.org/wiki/Bearing_(navigation)) for an explanation.
+        $ref: "#/definitions/valueWithUnit"
+      bearingType:
+        description: |
+          Denotes how the bearing is measured.
+        type: string
+        enum:
+          - absolute
+          - relative
+        default: absolute
 
   latLongPointGeoReference:
     allOf:
       - $ref: "#/definitions/geoReference"
       - $ref: "#/definitions/latLongPoint"
+      - $ref: "#/definitions/movingInfo"
     example:
       {
         "type": "latLongPointGeoReference",
         "lat": 52.0838333,
-        "lon": 5.8318803
+        "lon": 5.8318803,
+        "speed": {
+          "unit": "km/h",
+          "value": 76
+        },
+        "heading": {
+          "unit": "degrees",
+          "value": 143
+        }
       }
 
   latLongArrayGeoReference:
@@ -1660,6 +1703,7 @@ definitions:
       url: http://geojson.org/geojson-spec.html#id2
     allOf:
       - $ref: "#/definitions/geoReference"
+      - $ref: "#/definitions/movingInfo"
       - properties:
           coordinates:
             $ref: '#/definitions/point2D'
@@ -1848,6 +1892,7 @@ definitions:
     allOf:
       - $ref: "#/definitions/geoReference"
       - $ref: "#/definitions/tmcLocation"
+      - $ref: "#/definitions/movingInfo"
 
   tmcArrayGeoReference:
     allOf:
