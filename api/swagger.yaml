@@ -1929,7 +1929,8 @@ definitions:
     example:
       {
         "street": "Langestraat",
-        "houseNumber": "3a",
+        "houseNumber": "3",
+        "houseNumberAddition": "a",
         "postalCode": "1234AB",
         "city": "Amersfoort",
         "country": "nl"
@@ -1952,7 +1953,8 @@ definitions:
       {
         "name": "Main entrance of store",
         "street": "Langestraat",
-        "houseNumber": "3a",
+        "houseNumber": "3",
+        "houseNumberAddition": "a",
         "postalCode": "1234AB",
         "city": "Amersfoort",
         "country": "nl"
