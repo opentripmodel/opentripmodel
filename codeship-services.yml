@@ -1,0 +1,19 @@
+aws_dockercfg:
+  image: codeship/aws-ecr-dockercfg-generator
+  add_docker: true
+  encrypted_env_file: aws.env.encrypted
+  environment:
+    - AWS_REGION=us-east-1
+
+project_build:
+  dockercfg_service: aws_dockercfg
+  build:
+    dockerfile_path: Dockerfile
+    encrypted_args_file: artifactory.env.encrypted
+  add_docker: true
+  cached: true
+  encrypted_env_file:
+    - artifactory.env.encrypted
+    - aws.env.encrypted
+  environment:
+    - AWS_REGION=eu-west-1
