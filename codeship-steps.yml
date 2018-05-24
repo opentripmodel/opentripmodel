@@ -2,5 +2,4 @@
   steps:
   - name: build
     service: project_build
-    tag: (^version/[.\d]+$)
     command: docker build -t otm-spec-server docker

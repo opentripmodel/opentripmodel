@@ -3,3 +3,5 @@ dist
 swagger-codegen-cli*.jar
 opentripmodel.zip
 api/swagger_v.yaml
+/codeship.aes
+/aws.env
