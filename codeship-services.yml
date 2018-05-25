@@ -8,7 +8,7 @@ aws_dockercfg:
 project_build:
   dockercfg_service: aws_dockercfg
   build:
-    dockerfile_path: Dockerfile
+    dockerfile_path: Dockerfile.build
   add_docker: true
   cached: true
   encrypted_env_file:

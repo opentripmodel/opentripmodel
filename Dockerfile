@@ -1,10 +1,9 @@
 FROM python:3.6-alpine3.7
 
-RUN mkdir /usr/src/app
-WORKDIR /usr/src/app
+COPY http-server/server.py /
 
-RUN apk update && \
-    apk upgrade && \
-    apk add git
+RUN pip install cachetools
+RUN pip install logentries
+RUN pip install requests
 
-COPY . .
+CMD [ "python", "./server.py" ]

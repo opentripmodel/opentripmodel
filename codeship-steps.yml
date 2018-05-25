@@ -2,4 +2,4 @@
   steps:
   - name: build
     service: project_build
-    command: docker build -t otm-spec-server docker
+    command: ./codeship_build.sh
