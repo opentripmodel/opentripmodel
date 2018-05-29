@@ -6,4 +6,6 @@ RUN pip install cachetools
 RUN pip install logentries
 RUN pip install requests
 
+EXPOSE 9000
+
 CMD [ "python", "./server.py" ]
