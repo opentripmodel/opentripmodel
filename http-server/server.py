@@ -127,10 +127,13 @@ class MyHandler(BaseHTTPRequestHandler):
         version_select = ['<option value="{0}" {1}>{0}</option>'.format(v, 'selected' if v == version else '') for v
                           in list(tags)]
 
-        contents = self.handle_file_request(sha, 'redoc/index.html', local_file)
+        contents_bytes = self.handle_file_request(sha, 'redoc/index.html', local_file)
+        contents = contents_bytes.decode("utf-8")
+        log.debug("Unprocessed contents: {}".format(contents))
         processed = contents \
             .replace("spec-url='/api-docs'", "spec-url='swagger.yaml'") \
             .replace("{{VERSION_SELECT}}", "\n".join(version_select))
+        log.debug("Processed contenst: {}".format(processed))
         self.handle_response(
             200,
             {'Content-type': self.CONTENT_TYPES['html']},
@@ -152,9 +155,10 @@ class MyHandler(BaseHTTPRequestHandler):
         if not result:
             log.debug("Getting file from github: {}/{}".format(sha, file))
             result = requests.get(
-                "https://raw.githubusercontent.com/opentripmodel/opentripmodel/{}/{}".format(sha, file),
-                headers={'Authorization': self.GITHUB_TOKEN_STRING})
-            files_cache.setdefault(cachekey, result)
+                "https://raw.githubusercontent.com/opentripmodel/opentripmodel/{}/{}".format(sha, file))
+                # headers={'Authorization': self.GITHUB_TOKEN_STRING})
+            if result.status_code in (200,201):
+                files_cache.setdefault(cachekey, result)
         return result
 
     def handle_redirect(self, url):
