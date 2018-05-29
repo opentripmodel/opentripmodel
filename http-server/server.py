@@ -127,13 +127,15 @@ class MyHandler(BaseHTTPRequestHandler):
         version_select = ['<option value="{0}" {1}>{0}</option>'.format(v, 'selected' if v == version else '') for v
                           in list(tags)]
 
+        if version in ['4.0.0-b1', '4.0.0', '4.0.1', '4.1.0', '4.1.1', '4.1.2']:
+            tag = tags.get('4.2.0-a1')
+            sha = tag['commit']['sha']
+
         contents_bytes = self.handle_file_request(sha, 'redoc/index.html', local_file)
         contents = contents_bytes.decode("utf-8")
-        log.debug("Unprocessed contents: {}".format(contents))
         processed = contents \
             .replace("spec-url='/api-docs'", "spec-url='swagger.yaml'") \
             .replace("{{VERSION_SELECT}}", "\n".join(version_select))
-        log.debug("Processed contenst: {}".format(processed))
         self.handle_response(
             200,
             {'Content-type': self.CONTENT_TYPES['html']},
