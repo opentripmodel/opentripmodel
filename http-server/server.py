@@ -15,9 +15,10 @@ files_cache = TTLCache(maxsize=1000, ttl=86400)  # 24 hours
 
 log = logging.getLogger('otm-spec-server')
 
-local_html_file = os.environ.get("LOCAL_HTML_FILE", False)
-local_swagger_file = os.environ.get("LOCAL_SWAGGER_FILE", False)
-
+local_html_file_string = os.environ.get("LOCAL_HTML_FILE", "False")
+local_swagger_file_string = os.environ.get("LOCAL_SWAGGER_FILE", "False")
+local_html_file = local_html_file_string.upper() == "TRUE"
+local_swagger_file = local_swagger_file_string.upper() == "TRUE"
 
 class MyHandler(BaseHTTPRequestHandler):
     CONTENT_TYPES = {
@@ -106,7 +107,8 @@ class MyHandler(BaseHTTPRequestHandler):
     def handle_file_request(self, sha, file_name, local_file=False):
         contents = None
         if local_file:
-            with open('../{}'.format(file_name), 'r') as file:
+            log.info("Serving local file: %s", file_name)
+            with open('../{}'.format(file_name), 'rb') as file:
                 contents = file.read()
         else:
             req = self.get_file_from_github(sha, file_name)
