@@ -7,7 +7,7 @@ import requests
 from cachetools import TTLCache
 from logentries import LogentriesHandler
 
-HOST_NAME = 'localhost'
+HOST_NAME = '0.0.0.0'
 PORT_NUMBER = 9000
 
 versions_cache = TTLCache(maxsize=100, ttl=500)  # 5 minutes
@@ -17,6 +17,7 @@ log = logging.getLogger('otm-spec-server')
 
 local_html_file = os.environ.get("LOCAL_HTML_FILE", False)
 local_swagger_file = os.environ.get("LOCAL_SWAGGER_FILE", False)
+
 
 class MyHandler(BaseHTTPRequestHandler):
     CONTENT_TYPES = {
@@ -42,6 +43,8 @@ class MyHandler(BaseHTTPRequestHandler):
         self.end_headers()
 
     def do_GET(self):
+        log.info("GET {}".format(self.path))
+        log.debug("GET {}".format(self.path))
         pat = re.compile(r'/([0-9a-zA-Z\-.]+)/*(.*)')
         matched = pat.match(self.path)
         if matched:
