@@ -36,6 +36,14 @@ info:
     roll-back scenario's. A typical use case is when the originating system is not event based, and it has to communicate an entire "planning" at
     once. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
 
+    ## Changes since 4.1
+    - Rewrite of the documentation on `Event`s.
+    - Added `groupingId` to `Event`s.
+    - Added event types:
+        - `cancelAllEntityEvents`;
+        - `cancelGroupedEvents`.
+    - Fixed inconsistent query parameters for `GET` requests on event-endpoints.
+
     ## Changes since 4.0
     - The `administrativeReference` member of the `Location` entity is now camelCased, like all other members. In OTM 4.0 it was inconsistently
       called ~~`administrative-reference`~~. Implementors are advised to be a [Tolerant Reader](https://martinfowler.com/bliki/TolerantReader.html),
@@ -77,43 +85,312 @@ tags:
   - name: Event
     description: |
       An event is something occurring at a specific time (whether in the past, present, or past alike) and (optionally) at a specific location. Events
-      are the core of this API. Events link all static objects together. The table below shows which event types are applicable to which entities in
-      the OpenTripModel.
+      are the core of this API. Events link all static objects together. The sections below document the available event types. Each section contains
+      a table that summarizes to which entities the event can be applied and a table that denotes in which life cycle phases the event is available.
 
-      | event type                      | Location | Vehicle | Shipment | Trip  | Route | Actor | life&nbsp;cycle | description
-      | ------------------------------: | :------: | :-----: | :------: | :---: | :---: | :---: | --------------- | -----------
-      | updateEvent                     | ●        | ●       | ●        | ●     | ●     | ●     | `PPAR`          | &nbsp;
-      | locationUpdateEvent             |          | ●       |          |       |       |       | `__AR`          | Updates the location of a `Vehicle`
-      | startMovingEvent                |          | ●       |          |       |       |       | `PPAR`          | Marks the moment a `Vehicle` starts moving after standing still for a while.
-      | stopMovingEvent                 |          | ●       |          |       |       |       | `PPAR`          | Marks the moment a `Vehicle` starts standing still after moving for a while.
-      | startWaitingEvent               |          | ●       |          |       |       |       | `PPAR`          | &nbsp;
-      | stopWaitingEvent                |          | ●       |          |       |       |       | `PPAR`          | &nbsp;
-      | startLoadingAndUnloadingEvent   |          | ●       |          |       |       |       | `PPAR`          | Marks the start of a time period meant for loading and unloading. Mainly useful in `planned` and `projected` life cycle phases.
-      | stopLoadingAndUnloadingEvent    |          | ●       |          |       |       |       | `PPAR`          | Marks the end of a time period meant for loading and unloading. Mainly useful in `planned` and `projected` life cycle phases.
-      | startEngineEvent                |          | ●       |          |       |       |       | `__AR`          | The engine of a `Vehicle` is started.
-      | stopEngineEvent                 |          | ●       |          |       |       |       | `__AR`          | The engine of a `Vehicle` is stopped.
-      | coupleVehiclesEvent             |          | ●       |          |       |       |       | `PPAR`          | Marks the moment two `Vehicle`s are coupled.
-      | decoupleVehiclesEvent           |          | ●       |          |       |       |       | `PPAR`          | Marks the moment two `Vehicle`s are decoupled.
-      | assignToTripEvent               |          | ●       |          | ●     |       |       | `PPAR`          | Assigns a `Vehicle` to a `Trip`.
-      | deassignFromTripEvent           |          | ●       |          | ●     |       |       | `PPAR`          | Deassigns a `Vehicle` from a `Trip`.
-      | assignDriverEvent               |          | ●       |          |       |       | ●     | `PPAR`          | Assigns an `Actor` as a driver to a `Trip`.
-      | deassignDriverEvent             |          | ●       |          |       |       | ●     | `PPAR`          | Deassigns an `Actor` as a driver from a `Trip`.
-      | sensorUpdateEvent               |          | ●       |          |       |       |       | `__AR`          | Event to send an updated value of a sensor of the `Vehicle`. Can be used e.g. to monitor temperature inside a trailer.
-      | loadShipmentEvent               |          | ●       | ●        |       |       |       | `PPAR`          | Load a `Shipment` in a `Vehicle`
-      | unloadShipmentEvent             |          | ●       | ●        |       |       |       | `PPAR`          | Unload a `Shipment` from a `Vehicle`
-      | receiveShipmentEvent            | ●        |         | ●        |       |       |       | `PPAR`          | Receive a `Shipment` on a `Location`
-      | releaseShipmentEvent            | ●        |         | ●        |       |       |       | `PPAR`          | Release a `Shipment` from a `Location`
-      | restrictionWarningEvent         | ●        |         |          | ●     | ●     |       | `PPAR`          | A warning event that may be sent when a restriction is violated.
-      | trafficWarningEvent             | ●        |         |          |       | ●     |       | `PPAR`          | A warning event that may be sent to warn about a traffic condition on a `Location` or a `Route`.
-      | linkTripsEvent                  |          |         |          | ●     |       |       | `PPAR`          | Event to be used to link two `Trip`s together.
-      | pickupTimeWindowStartEvent      |          |         | ●        |       |       |       | `PP__`          | Marks the start of a time window for the pickup of a `Shipment`. Only applicable in `planned` or `projected` life cycle phases.
-      | pickupTimeWindowEndEvent        |          |         | ●        |       |       |       | `PP__`          | Marks the end of a time window for the pickup of a `Shipment`. Only applicable in `planned` or `projected` life cycle phases.
-      | deliveryTimeWindowStartEvent    |          |         | ●        |       |       |       | `PP__`          | Marks the start of a time window for the delivery of a `Shipment`. Only applicable in `planned` or `projected` life cycle phases.
-      | deliveryTimeWindowEndEvent      |          |         | ●        |       |       |       | `PP__`          | Marks the end of a time window for the delivery of a `Shipment`. Only applicable in `planned` or `projected` life cycle phases.
-      | constraintViolationEvent        | ●        |         | ●        | ●     |       |       | `PPAR`          | Can be generated if a constraint is violated.
-      | cancelEvent                     | ●        | ●       | ●        | ●     | ●     | ●     | `__AR`          | Cancel one or more `Event`. To be canceled event(s) should be set as `involvedObject(s)`. Since events can only be created and not deleted nor updated, a `cancelEvent` is needed when you need to change or remove an event.
-      | ignoreEvent                     | ●        | ●       | ●        | ●     | ●     | ●     | `__AR`          | Ignore one or more `Event`. To be ignored event(s) should be set as `involvedObject(s)`.
-      | associateWithActorEvent         | ●        | ●       | ●        | ●     | ●     | ●     | `_PAR`          | Associate an entity with an `Actor`.
+      ## Update events
+
+      Update events typically send an update to the state of an entity. These kind of events are only sensible in the `actual` and `realized` life cycle
+      phases. This makes sense, because things like location or sensor updates can't be planned nor projected. Update events typically involve only one
+      entity at a time.
+
+      #### Applicable life cycle phases
+
+      | Planned | Projected | Actual | Realized |
+      | :-----: | :-------: | :----: | :------: |
+      |         |           | ●      | ●        |
+
+      ### `locationUpdateEvent`
+
+      Updates the location of a `Vehicle`
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      |          | ●       |          |       |       |       |            |       |
+
+      ### `sensorUpdateEvent`
+
+      Event to send an updated value of a sensor of the `Vehicle`. Can be used e.g. to monitor temperature inside a trailer.
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      |          | ●       |          |       |       |       |            |       |
+
+      ### `startEngineEvent`, `stopEngineEvent`
+
+      The engine of a `Vehicle` is started or stopped.
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      |          | ●       |          |       |       |       |            |       |
+
+      ## Warning events
+
+      Warning events warn about violations, possible causes for delay or other things that may have impact on an operation and may need some
+      attention. Warning events can exist in all life cycle phases, since other events might be the cause of a warning.
+
+      #### Applicable life cycle phases
+
+      | Planned | Projected | Actual | Realized |
+      | :-----: | :-------: | :----: | :------: |
+      |  ●      | ●         | ●      | ●        |
+
+      ### `restrictionWarningEvent`
+
+      A warning event that may be sent when a restriction is violated.
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      | ●        |         |          | ●     | ●     |       |            |       |
+
+      ### `constraintViolationEvent`
+
+      Can be generated if a constraint is violated.
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      | ●        |         | ●        | ●     |       |       |            |       |
+
+      ### `trafficWarningEvent`
+
+      A warning event that may be sent to warn about a traffic condition on a `Location` or a `Route`.
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      | ●        |         |          |       | ●     |       |            |       |
+
+
+      ## Action events
+
+      Action events describe actions that take place in an operation. Action events can typically be used in any life cycle phase. This makes sense,
+      since you can say an action can be planned, projected, actually happening or be realized. Action events typically involve only one entity at
+      a time.
+
+      #### Applicable life cycle phases
+
+      | Planned | Projected | Actual | Realized |
+      | :-----: | :-------: | :----: | :------: |
+      |  ●      | ●         | ●      | ●        |
+
+      ### `startMovingEvent`, `stopMovingEvent`
+
+      Marks the moment a `Vehicle` starts or stops moving after or before standing still for a while.
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      |          | ●       |          |       |       |       |            |       |
+
+      ### `startWaitingEvent`, `stopWaitingEvent`
+
+      Marks the moment a `Vehicle` starts or stops waiting.
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      |          | ●       |          |       |       |       |            |       |
+
+      ### `startLoadingAndUnloadingEvent`, `stopLoadingAndUnloadingEvent`
+
+      Marks the start or end of a time period meant for loading and unloading.
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      |          | ●       |          |       |       |       |            |       |
+
+      ## Time window events
+
+      Time window events are used to model a time window in a `planned` or `projected` life cycle phase. The start and end of a time window are
+      modelled as separate events. The following time window events are available:
+
+      * `pickupTimeWindowStartEvent`: Marks the start of a time window for the pickup of a `Shipment`. Only applicable in `planned` or `projected` life cycle phases.      `
+      * `pickupTimeWindowEndEvent`: Marks the end of a time window for the pickup of a `Shipment`. Only applicable in `planned` or `projected` life cycle phases.
+      * `deliveryTimeWindowStartEvent`: Marks the start of a time window for the delivery of a `Shipment`. Only applicable in `planned` or `projected` life cycle phases.
+      * `deliveryTimeWindowEndEvent`: Marks the end of a time window for the delivery of a `Shipment`. Only applicable in `planned` or `projected` life cycle phases.
+
+      #### Applicable life cycle phases
+
+      | Planned | Projected | Actual | Realized |
+      | :-----: | :-------: | :----: | :------: |
+      |  ●      | ●         |        |          |
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      |          |         | ●        |       |       |       |            |       |
+
+      ## Associative events
+
+      Associative events are used to create or remove associations between entities. These events can take place in all life cycle phases.
+      Associative events typically involve two events.
+
+      #### Applicable life cycle phases
+
+      | Planned | Projected | Actual | Realized |
+      | :-----: | :-------: | :----: | :------: |
+      |  ●      | ●         | ●      | ●        |
+
+      ### `coupleVehiclesEvent`, `decoupleVehiclesEvent`
+
+      Marks the moment two `Vehicle`s are coupled or decoupled.
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      |          | ●  ●    |          |       |       |       |            |       |
+
+      ### `assignToTripEvent`, `deassignFromTripEvent`
+
+      Assigns or deassings a `Vehicle` to/from a `Trip`.
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      |          | ●       |          | ●     |       |       |            |       |
+
+
+      ### `assignDriverEvent`, `deassignDriverEvent`
+
+      (De)assigns an `Actor` as a driver to/from a `Trip`.
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      |          | ●       |          |       |       | ●     |            |       |
+
+      ### `associateWithActorEvent`
+
+      Associate an entity with an `Actor`. The exact meaning of the association can vary and is defined by the `role` parameter of the association
+      event. Note that OpenTripModel implementations may choose to use `Actor` associations as a source of authorization information. In that case,
+      one can e.g. only query `Shipment`s that are associated with a certain `Actor`.
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      | ●        | ●       | ●        | ●     | ●     | ●     | ●          | ●     |
+
+      ### Shipment loading and unloading events
+
+      There are four event types for dealing with shipment loading and unloading. `loadShipmentEvent` and `unloadShipmentEvent` describe the loading
+      and unloading of `Shipment`s to or from a `Vehicle`. `receiveShipmentEvent` and `releaseShipmentEvent` describe the reception or release of a
+      `Shipment` on or from a `Location`. Typically, a `loadShipmentEvent` could be paired to a `releaseShipmentEvent`, occuring at the same time.
+      This would mean that a `Shipment` is loaded into a `Vehicle` and at the same time released by a `Location`. In the same fashion, an
+      `unloadShipmentEvent` could be paired to a `receiveShipmentEvent`. OpenTripModel does not _require_ to model both the loading/unloading and
+      reception/release. It is up to the implementation parties to decide which level of granularity in events is desired for a specific operation.
+
+      | event type             | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event | description
+      | ---------------------: | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: | -----------
+      | `loadShipmentEvent`    |          | ●       | ●        |       |       |       |            |       | Load a `Shipment` in a `Vehicle`
+      | `unloadShipmentEvent`  |          | ●       | ●        |       |       |       |            |       | Unload a `Shipment` from a `Vehicle`
+      | `receiveShipmentEvent` | ●        |         | ●        |       |       |       |            |       | Receive a `Shipment` on a `Location`
+      | `releaseShipmentEvent` | ●        |         | ●        |       |       |       |            |       | Release a `Shipment` from a `Location`
+
+
+      ### `linkTripsEvent`
+
+      Event to be used to link two `Trip`s together.
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      |          |         |          | ●     |       |       |            |       |
+
+
+      ## Meta events
+
+      Meta events are events about events. There are two types of meta events: `cancelEvent` and `ignoreEvent`. As a rule of thumb, a `cancelEvent`
+      is to be used for events that you created yourself and want to cancel (or replace), while an `ignoreEvent` is meant to notify that an event
+      sent by another system or actor is to be ignored. An example of the latter might be an event to ingore a `sensorUpdateEvent`, because the
+      sensor is defective.
+
+      ### `cancelEvent`
+
+      Cancels one or more `Event`. Since events can only be created and not deleted nor updated, a `cancelEvent` is needed when you need to change
+      or remove an event. To be canceled events should be set as `involvedObjects`. Note that you can't cancel events in another lifecycle phase.
+
+      #### Applicable life cycle phases
+
+      | Planned | Projected | Actual | Realized |
+      | :-----: | :-------: | :----: | :------: |
+      |  ●      | ●         | ●      | ●        |
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      |          |         |          |       |       |       |            | ●     |
+
+      ### `cancelAllEntityEvents`
+
+      This event can be used to cancel _all_ events that are associated with a given entity. This might be needed e.g. in cases where a `Trip` with
+      lots of `planned` events is published and the planning is changed. In such a case, it can be more efficient to just cancel all events and start
+      over.
+
+      #### Applicable life cycle phases
+
+      | Planned | Projected | Actual | Realized |
+      | :-----: | :-------: | :----: | :------: |
+      |  ●      | ●         | ●      | ●        |
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      | ●        | ●       | ●        | ●     | ●     | ●     | ●          |       |
+
+      ### `cancelGroupedEvents`
+
+      This event can be used to cancel all events that share the same `groupingId`. The grouping IDs to be cancelled myst be set in the
+      `cancelledGroupingIds` variable, which can contain an array of groupingId's.
+
+      #### Applicable life cycle phases
+
+      | Planned | Projected | Actual | Realized |
+      | :-----: | :-------: | :----: | :------: |
+      |  ●      | ●         | ●      | ●        |
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      | ●        | ●       | ●        | ●     | ●     | ●     | ●          |       |
+
+      ### `ignoreEvent`
+
+      Ignore one or more `Event`. To be ignored event(s) should be set as `involvedObject(s)`. Only use `ignoreEvents` to mark events from other
+      systems or actors to be ignored if there is no other way to prevent the events from being sent at all.
+
+      #### Applicable life cycle phases
+
+      | Planned | Projected | Actual | Realized |
+      | :-----: | :-------: | :----: | :------: |
+      |         |           | ●      | ●        |
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
+      |          |         |          |       |       |       |            | ●     |
   - name: Trip
     description: |
       A `Trip` represents a series of events, which optionally may be linked to a route.
@@ -186,7 +463,8 @@ paths:
         500: { $ref: "#/responses/internalServerError" }
     put:
       summary: Create a new Location
-      description: Create a `Location` object with the given data.
+      description: |
+        Create a `Location` object with the given data.
       tags:
         - Location
       consumes:
@@ -266,6 +544,10 @@ paths:
       parameters:
         - $ref: "#/parameters/lifecycle"
         - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/startDateTimeParam"
+        - $ref: "#/parameters/endDateTimeParam"
+        - $ref: "#/parameters/eventTypeParam"
+        - $ref: "#/parameters/groupingIdParam"
       responses:
         200:
           description: A list of `Events` for the given `Location`.
@@ -413,7 +695,10 @@ paths:
       parameters:
         - $ref: "#/parameters/lifecycle"
         - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/startDateTimeParam"
+        - $ref: "#/parameters/endDateTimeParam"
         - $ref: "#/parameters/eventTypeParam"
+        - $ref: "#/parameters/groupingIdParam"
       responses:
         200:
           description: A list of Events for the given trip
@@ -574,6 +859,7 @@ paths:
         - $ref: "#/parameters/startDateTimeParam"
         - $ref: "#/parameters/endDateTimeParam"
         - $ref: "#/parameters/eventTypeParam"
+        - $ref: "#/parameters/groupingIdParam"
       responses:
         200:
           description: A list of `Events` for the given `Trip`, optionally filtered according to the request parameters.
@@ -738,6 +1024,10 @@ paths:
       parameters:
         - $ref: "#/parameters/lifecycle"
         - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/startDateTimeParam"
+        - $ref: "#/parameters/endDateTimeParam"
+        - $ref: "#/parameters/eventTypeParam"
+        - $ref: "#/parameters/groupingIdParam"
       responses:
         200:
           description: A list of `Events` for the given `Vehicle`
@@ -884,6 +1174,10 @@ paths:
       parameters:
         - $ref: "#/parameters/lifecycle"
         - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/startDateTimeParam"
+        - $ref: "#/parameters/endDateTimeParam"
+        - $ref: "#/parameters/eventTypeParam"
+        - $ref: "#/parameters/groupingIdParam"
       responses:
         200:
           description: A list of `Events` for the given `Shipment`
@@ -1029,6 +1323,10 @@ paths:
       parameters:
         - $ref: "#/parameters/lifecycle"
         - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/startDateTimeParam"
+        - $ref: "#/parameters/endDateTimeParam"
+        - $ref: "#/parameters/eventTypeParam"
+        - $ref: "#/parameters/groupingIdParam"
       responses:
         200:
           description: A list of `Events` for the given `Actor`
@@ -1172,6 +1470,10 @@ paths:
       parameters:
         - $ref: "#/parameters/lifecycle"
         - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/startDateTimeParam"
+        - $ref: "#/parameters/endDateTimeParam"
+        - $ref: "#/parameters/eventTypeParam"
+        - $ref: "#/parameters/groupingIdParam"
       responses:
         200:
           description: A list of `Events` for the given `Constraint`
@@ -1270,7 +1572,17 @@ parameters:
     in: body
     schema: { $ref: "#/definitions/location" }
     required: true
-    description: JSON object describing a `Location`.
+    description: |
+      JSON object describing a `Location`.
+
+      > **Please note:** The `geoReference` variable is the one and only part of the `Location` entity that exactly describes the geographic
+        location. The `administrativeReference` member is just what is says: an administrative reference. An administrative reference is typically
+        a street address. It _might_ be the street address corresponding to the location that is defined by the `geoReference`, but that's not
+        required. A common case is a shop where the `administrativeReference` is the street address of the main entrance, while the `geoLocation`
+        is the location of the loading bay, which is typically on the back side and so in another street.
+
+      > **Please note:** In some cases, a street address is the most accurate known location. In such a case, you should set the address in the
+        `geoReference` as `addressGeoReference` type.
   routeParam:
     name: routeParam
     in: body
@@ -1361,6 +1673,14 @@ parameters:
     format: comma-separated
     description: |
       Comma-separated list of event types. The resulting list will only have events of the given types, events of other types will be ommitted.
+    required: false
+  groupingIdParam:
+    name: groupingId
+    in: query
+    type: string
+    format: comma-separated
+    description: |
+      Comman-separated list of `groupingId`s. The resulting list will only have events with the given grouping IDs.
     required: false
   actorQueryParam:
     name: actor
@@ -1460,7 +1780,8 @@ definitions:
 
   location:
     type: object
-    description: Object describing a geographic location. A location can either be a point or an area.
+    description: |
+      Object describing a geographic location. A location can either be a point or an area.
     properties:
       id:
         type: string
@@ -2649,6 +2970,14 @@ definitions:
           Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
         example:
           https://api.opentripmodel.org/api/public/v4/vehicles/96b65c0f-9692-4b46-bd08-cac21ecabcec/actual/events/ed592f10-a753-40d9-b015-dfeed7dc0681
+      groupingId:
+        type: string
+        description: |
+          When defining interfaces between different systems, sometimes one "event" in one system can lead to multiple OTM-events. You might need to
+          be able to see which events originate to the same "source" event. Another use case for the `groupingId` is for displaying purposes. In a
+          GUI, it might be needed to visually group certain events. In these cases, the `groupingId` can be used.
+        example:
+          1f1aac39-437d-4098-aef7-ec720016b932
       lifecyclePhase:
         $ref: "#/definitions/lifecyclePhase"
       involvedObjects:
@@ -2909,6 +3238,25 @@ definitions:
             $ref: "#/definitions/constraint"
 
   cancelEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+
+  cancelGroupedEvents:
+    allOf:
+      - $ref: "#/definitions/event"
+      - properties:
+          cancelledGroupingIds:
+            type: array
+            description: |
+              All events with the given `groupingId`s will be cancelled.
+            items:
+              type: string
+              example:
+                ceb70302-4379-481c-9591-2c42198a9ac7
+            example:
+              ["a52680d3-18d5-4ad5-baed-ba85bd4ce8dc", "6ebdb45e-d82d-41df-9554-0a1166db9a05"]
+
+  cancelAllEntityEvents:
     allOf:
       - $ref: "#/definitions/event"
 
