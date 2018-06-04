@@ -37,12 +37,17 @@ info:
     once. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
 
     ## Changes since 4.1
-    - Rewrite of the documentation on `Event`s.
+    - Rewrite of the [documentation on `Event`s](#tag/Event).
     - Added `groupingId` to `Event`s.
     - Added event types:
         - `cancelAllEntityEvents`;
         - `cancelGroupedEvents`.
     - Fixed inconsistent query parameters for `GET` requests on event-endpoints.
+    - Sensors are now first class citizens in OpenTripModel:
+        - Added the `Sensor` entity and corresponding endpoints
+        - Added `coupleSensorEvent` and `decoupleSensorEvent`
+        - Updated `sensorValueConstraint`
+        - Added `sensorUpdateFrequencyConstraint`
 
     ## Changes since 4.0
     - The `administrativeReference` member of the `Location` entity is now camelCased, like all other members. In OTM 4.0 it was inconsistently
@@ -106,9 +111,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      |          | ●       |          |       |       |       |            |       |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      |          | ●       |          |       |       |       |            |        |       |
 
       ### `sensorUpdateEvent`
 
@@ -116,9 +121,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      |          | ●       |          |       |       |       |            |       |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      |          |         |          |       |       |       |            | ●      |       |
 
       ### `startEngineEvent`, `stopEngineEvent`
 
@@ -126,9 +131,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      |          | ●       |          |       |       |       |            |       |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      |          | ●       |          |       |       |       |            |        |       |
 
       ## Warning events
 
@@ -147,9 +152,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      | ●        |         |          | ●     | ●     |       |            |       |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      | ●        |         |          | ●     | ●     |       |            |        |       |
 
       ### `constraintViolationEvent`
 
@@ -157,9 +162,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      | ●        |         | ●        | ●     |       |       |            |       |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      | ●        |         | ●        | ●     |       |       |            | ●      |       |
 
       ### `trafficWarningEvent`
 
@@ -167,9 +172,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      | ●        |         |          |       | ●     |       |            |       |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      | ●        |         |          |       | ●     |       |            |        |       |
 
 
       ## Action events
@@ -190,9 +195,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      |          | ●       |          |       |       |       |            |       |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      |          | ●       |          |       |       |       |            |        |       |
 
       ### `startWaitingEvent`, `stopWaitingEvent`
 
@@ -200,9 +205,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      |          | ●       |          |       |       |       |            |       |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      |          | ●       |          |       |       |       |            |        |       |
 
       ### `startLoadingAndUnloadingEvent`, `stopLoadingAndUnloadingEvent`
 
@@ -210,9 +215,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      |          | ●       |          |       |       |       |            |       |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      |          | ●       |          |       |       |       |            |        |       |
 
       ## Time window events
 
@@ -232,9 +237,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      |          |         | ●        |       |       |       |            |       |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      |          |         | ●        |       |       |       |            |        |       |
 
       ## Associative events
 
@@ -253,9 +258,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      |          | ●  ●    |          |       |       |       |            |       |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      |          | ●  ●    |          |       |       |       |            |        |       |
 
       ### `assignToTripEvent`, `deassignFromTripEvent`
 
@@ -263,9 +268,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      |          | ●       |          | ●     |       |       |            |       |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      |          | ●       |          | ●     |       |       |            |        |       |
 
 
       ### `assignDriverEvent`, `deassignDriverEvent`
@@ -274,9 +279,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      |          | ●       |          |       |       | ●     |            |       |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      |          | ●       |          |       |       | ●     |            |        |       |
 
       ### `associateWithActorEvent`
 
@@ -286,9 +291,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      | ●        | ●       | ●        | ●     | ●     | ●     | ●          | ●     |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      | ●        | ●       | ●        | ●     | ●     | ●     | ●          | ●      | ●     |
 
       ### Shipment loading and unloading events
 
@@ -299,22 +304,47 @@ tags:
       `unloadShipmentEvent` could be paired to a `receiveShipmentEvent`. OpenTripModel does not _require_ to model both the loading/unloading and
       reception/release. It is up to the implementation parties to decide which level of granularity in events is desired for a specific operation.
 
-      | event type             | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event | description
-      | ---------------------: | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: | -----------
-      | `loadShipmentEvent`    |          | ●       | ●        |       |       |       |            |       | Load a `Shipment` in a `Vehicle`
-      | `unloadShipmentEvent`  |          | ●       | ●        |       |       |       |            |       | Unload a `Shipment` from a `Vehicle`
-      | `receiveShipmentEvent` | ●        |         | ●        |       |       |       |            |       | Receive a `Shipment` on a `Location`
-      | `releaseShipmentEvent` | ●        |         | ●        |       |       |       |            |       | Release a `Shipment` from a `Location`
+      | event type             | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event | description
+      | ---------------------: | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: | -----------
+      | `loadShipmentEvent`    |          | ●       | ●        |       |       |       |            |        |       | Load a `Shipment` in a `Vehicle`
+      | `unloadShipmentEvent`  |          | ●       | ●        |       |       |       |            |        |       | Unload a `Shipment` from a `Vehicle`
+      | `receiveShipmentEvent` | ●        |         | ●        |       |       |       |            |        |       | Receive a `Shipment` on a `Location`
+      | `releaseShipmentEvent` | ●        |         | ●        |       |       |       |            |        |       | Release a `Shipment` from a `Location`
 
 
       ### `linkTripsEvent`
 
       Event to be used to link two `Trip`s together.
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      |          |         |          | ●     |       |       |            |       |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      |          |         |          | ●     |       |       |            |        |       |
 
+
+      ### Sensor coupling
+
+      A `Sensor` can be coupled to another entity. It is also possible to decouple `Sensor`s, to facilitate portable sensors that are temporarily
+      used. To couple and decouple sensors, use one of the following event types:
+      - `coupleSensorEvent`
+      - `decoupleSensorEvent`
+      The entity the `Sensor` is coupled to, or decoupled from, should be in the `involvedObjects` list of the event.
+
+      The meaning of a sensor coupling event might be a bit different in different life cycle phases:
+      - In the `planned` and `projected` phases, the event should be interpreted as "it is planned (or projected) that this sensor will be coupled
+        to this entity. This might be useful if you want to express a planning in OpenTripModel and you want to explicitely document the action
+        of placing a portable sensor in e.g. a trailer.
+      - In the `actual` life cycle phase, the event can represent the moment a sensor is installed. But sometimes a sensor is permanently installed,
+        and you just need a way to tell the system that a certain sensor is associated with a certain vehicle or physical location. In any case, a
+        system can use the couple events in the `actual` life cycle phase to know that update events to the sensor also apply to the associated
+        entity.
+      - In the `realized` life cycle phase, the couple and decouple events might be important for monitoring and auditing. E.g. once you know a
+        temperature sensor is coupled to a trailer, you can use it to create an audit trail of the temperature inside the trailer during a trip.
+
+      #### Applicable entities
+
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      | ●        | ●       | ●        |       |       | ●     |            | ●      |       |
 
       ## Meta events
 
@@ -336,9 +366,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      |          |         |          |       |       |       |            | ●     |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      |          |         |          |       |       |       |            |        | ●     |
 
       ### `cancelAllEntityEvents`
 
@@ -354,9 +384,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      | ●        | ●       | ●        | ●     | ●     | ●     | ●          |       |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      | ●        | ●       | ●        | ●     | ●     | ●     | ●          | ●      |       |
 
       ### `cancelGroupedEvents`
 
@@ -371,9 +401,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      | ●        | ●       | ●        | ●     | ●     | ●     | ●          |       |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      | ●        | ●       | ●        | ●     | ●     | ●     | ●          | ●      |       |
 
       ### `ignoreEvent`
 
@@ -388,9 +418,9 @@ tags:
 
       #### Applicable entities
 
-      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Event |
-      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :---: |
-      |          |         |          |       |       |       |            | ●     |
+      | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
+      | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
+      |          |         |          |       |       |       |            |        | ●     |
   - name: Trip
     description: |
       A `Trip` represents a series of events, which optionally may be linked to a route.
@@ -401,6 +431,11 @@ tags:
     description: |
       A `Vehicle` is any entity which can move through space in between locations. It can be for instance a truck, a trailer, an airplane, a drone, or
       even something which has not been invennted yet.
+  - name: Sensor
+    description: |
+      A `Sensor` is an entity which can measure quantities, typically with a certain frequency. Examples are temperature sensors, weight sensors, etc.
+      `Sensor` entities can be coupled to other entities. E.g. to measure the temperature inside a trailer, one could couple a `Sensor` entity
+      representing a temperature sensor to a `Vehicle` entity representing a trailer.
   - name: Shipment
     description: |
       A `Shipment` is one (or more) item(s) being transported between locations.
@@ -424,6 +459,7 @@ x-tagGroups:
       - Shipment
       - Actor
       - Constraint
+      - Sensor
   - name: Bundle operations
     tags:
       - Bundle
@@ -1066,6 +1102,157 @@ paths:
         404: { $ref: "#/responses/notFound" }
         500: { $ref: "#/responses/internalServerError" }
 
+  /sensors:
+    get:
+      summary: Get a list of Sensors
+      description: |
+        Retrieves a list of `Sensor` objects, optionally filtered by query parameters.
+      tags:
+        - Sensor
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/nameParam"
+        - $ref: "#/parameters/externalIdSchemaParam"
+        - $ref: "#/parameters/externalIdValueParam"
+        - $ref: "#/parameters/actorQueryParam"
+        - $ref: "#/parameters/roleQueryParam"
+      responses:
+        200:
+          description: A list of `Sensor`s, optionally filtered by query parameters.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/sensor"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Create a new Sensor
+      description: Create a new `Sensor` object
+      tags:
+        - Sensor
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/sensorParam"
+      responses:
+        201:
+          description: The created `Sensor` object. Containes the generated UUID that can be used to refer to this `Sensor` in later requests.
+          schema: { $ref: "#/definitions/sensor" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        409: { $ref: "#/responses/conflict" }
+        500: { $ref: "#/responses/internalServerError" }
+  /sensors/{uuid}:
+    get:
+      summary: Get a Sensor by its UUID
+      description: Retrieves a specific `Sensor` object by its unique identifier (UUID)
+      tags:
+        - Sensor
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+      responses:
+        200:
+          description: A `Sensor` object
+          schema: { $ref: "#/definitions/sensor" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    post:
+      summary: Update a Sensor
+      description: |
+        Updates the `Sensor` identified by the UUID with the POSTed data. Note that the UUID-part of the `id` in the entity in the body of the
+        `POST`-request should equal the ID part of the endpoint where the entity is posted to, otherwise a `400` (Bad request) error will be returned.
+      tags:
+        - Sensor
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/sensorParam"
+      responses:
+        200:
+          description: The updated Sensor object.
+          schema: { $ref: "#/definitions/sensor" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+  /sensors/{uuid}/{lifecycle}/events:
+    get:
+      summary: Get a list of Events for a Sensor
+      description: Retrieves a list of `Events` for the `Sensor` with the given UUID
+      tags:
+        - Sensor
+        - Event
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/startDateTimeParam"
+        - $ref: "#/parameters/endDateTimeParam"
+        - $ref: "#/parameters/eventTypeParam"
+        - $ref: "#/parameters/groupingIdParam"
+      responses:
+        200:
+          description: A list of `Events` for the given `Sensor`
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/event"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Publish an Event for a Sensor
+      description: Publish a new `Event` for the given `Sensor`.
+      tags:
+        - Event
+        - Sensor
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/eventParam"
+      responses:
+        201:
+          description: The created `Event` object. Containes the generated UUID that can be used to refer to this `Event` in later requests.
+          schema: { $ref: "#/definitions/event" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+
   /shipments:
     get:
       summary: Get a list of Shipments
@@ -1595,6 +1782,12 @@ parameters:
     schema: { $ref: "#/definitions/vehicle" }
     required: true
     description: JSON object describing a `Vehicle`.
+  sensorParam:
+    name: sensorParam
+    in: body
+    schema: { $ref: "#/definitions/sensor" }
+    required: true
+    description: JSON object describing a `Sensor`.
   shipmentParam:
     name: shipmentParam
     in: body
@@ -2488,13 +2681,36 @@ definitions:
             enum:
               - maximum
               - minimum
-          sensorName:
+          sensor:
             type: string
-            description: Name of the sensor, for display purpose only.
-            example:
-              "Main temperature sensor"
-          sensorId:
-            $ref: "#/definitions/idReference"
+            format: uri
+            description: OTM URI of the sensor this constraint applies to.
+            example: https://api.opentripmodel.org/api/public/v4/sensors/6666f00c-1332-472c-aff9-bc11b3d53296
+          maximum:
+            description: Maximum sensor value allowed
+            $ref: "#/definitions/valueWithUnit"
+          minimum:
+            description: Minimum sensor value allowed
+            $ref: "#/definitions/valueWithUnit"
+
+  sensorUpdateFrequencyConstraint:
+    allOf:
+      - $ref: "#/definitions/constraint"
+      - properties:
+          sensorUpdateFrequencyConstraintType:
+            description: |
+              The type of sensor value constraint. Available types are:
+                - `maximum`: All sensor values below and including the maximum value are allowed.
+                - `minimum`: All sensor values above and including the minimum value are allowed.
+            type: string
+            enum:
+              - maximum
+              - minimum
+          sensor:
+            type: string
+            format: uri
+            description: OTM URI of the sensor this constraint applies to.
+            example: https://api.opentripmodel.org/api/public/v4/sensors/6666f00c-1332-472c-aff9-bc11b3d53296
           maximum:
             description: Maximum sensor value allowed
             $ref: "#/definitions/valueWithUnit"
@@ -2692,6 +2908,70 @@ definitions:
     example:
       {
         "type": "diesel"
+      }
+    required:
+      - type
+
+####### Sensors #######
+
+  sensor:
+    type: object
+    description: Sensor
+    properties:
+      id:
+        type: string
+        format: uri
+        description: |
+          Unique ID for this `Sensor`. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it.
+          Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
+        example: https://api.opentripmodel.org/api/public/v4/sensors/6666f00c-1332-472c-aff9-bc11b3d53296
+      name:
+        type: string
+        description: |
+          Name of the `Sensor`, mainly used for display and search purposes.
+        example:
+          "Temperature sensor in trailer x"
+      placement:
+        type: string
+        description: |
+          Sometimes more than one sensor can be associated with a single entity. This is the case e.g. in cooled trailers that are devided into
+          compartments with different temperatures, where each compartment has its own sensor. The `placement` member can be used to identify where a
+          sensor is placed. Parties using OpenTripModel to exchange sensor data may wish to agree on a standardized naming, but this is too specific
+          to describe in the standard.
+        example:
+          "Compartment 1"
+      externalIds:
+        type: array
+        items:
+          $ref: "#/definitions/idReference"
+      sensorType:
+        $ref: "#/definitions/sensorType"
+
+  sensorType:
+    type: object
+    description: The type of sensor
+    properties:
+      type:
+        type: string
+        enum:
+          - temperature
+          - pressure
+          - speed
+          - humidity
+          - accelerometer
+          - current
+          - voltage
+          - weight
+          - unknown
+          - other
+      other:
+        type: string
+        description: |
+          Name of the sensor type if `other` is chosen in the `type` field.
+        example: smurf sensor
+    example:
+      {
+        "type": "accelerometer"
       }
     required:
       - type
@@ -2913,6 +3193,12 @@ definitions:
         }
       }
 
+  sensorEntity:
+    type: object
+    allOf:
+      - $ref: "#/definitions/bundledEntity"
+      - $ref: "#/definitions/sensor"
+
   vehicleEntity:
     type: object
     allOf:
@@ -3119,6 +3405,14 @@ definitions:
       - $ref: "#/definitions/event"
       - $ref: "#/definitions/updateEvent_parent"
 
+  coupleSensorEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+
+  decoupleSensorEvent:
+    allOf:
+      - $ref: "#/definitions/event"
+
   assignToTripEvent:
     allOf:
       - $ref: "#/definitions/event"
@@ -3147,10 +3441,6 @@ definitions:
       - $ref: "#/definitions/event"
       - $ref: "#/definitions/updateEvent_parent"
       - properties:
-          sensorId:
-            type: string
-            description: |
-              ID of the sensor, must be unique within the `Vechicle` that is referenced in the `involvedObjects`.
           sensorValue:
             $ref: "#/definitions/valueWithUnit"
 
