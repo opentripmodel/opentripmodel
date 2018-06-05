@@ -11,7 +11,8 @@ from logentries import LogentriesHandler
 class Datadog:
     import socket
     from datadog import api
-    from datadog import statsd
+    from datadog import ThreadStats
+    stats = ThreadStats()
 
     ACTUAL_HOST_NAME = socket.gethostname()
     METRIC_NAME_TEMPLATE = 'otm_spec_server.{}'
@@ -22,6 +23,7 @@ class Datadog:
     def __init__(self):
         from datadog import initialize
         initialize()
+        self.stats.start()
 
         params = {
             'description': 'HTTP requests',
@@ -43,7 +45,7 @@ class Datadog:
         if version:
             tags.append('version:{}'.format(version)),
 
-        self.statsd.increment(self.REQUESTS_METRIC, 1, tags)
+        self.stats.increment(metric_name=self.REQUESTS_METRIC, tags=tags)
 
     def github_resource(self, file, version, from_cache, status_code=None):
         tags = [
@@ -54,14 +56,15 @@ class Datadog:
         ]
         if status_code:
             tags.append('status_code:{}'.format(status_code))
-        self.statsd.increment(self.GITHUB_RESOURCE_METRIC, 1, tags)
+        self.stats.increment(metric_name=self.GITHUB_RESOURCE_METRIC, tags=tags)
 
     def event(self, title, text):
-        self.api.Event.create(
+        self.stats.event(
             title=title,
             text=text,
-            tags=['environment:{}'.format(self.ENVIRONMENT), ],
-            host=self.ACTUAL_HOST_NAME)
+            tags=['environment:{}'.format(self.ENVIRONMENT), 'otm_spec_server'],
+            hostname=self.ACTUAL_HOST_NAME,
+            aggregation_key='otm_spec_server')
 
 
 HOST_NAME = '0.0.0.0'
