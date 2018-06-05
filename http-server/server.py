@@ -1,3 +1,4 @@
+import json
 import logging
 import os
 import re
@@ -132,6 +133,14 @@ class MyHandler(BaseHTTPRequestHandler):
             tags_list = req.json()
             tags = dict((t.get('name').rsplit('/')[-1], t) for t in tags_list)
 
+            if version == 'health':
+                health = {
+                    'name': 'otm-spec-server',
+                    'version': tags_list[0]['name'].rsplit('/')[-1],
+                    'health': 'RUNNING'
+                }
+                self.handle_response(200, {}, bytes(json.dumps(health, indent=2), "utf-8"))
+                return
             if not version:
                 self.handle_redirect(list(tags)[0])
                 return
