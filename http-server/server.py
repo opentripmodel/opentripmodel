@@ -7,6 +7,70 @@ import requests
 from cachetools import TTLCache
 from logentries import LogentriesHandler
 
+
+class Datadog:
+    import socket
+    from datadog import api
+
+    ACTUAL_HOST_NAME = socket.gethostname()
+    METRIC_NAME_TEMPLATE = 'otm_spec_server.{}'
+    REQUESTS_METRIC = METRIC_NAME_TEMPLATE.format('http.requests')
+    GITHUB_RESOURCE_METRIC = METRIC_NAME_TEMPLATE.format('github_resource')
+    ENVIRONMENT = os.environ.get('ENVIRONMENT', 'unknown')
+
+    def __init__(self):
+        from datadog import initialize
+        initialize()
+
+        params = {
+            'description': 'HTTP requests',
+            'short_name': 'requests',
+            'type': 'count',
+            'unit': 'request',
+            'per_unit': None
+        }
+
+        self.api.Metadata.update(metric_name=self.REQUESTS_METRIC, **params)
+
+    def request(self, verb, request_type, version):
+        tags = [
+            'verb:{}'.format(verb),
+            'environment:{}'.format(self.ENVIRONMENT)
+        ]
+        if request_type:
+            tags.append('type:{}'.format(request_type)),
+        if version:
+            tags.append('version:{}'.format(version)),
+
+        self.api.Metric.send(
+            metric=self.REQUESTS_METRIC,
+            points=1,
+            host=self.ACTUAL_HOST_NAME,
+            tags=tags)
+
+    def github_resource(self, file, version, from_cache, status_code=None):
+        tags = [
+            'file:{}'.format(file),
+            'version:{}'.format(version),
+            'from_cache:{}'.format(from_cache),
+            'environment:{}'.format(self.ENVIRONMENT)
+        ]
+        if status_code:
+            tags.append('status_code:{}'.format(status_code))
+        self.api.Metric.send(
+            metric=self.GITHUB_RESOURCE_METRIC,
+            points=1,
+            host=self.ACTUAL_HOST_NAME,
+            tags=tags)
+
+    def event(self, title, text):
+        self.api.Event.create(
+            title=title,
+            text=text,
+            tags=['environment:{}'.format(self.ENVIRONMENT), ],
+            host=self.ACTUAL_HOST_NAME)
+
+
 HOST_NAME = '0.0.0.0'
 PORT_NUMBER = 9000
 
@@ -19,6 +83,9 @@ local_html_file_string = os.environ.get("LOCAL_HTML_FILE", "False")
 local_swagger_file_string = os.environ.get("LOCAL_SWAGGER_FILE", "False")
 local_html_file = local_html_file_string.upper() == "TRUE"
 local_swagger_file = local_swagger_file_string.upper() == "TRUE"
+
+datadog = Datadog()
+
 
 class MyHandler(BaseHTTPRequestHandler):
     CONTENT_TYPES = {
@@ -39,6 +106,7 @@ class MyHandler(BaseHTTPRequestHandler):
     GITHUB_TOKEN_STRING = 'token {}'.format(GITHUB_TOKEN)
 
     def do_HEAD(self):
+        datadog.request('HEAD', None, None)
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
@@ -72,19 +140,23 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.handle_redirect("/{}/index.html".format(version))
                 return
 
+            # noinspection PyBroadException
             try:
                 tag = tags.get(version)
                 if tag:
                     sha = tag['commit']['sha']
 
                     if file == 'index.html' or file == '':
+                        datadog.request('GET', "index.html", version)
                         self.handle_index_html(sha, tags, version, local_html_file)
                     elif file == 'swagger.yaml':
+                        datadog.request('GET', "swagger.yaml", version)
                         self.handle_swagger_yaml(sha, version, local_swagger_file)
                     else:
-                        self.handle_github_file(file, file_extension, sha)
+                        datadog.request('GET', file_extension, version)
+                        self.handle_github_file(file, file_extension, sha, version)
                 else:
-                    self.handle_github_file("{}/{}".format(version, file), file_extension, "master")
+                    self.handle_github_file("{}/{}".format(version, file), file_extension, "master", version)
             except FileNotFoundError:
                 self.handle_error(404, "File not found: '{}'".format(file))
             except Exception:
@@ -92,8 +164,8 @@ class MyHandler(BaseHTTPRequestHandler):
         else:
             self.handle_error(req.status_code, req.content)
 
-    def handle_github_file(self, file, file_extension, sha):
-        req = self.get_file_from_github(sha, file)
+    def handle_github_file(self, file, file_extension, sha, version):
+        req = self.get_file_from_github(sha, file, version)
         if req.status_code in (200, 201):
             content_type = self.CONTENT_TYPES.get(file_extension) if file_extension else req.headers[
                 'Content-type']
@@ -104,20 +176,20 @@ class MyHandler(BaseHTTPRequestHandler):
             else:
                 self.handle_error(req.status_code, req.content)
 
-    def handle_file_request(self, sha, file_name, local_file=False):
+    def handle_file_request(self, sha, file_name, version, local_file=False):
         contents = None
         if local_file:
             log.info("Serving local file: %s", file_name)
             with open('../{}'.format(file_name), 'rb') as file:
                 contents = file.read()
         else:
-            req = self.get_file_from_github(sha, file_name)
+            req = self.get_file_from_github(sha, file_name, version)
             if req.status_code in (200, 201):
                 contents = req.content
         return contents
 
     def handle_swagger_yaml(self, sha, version, local_file=False):
-        contents = self.handle_file_request(sha, 'api/swagger.yaml', local_file)
+        contents = self.handle_file_request(sha, 'api/swagger.yaml', version, local_file)
         processed = contents.replace(b"{{VERSION}}", bytes(version, "utf-8"))
         self.handle_response(
             200,
@@ -129,6 +201,7 @@ class MyHandler(BaseHTTPRequestHandler):
         version_select = ['<option value="{0}" {1}>{0}</option>'.format(v, 'selected' if v == version else '') for v
                           in list(tags)]
 
+        # Compatibility with older versions, where index.html did not contain a placeholder for version selection.
         if version in ['4.0.0-b1', '4.0.0', '4.0.1', '4.1.0', '4.1.1', '4.1.2']:
             tag = tags.get('4.2.0-a1')
             sha = tag['commit']['sha']
@@ -153,16 +226,19 @@ class MyHandler(BaseHTTPRequestHandler):
             versions_cache.setdefault("versions", result)
         return result
 
-    def get_file_from_github(self, sha, file):
+    @staticmethod
+    def get_file_from_github(sha, file, version):
         cachekey = "{}{}".format(sha, file)
         result = files_cache.get(cachekey)
         if not result:
             log.debug("Getting file from github: {}/{}".format(sha, file))
             result = requests.get(
                 "https://raw.githubusercontent.com/opentripmodel/opentripmodel/{}/{}".format(sha, file))
-                # headers={'Authorization': self.GITHUB_TOKEN_STRING})
-            if result.status_code in (200,201):
+            if result.status_code in (200, 201):
                 files_cache.setdefault(cachekey, result)
+            datadog.github_resource(file=file, version=version, from_cache=True, status_code=result.status_code)
+        else:
+            datadog.github_resource(file=file, version=version, from_cache=True)
         return result
 
     def handle_redirect(self, url):
@@ -217,9 +293,11 @@ if __name__ == '__main__':
 
     httpd = HTTPServer((HOST_NAME, PORT_NUMBER), MyHandler)
     log.info('Server Starts - %s:%s', HOST_NAME, PORT_NUMBER)
+    datadog.event('Server Starts', 'HTTP server starts listening on %s:%s'.format(HOST_NAME, PORT_NUMBER))
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
     httpd.server_close()
     log.info('Server Stops - %s:%s', HOST_NAME, PORT_NUMBER)
+    datadog.event('Server Stops', 'HTTP server stopped listening on %s:%s'.format(HOST_NAME, PORT_NUMBER))
