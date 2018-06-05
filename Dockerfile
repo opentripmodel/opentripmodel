@@ -5,6 +5,7 @@ COPY http-server/server.py /
 RUN pip install cachetools
 RUN pip install logentries
 RUN pip install requests
+RUN pip install datadog
 
 EXPOSE 9000
 
