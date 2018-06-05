@@ -11,6 +11,7 @@ from logentries import LogentriesHandler
 class Datadog:
     import socket
     from datadog import api
+    from datadog import statsd
 
     ACTUAL_HOST_NAME = socket.gethostname()
     METRIC_NAME_TEMPLATE = 'otm_spec_server.{}'
@@ -42,11 +43,7 @@ class Datadog:
         if version:
             tags.append('version:{}'.format(version)),
 
-        self.api.Metric.send(
-            metric=self.REQUESTS_METRIC,
-            points=1,
-            host=self.ACTUAL_HOST_NAME,
-            tags=tags)
+        self.statsd.increment(self.REQUESTS_METRIC, 1, tags)
 
     def github_resource(self, file, version, from_cache, status_code=None):
         tags = [
@@ -57,11 +54,7 @@ class Datadog:
         ]
         if status_code:
             tags.append('status_code:{}'.format(status_code))
-        self.api.Metric.send(
-            metric=self.GITHUB_RESOURCE_METRIC,
-            points=1,
-            host=self.ACTUAL_HOST_NAME,
-            tags=tags)
+        self.statsd.increment(self.GITHUB_RESOURCE_METRIC, 1, tags)
 
     def event(self, title, text):
         self.api.Event.create(
@@ -293,11 +286,11 @@ if __name__ == '__main__':
 
     httpd = HTTPServer((HOST_NAME, PORT_NUMBER), MyHandler)
     log.info('Server Starts - %s:%s', HOST_NAME, PORT_NUMBER)
-    datadog.event('Server Starts', 'HTTP server starts listening on %s:%s'.format(HOST_NAME, PORT_NUMBER))
+    datadog.event('OTM Spec Server Starts', 'HTTP server starts listening on %s:%s'.format(HOST_NAME, PORT_NUMBER))
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
     httpd.server_close()
     log.info('Server Stops - %s:%s', HOST_NAME, PORT_NUMBER)
-    datadog.event('Server Stops', 'HTTP server stopped listening on %s:%s'.format(HOST_NAME, PORT_NUMBER))
+    datadog.event('OTM Spec Server Stops', 'HTTP server stopped listening on %s:%s'.format(HOST_NAME, PORT_NUMBER))
