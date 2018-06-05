@@ -45,7 +45,7 @@ class Datadog:
         if version:
             tags.append('version:{}'.format(version)),
 
-        self.stats.increment(metric_name=self.REQUESTS_METRIC, tags=tags)
+        self.stats.increment(metric_name=self.REQUESTS_METRIC, tags=tags, value=1, sample_rate=1)
 
     def github_resource(self, file, version, from_cache, status_code=None):
         tags = [
@@ -56,7 +56,9 @@ class Datadog:
         ]
         if status_code:
             tags.append('status_code:{}'.format(status_code))
-        self.stats.increment(metric_name=self.GITHUB_RESOURCE_METRIC, tags=tags)
+        if version and version != 'images':
+            tags.append('version:{}'.format(version)),
+        self.stats.increment(metric_name=self.GITHUB_RESOURCE_METRIC, tags=tags, value=1, sample_rate=1)
 
     def event(self, title, text):
         self.stats.event(
@@ -65,6 +67,7 @@ class Datadog:
             tags=['environment:{}'.format(self.ENVIRONMENT), 'otm_spec_server'],
             hostname=self.ACTUAL_HOST_NAME,
             aggregation_key='otm_spec_server')
+        self.stats.flush()
 
 
 HOST_NAME = '0.0.0.0'
@@ -289,11 +292,11 @@ if __name__ == '__main__':
 
     httpd = HTTPServer((HOST_NAME, PORT_NUMBER), MyHandler)
     log.info('Server Starts - %s:%s', HOST_NAME, PORT_NUMBER)
-    datadog.event('OTM Spec Server Starts', 'HTTP server starts listening on %s:%s'.format(HOST_NAME, PORT_NUMBER))
+    datadog.event('OTM Spec Server Starts', 'HTTP server starts listening on {}:{}'.format(HOST_NAME, PORT_NUMBER))
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
     httpd.server_close()
     log.info('Server Stops - %s:%s', HOST_NAME, PORT_NUMBER)
-    datadog.event('OTM Spec Server Stops', 'HTTP server stopped listening on %s:%s'.format(HOST_NAME, PORT_NUMBER))
+    datadog.event('OTM Spec Server Stops', 'HTTP server stopped listening on {}:{}'.format(HOST_NAME, PORT_NUMBER))
