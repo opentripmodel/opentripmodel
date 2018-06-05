@@ -1,0 +1,5 @@
+- type: serial
+  steps:
+  - name: build
+    service: project_build
+    command: ./codeship_build.sh
