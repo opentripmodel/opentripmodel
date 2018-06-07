@@ -5,3 +5,4 @@ opentripmodel.zip
 api/swagger_v.yaml
 /codeship.aes
 /aws.env
+/taskdef-prod.json
