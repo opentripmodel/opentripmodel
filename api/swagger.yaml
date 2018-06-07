@@ -158,7 +158,12 @@ tags:
       ### restrictionWarningEvent
 
       A warning event that may be sent when a restriction is violated. This event can be used for all restrictions that are not modelled as
-      OpenTripModel `Constraints`. For violations of `Constraints`, please use the `constraintViolationEvent` instead.
+      OpenTripModel `Constraints`. For violations of `Constraints`, please use the `constraintViolationEvent` instead. Restriction violations you
+      can model using this event include, but are not limited to:
+
+      - traffic rule violations
+      - exceeding of load capacity
+      - routing through environmental zones
 
       _Applicable entities for `restrictionWarningEvent`:_
 
@@ -268,7 +273,12 @@ tags:
 
       ### coupleVehiclesEvent, decoupleVehiclesEvent
 
-      Marks the moment two `Vehicle`s are coupled or decoupled.
+      Marks the moment two `Vehicle`s are coupled or decoupled. Coupling of `Vehicles` can have several meanings in the real world, including, but
+      not limited to:
+
+      - coupling a trailer to a truck
+      - coupling two or more trailer/truck combinations to form a platoon
+      - coupling a trailer to a ferry
 
       _Applicable entities for `coupleVehiclesEvent` and `decoupleVehiclesEvent`:_
 
@@ -299,7 +309,7 @@ tags:
 
       ### associateWithActorEvent, dissociateFromActorEvent
 
-      Associate an entity with an `Actor` or dissociate an alreayd associated actor and entity. The exact meaning of the association can vary and is
+      Associate an entity with an `Actor` or dissociate an already associated actor and entity. The exact meaning of the association can vary and is
       defined by the `role` parameter of the association event. Note that OpenTripModel implementations may choose to use `Actor` associations as a
       source of authorization information. In that case, one can e.g. only query `Shipment`s that are associated with a certain `Actor`.
 
@@ -1938,7 +1948,7 @@ responses:
     schema:
       type: string
       description: error message
-      example: An object with the same properties alreayd exists.
+      example: An object with the same properties already exists.
   internalServerError:
     description: An unexpected server error has occured, which needs further investigation. Please contact support.
     schema:
