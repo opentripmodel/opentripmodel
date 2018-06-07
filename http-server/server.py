@@ -2,6 +2,7 @@ import json
 import logging
 import os
 import re
+import semver
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import requests
@@ -142,7 +143,8 @@ class MyHandler(BaseHTTPRequestHandler):
                 self.handle_response(200, {}, bytes(json.dumps(health, indent=2), "utf-8"))
                 return
             if not version:
-                self.handle_redirect(list(tags)[0])
+                latest_stable = next(v for v in sorted(tags, reverse=True) if not semver.parse(v)['prerelease'])
+                self.handle_redirect(latest_stable)
                 return
             if not file:
                 self.handle_redirect("/{}/index.html".format(version))

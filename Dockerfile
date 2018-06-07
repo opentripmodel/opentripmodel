@@ -6,6 +6,7 @@ RUN pip install cachetools
 RUN pip install logentries
 RUN pip install requests
 RUN pip install datadog
+RUN pin install semver
 
 EXPOSE 9000
 
