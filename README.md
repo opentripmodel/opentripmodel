@@ -18,68 +18,68 @@ supply chain. Read more on the
 ## What is in this repository?
 This repository contains the OpenAPI specification for the OpenTripModel API in
 YAML format, as well as some tooling to automatically publish the documentation
-and to generate a simple stub server for testing purposes. Read the following
-sections in this README for more information about the tooling and scripts.
+Read the following sections in this README for more information about the tooling 
+and scripts.
+
+The repository also includes a simple Python HTTP-server, that serves all files
+needed to render the documentation. This server can be found in 
+[http-server/server.py](http-server/server.py).
+
+The server will serve a HTML-file, that includes
+[Redoc](https://github.com/Rebilly/ReDoc) to render the `swagger.yaml`
+in a more human readable fashion.
 
 ### How to generate a distribution
-The `build.sh` script can build a distribution on any system that has a bash
-shell. The resulting `opentripmodel.zip` file is a distribution that can be
-uploaded to AWS Elastic Beanstalk. This distribution will publish a
-[ReDoc](https://github.com/Rebilly/ReDoc)-rendered view on the API specification
-in the root of the server. The distribution also contains a Node.js-based stub
-server that will be running at the path `/api/`. This is what is currently
-published and running on the
-[developer.opentripmodel.org](https://developer.opentripmodel.org) domain.
+The documentation server is distributed as a [Docker](https://www.docker.com/what-docker)
+container. To create a container from sources, you should install Docker on your
+machine. Then run 
 
-To create the distribution, open up a shell and type
-```
-./build.sh
+```bash
+docker build -t otm-spec-server .
 ```
 
-### How to deploy a new version on Beanstalk
+to build the container. Then the container can be started as follows:
 
-Either
+```bash
+docker run -p 9000:9000 -e "GITHUB_TOKEN=GitHub Token here" -e "LOG_LEVEL=DEBUG" otm-spec-server 
+``` 
 
-- Upload the generated `opentripmodel.zip` file to AWS Beanstalk via the AWS web
-  interface.
+### Running the server locally
+The HTTP server can also be run locally, without the need to build a Docker 
+container. To do so, you'll need to install Python 3.6 (or higher) on your local
+machine. Also, you'll need to install some dependencies:
 
-or
-
-- Use the AWS command line tools to create an application version and publish a
-  distribution. You can refer to `codeship-ci.sh` and
-  `create-application-version.sh` to see what commands are involved.
-
-### How to run the server locally
-The generated server code is placed in a `dist` directory by the build script.
-So to run locally, run the build script first, as described above. Then run:
-
-```
-cd dist
-npm start
+```bash
+pip install cachetools
+pip install logentries
+pip install requests
+pip install datadog
+pip install semver
 ```
 
-Now you can view the API in several ways:
+After that, you can start the server:
 
-* To view the [Redoc](https://github.com/Rebilly/ReDoc) interface:
-  ```
-  open http://localhost:8080/
-  ```
-  The Redoc interface is the only one that displays the API in the right way,
-  since it is the only UI that supports the `discriminator` feature of
-  SwaggerSpec, that is used extensively in the API. However, for now, Redoc
-  doesn't have a "try it" button
-  [yet](https://github.com/Rebilly/ReDoc/issues/53), therefore, you can use the
-  Swagger UI too.
+```bash
+python http-server/server.py
+```
 
-* To view the Swagger UI interface:
-  ```
-  open http://localhost:8080/docs
-  ```
-  Swagger UI doesn't display the API correctly, since it doesn't support the
-  `discriminator` feature of SwaggerSpec.
+The server expects some environment variables to be set:
 
-* To try the API with the stub server, fire HTTP requests to
-  `https://localhost:8080/api/`.
+* `ENVIRONMENT`: the environment that will be reported to 
+  [Datadog](https://www.datadoghq.com/), to be able to distinguish metrics
+  from different environments.
+* `GITHUB_TOKEN`: a GitHub token to access the GitHub repository via the 
+  GitHub API. This is needed because the different versions of the 
+  specification are loaded from GitHub.
+* `LOGENTRIES_TOKEN`: Token to publish application logs to 
+  [Logentries](https://logentries.com/). If not set, logs will only be
+  written to the console.
+* `LOCAL_HTML_FILE`: Boolean, indicating if the `index.html` file should
+  be served from the local file system (`true`) or from GitHub (`false`).
+  If omitted, the file is served from GitHub.
+* `LOCAL_SWAGGER_FILE`: Boolean, indicating if the `swagger.yaml` file should
+  be served from the local file system (`true`) or from GitHub (`false`).
+  If omitted, the file is served from GitHub.
 
 ## Licence
 <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />All OpenTripModel documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
