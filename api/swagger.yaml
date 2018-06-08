@@ -36,6 +36,14 @@ info:
     roll-back scenario's. A typical use case is when the originating system is not event based, and it has to communicate an entire "planning" at
     once. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
 
+    ## Changes since 4.2.0-b1
+    - Added [top level `/events` endpoint](#tag/Event%2Fpaths%2F~1events%2Fget)
+    - Added `involvedObject` query parameter for filtering events
+    - Added `lifecycle` query parameter for filtering events on their lifecycle. This only applies when querying for events via the general `/events`
+      endpoint.
+    - Added overview documentation about [Event endpoints](#section/event-endpoints)
+    - Added overview documentation about [Involved objects](#section/involved-objects)
+
     ## Changes since 4.1
     - Rewrite of the [documentation on `Event`s](#tag/Event).
     - Added `groupingId` to `Event`s.
@@ -91,18 +99,43 @@ tags:
   - name: Event
     description: |
       An event is something occurring at a specific time (whether in the past, present, or past alike) and (optionally) at a specific location. Events
-      are the core of this API. Events link all static objects together. The sections below document the available event types. Events are devided
-      into categories:
-      - Update events
-      - Warning events
-      - Action events
-      - Time window events
-      - Associative events
-      - Meta events
+      are the core of this API. Events link all static objects together. There are several different event types defined in OpenTripModel. The
+      sections below document the available event types. Events are devided into categories:
+      - [Update events](#section/update-events)
+      - [Warning events](#section/warning-events)
+      - [Action events](#section/action-events)
+      - [Time window events](#section/time-window-events)
+      - [Associative events](#section/associative-events)
+      - [Meta events](#section/meta-events)
 
-      See the respective sections below.
+      ## <a section="section/event-endpoints"></a>Event endpoints
+      Since events are related to at least one other entity, events can be accessed both via the related entities as well as via a dedicated `events`
+      endpoint. The following table summarizes all available ways to access events via OpenTripModel endpoints:
 
-      ## Update events
+      | #&#160;events | access          | read/write |                                                                         |
+      | ------------- | --------------- | ---------- | ----------------------------------------------------------------------- |
+      | list          | directly        | read       | [**GET** `/events`](#tag/Event%2Fpaths%2F~1events%2Fget)                |
+      | list          | directly        | write      | [use a Bundle](#tag/Bundle)                                             |
+      | list          | via&#160;entity | read       | **GET** `/{entity}/{uuid}/{lifecycle}/events/`                          |
+      | list          | via&#160;entity | write      | [use a Bundle](#tag/Bundle)                                             |
+      | single        | directly        | read       | [**GET** `/events/{uuid}`](#tag/Event%2Fpaths%2F~1events~1{uuid}%2Fget) |
+      | single        | directly        | write      | [**PUT** `/events`](#tag/Event%2Fpaths%2F~1events%2Fput)                |
+      | single        | via&#160;entity | read       | N/A                                                                     |
+      | single        | via&#160;entity | write      | **PUT** `/{entity}/{uuid}/{lifecycle}/events/`                          |
+
+      ## <a section="section/involved-objects"></a>Involved objects
+      Each event has a list of `involvedObjects`. Each event should have at least one other entity in the list of `involvedObjects`, since entities
+      only exist in the context of one or more other entities. Some event types impose additional requirements, such as a higher minimal number of
+      `involvedObjects` or a specific type of entity as involved object.
+
+      Note that events can be published on the endpoint of an entity, thus creating
+      an involvement implicitly. In other words, when you `PUT` e.g. a `locationUpdateEvent` on the
+      `/vehicles/0a254672-fc1d-4639-899f-15c40cbb7c3f/actual/events` endpoint, the `Vehicle` with UUID `0a254672-fc1d-4639-899f-15c40cbb7c3f` will
+      be an involved object for the `locationUpdateEvent`, even if you don't add the `Vehicle` to the `involvedObjects` array. It is advisable for OTM
+      server implementations to add this `Vehicle` to the `involvedObjects` of the `locationUpdateEvent` as soon as possible, to make sure it is
+      returned whenever the event is retreived, e.g. via the general `/events` endpoint.
+
+      ## <a section="section/update-events"></a>Update events
 
       Update events typically send an update to the state of an entity. These kind of events are only sensible in the `actual` and `realized`
       lifecycle phases. This makes sense, because things like location or sensor updates can't be planned nor projected. Update events typically
@@ -144,7 +177,7 @@ tags:
       | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
       |          | ●       |          |       |       |       |            |        |       |
 
-      ## Warning events
+      ## <a section="section/warning-events"></a>Warning events
 
       Warning events warn about violations, possible causes for delay or other things that may have impact on an operation and may need some
       attention. Warning events can exist in all lifecycle phases, since other events might be the cause of a warning.
@@ -195,7 +228,7 @@ tags:
       | ●        |         |          |       | ●     |       |            |        |       |
 
 
-      ## Action events
+      ## <a section="section/action-events"></a>Action events
 
       Action events describe actions that take place in an operation. Action events can typically be used in any lifecycle phase. This makes sense,
       since you can say an action can be planned, projected, actually happening or be realized. Action events typically involve only one entity at
@@ -237,7 +270,7 @@ tags:
       | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
       |          | ●       |          |       |       |       |            |        |       |
 
-      ## Time window events
+      ## <a section="section/time-window-events"></a>Time window events
 
       Time window events are used to model a time window in a `planned` or `projected` lifecycle phase. The start and end of a time window are
       modelled as separate events. The following time window events are available:
@@ -260,7 +293,7 @@ tags:
       | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
       |          |         | ●        |       |       |       |            |        |       |
 
-      ## Associative events
+      ## <a section="section/associative-events"></a>Associative events
 
       Associative events are used to create or remove associations between entities. These events can take place in all lifecycle phases.
       Associative events typically involve two events.
@@ -377,7 +410,7 @@ tags:
       | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
       | ○        | ○       | ○        |       |       | ○     |            | ●      |       |
 
-      ## Meta events
+      ## <a section="section/meta-events"></a>Meta events
 
       Meta events are events about events. There are two types of meta events: `cancelEvent` and `ignoreEvent`. As a rule of thumb, a `cancelEvent`
       is to be used for events that you created yourself and want to cancel (or replace), while an `ignoreEvent` is meant to notify that an event
@@ -475,12 +508,12 @@ x-tagGroups:
       - Actor
       - Constraint
       - Sensor
-  - name: Bundle operations
-    tags:
-      - Bundle
   - name: Event-related operations
     tags:
       - Event
+  - name: Bundle operations
+    tags:
+      - Bundle
 
 paths:
   /locations:
@@ -588,7 +621,6 @@ paths:
       description: Retrieves a list of `Events` for the `Location` with the given UUID
       tags:
         - Location
-        - Event
       produces:
         - application/json
         - application/xml
@@ -599,6 +631,7 @@ paths:
         - $ref: "#/parameters/endDateTimeParam"
         - $ref: "#/parameters/eventTypeParam"
         - $ref: "#/parameters/groupingIdParam"
+        - $ref: "#/parameters/involvedObjectParam"
       responses:
         200:
           description: A list of `Events` for the given `Location`.
@@ -615,7 +648,6 @@ paths:
       summary: Publish a new Event for the given Location
       description: Publish a new `Event` for the given `Location`
       tags:
-        - Event
         - Location
       consumes:
         - application/json
@@ -739,7 +771,6 @@ paths:
       description: Retrieves a list of `Events` for the trip with the given UUID.
       tags:
         - Trip
-        - Event
       produces:
         - application/json
         - application/xml
@@ -750,6 +781,7 @@ paths:
         - $ref: "#/parameters/endDateTimeParam"
         - $ref: "#/parameters/eventTypeParam"
         - $ref: "#/parameters/groupingIdParam"
+        - $ref: "#/parameters/involvedObjectParam"
       responses:
         200:
           description: A list of Events for the given trip
@@ -768,7 +800,6 @@ paths:
         Publish a new `Event` for the given trip. Note that a planned `Trip` may consist of a lot of `Events`. Therefore it is possible to create a
         `Trip` with its events at once via a `PUT` to the `trips` endpoint.
       tags:
-        - Event
         - Trip
       consumes:
         - application/json
@@ -900,7 +931,6 @@ paths:
           value is "now". The returned list is a list of actual `Events` that took place on the given `Route` in the given time window.
       tags:
         - Route
-        - Event
       produces:
         - application/json
         - application/xml
@@ -911,6 +941,7 @@ paths:
         - $ref: "#/parameters/endDateTimeParam"
         - $ref: "#/parameters/eventTypeParam"
         - $ref: "#/parameters/groupingIdParam"
+        - $ref: "#/parameters/involvedObjectParam"
       responses:
         200:
           description: A list of `Events` for the given `Trip`, optionally filtered according to the request parameters.
@@ -927,7 +958,6 @@ paths:
       summary: Publish a new Event on a Route
       description: Publish a new `Event` for the given `Route`.
       tags:
-        - Event
         - Route
       consumes:
         - application/json
@@ -1068,7 +1098,6 @@ paths:
       description: Retrieves a list of `Events` for the `Vehicle` with the given UUID
       tags:
         - Vehicle
-        - Event
       produces:
         - application/json
         - application/xml
@@ -1079,6 +1108,7 @@ paths:
         - $ref: "#/parameters/endDateTimeParam"
         - $ref: "#/parameters/eventTypeParam"
         - $ref: "#/parameters/groupingIdParam"
+        - $ref: "#/parameters/involvedObjectParam"
       responses:
         200:
           description: A list of `Events` for the given `Vehicle`
@@ -1095,7 +1125,6 @@ paths:
       summary: Publish an Event for a Vehicle
       description: Publish a new `Event` for the given `Vehicle`.
       tags:
-        - Event
         - Vehicle
       consumes:
         - application/json
@@ -1219,7 +1248,6 @@ paths:
       description: Retrieves a list of `Events` for the `Sensor` with the given UUID
       tags:
         - Sensor
-        - Event
       produces:
         - application/json
         - application/xml
@@ -1230,6 +1258,7 @@ paths:
         - $ref: "#/parameters/endDateTimeParam"
         - $ref: "#/parameters/eventTypeParam"
         - $ref: "#/parameters/groupingIdParam"
+        - $ref: "#/parameters/involvedObjectParam"
       responses:
         200:
           description: A list of `Events` for the given `Sensor`
@@ -1246,7 +1275,6 @@ paths:
       summary: Publish an Event for a Sensor
       description: Publish a new `Event` for the given `Sensor`.
       tags:
-        - Event
         - Sensor
       consumes:
         - application/json
@@ -1369,7 +1397,6 @@ paths:
       description: Retrieves a list of `Events` for the `Shipment` with the given UUID
       tags:
         - Shipment
-        - Event
       produces:
         - application/json
         - application/xml
@@ -1380,6 +1407,7 @@ paths:
         - $ref: "#/parameters/endDateTimeParam"
         - $ref: "#/parameters/eventTypeParam"
         - $ref: "#/parameters/groupingIdParam"
+        - $ref: "#/parameters/involvedObjectParam"
       responses:
         200:
           description: A list of `Events` for the given `Shipment`
@@ -1396,7 +1424,6 @@ paths:
       summary: Publish a new Event on a Shipment
       description: Publish a new `Event` for the given `Shipment`
       tags:
-        - Event
         - Shipment
       consumes:
         - application/json
@@ -1518,7 +1545,6 @@ paths:
       description: Retrieves a list of `Events` for the `Actor` with the given UUID
       tags:
         - Actor
-        - Event
       produces:
         - application/json
         - application/xml
@@ -1529,6 +1555,7 @@ paths:
         - $ref: "#/parameters/endDateTimeParam"
         - $ref: "#/parameters/eventTypeParam"
         - $ref: "#/parameters/groupingIdParam"
+        - $ref: "#/parameters/involvedObjectParam"
       responses:
         200:
           description: A list of `Events` for the given `Actor`
@@ -1545,7 +1572,6 @@ paths:
       summary: Publish a new Event for the given Actor
       description: Publish a new `Event` for the `Actor` with the given UUID
       tags:
-        - Event
         - Actor
       consumes:
         - application/json
@@ -1665,7 +1691,6 @@ paths:
       description: Retrieves a list of `Events` for the `Constraint` with the given UUID
       tags:
         - Constraint
-        - Event
       produces:
         - application/json
         - application/xml
@@ -1676,6 +1701,7 @@ paths:
         - $ref: "#/parameters/endDateTimeParam"
         - $ref: "#/parameters/eventTypeParam"
         - $ref: "#/parameters/groupingIdParam"
+        - $ref: "#/parameters/involvedObjectParam"
       responses:
         200:
           description: A list of `Events` for the given `Constraint`
@@ -1692,7 +1718,6 @@ paths:
       summary: Publish a new Event on a Constraint
       description: Publish a new `Event` for the `Constraint` with the given UUID
       tags:
-        - Event
         - Constraint
       consumes:
         - application/json
@@ -1707,6 +1732,137 @@ paths:
       responses:
         201:
           description: The created `Event` object. Containes the generated UUID that can be used to refer to this `Event` in later requests.
+          schema: { $ref: "#/definitions/event" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+
+  /events:
+    get:
+      summary: Get a list of Events
+      description: Get a list of `Events`, optionally filtered by query parameters
+      tags:
+        - Event
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycleQueryParam"
+        - $ref: "#/parameters/groupingIdParam"
+        - $ref: "#/parameters/eventTypeParam"
+        - $ref: "#/parameters/startDateTimeParam"
+        - $ref: "#/parameters/endDateTimeParam"
+        - $ref: "#/parameters/involvedObjectParam"
+      responses:
+        200:
+          description: |
+            A list of all defined `Events`, optionally filtered by query parameters.
+          schema:
+            type:
+              array
+            items:
+              $ref: "#/definitions/event"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Create a new Event
+      description: |
+        Create an `Event` object with the given data.
+      tags:
+        - Event
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/eventParam"
+      responses:
+        201:
+          description: |
+            The `Event` object as created. The returned object will contain the generated UUID that can be used to refer to this `Event` in later
+            requests.
+          schema: { $ref: "#/definitions/event" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        409: { $ref: "#/responses/conflict" }
+        500: { $ref: "#/responses/internalServerError" }
+  /events/{uuid}:
+    get:
+      summary: Get a specific Event by its UUID
+      description: Retrieves a single `Event` object by its unique identifier (UUID)
+      tags:
+        - Event
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/uuidParam"
+      responses:
+        200:
+          description: An `Event` object
+          schema: { $ref: "#/definitions/event" }
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+  /events/{uuid}/{lifecycle}/events:
+    get:
+      summary: Get a list of Events related to this Event
+      description: Retrieves a list of `Events` related to the `Event` with the given UUID
+      tags:
+        - Event
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/startDateTimeParam"
+        - $ref: "#/parameters/endDateTimeParam"
+        - $ref: "#/parameters/eventTypeParam"
+        - $ref: "#/parameters/groupingIdParam"
+        - $ref: "#/parameters/involvedObjectParam"
+      responses:
+        200:
+          description: A list of `Events` related to the given `Event`.
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/event"
+        400: { $ref: "#/responses/badRequest" }
+        401: { $ref: "#/responses/unauthorized" }
+        403: { $ref: "#/responses/forbidden" }
+        404: { $ref: "#/responses/notFound" }
+        500: { $ref: "#/responses/internalServerError" }
+    put:
+      summary: Publish a new Event related to the given Event
+      description: Publish a new `Event` related to the given `Event`
+      tags:
+        - Event
+      consumes:
+        - application/json
+        - application/xml
+      produces:
+        - application/json
+        - application/xml
+      parameters:
+        - $ref: "#/parameters/lifecycle"
+        - $ref: "#/parameters/uuidParam"
+        - $ref: "#/parameters/eventParam"
+      responses:
+        201:
+          description: |
+            The created `Event`. The returned object will contain the generated UUID that can be used to refer to this `Event` in later requests.
           schema: { $ref: "#/definitions/event" }
         400: { $ref: "#/responses/badRequest" }
         401: { $ref: "#/responses/unauthorized" }
@@ -1757,6 +1913,17 @@ parameters:
       - realized
     required: true
     description: The lifecycle phase the request applies to
+  lifecycleQueryParam:
+    name: lifecycle
+    in: query
+    type: string
+    enum:
+      - planned
+      - projected
+      - actual
+      - realized
+    required: false
+    description: Parameter to filter events by lifecycle phase.
   eventParam:
     name: eventParam
     in: body
@@ -1856,6 +2023,19 @@ parameters:
     description: |
       An external ID value, a part of it, to search for entities by their external IDs. This parameter should be combined with the `externalIdSchema`
       parameter.
+  involvedObjectParam:
+    name: involvedObject
+    in: query
+    type: string
+    format: uuid
+    required: false
+    description: |
+      Query parameter to filter events by involved object. With this query parameter, you can filter a list of `Events` to only contain `Events` that
+      have a certain entity in their list of `involvedObjects`. You can filter for multiple, different involved objects by chaining the parameter, as
+      follows: `involvedObject=385afbeb-4fba-48f3-91da-b5547e8f3365&involvedObject=e49064e9-abe4-404b-9d72-3093380db937`. In that case, a logical `OR`
+      will be applied, meaning that all events are returned that have any of the listed involved objects.
+
+      > **NOTE**: The value used in this query parameter is the "bare" UUID, not the URI of an object.
   startDateTimeParam:
     name: startDateTime
     in: query
@@ -1878,9 +2058,10 @@ parameters:
     name: eventType
     in: query
     type: string
-    format: comma-separated
     description: |
-      Comma-separated list of event types. The resulting list will only have events of the given types, events of other types will be ommitted.
+      Filter events by event type. The resulting list will only have events of the given type. Multiple `eventType` parameters can be combined to
+      get a list of multiple event types, like this: `eventType=loadShipmentEvent&eventType=unloadShipmentEvent`. In that case a logical `OR` will
+      be used, meaning all events with any of the given `eventTypes` will be returned.
     required: false
   groupingIdParam:
     name: groupingId
@@ -3294,7 +3475,8 @@ definitions:
       type:
         type: string
         description: |
-          The type of the `Event`. Depending on this type, additional fields may be required for this object.
+          The type of the `Event`. Depending on this type, additional fields may be required for this object. See the main [Event section](#tag/Event)
+          for comprehensive documentation on the available event types, their meaning and their variables.
         example:
           "loadShipmentEvent"
       time:

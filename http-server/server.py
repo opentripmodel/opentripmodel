@@ -296,10 +296,14 @@ def initialize_logging():
         log.addHandler(LogentriesHandler(logentries_token))
     else:
         log.warning("No LOGENTRIES_TOKEN found in environment. Only logging to local console.")
+    log.info("Logging initialized, level=%s", log_level)
 
 
 if __name__ == '__main__':
     initialize_logging()
+
+    log.debug("LOCAL_HTML_FILE=%s", local_html_file)
+    log.debug("LOCAL_SWAGGER_FILE=%s", local_swagger_file)
 
     httpd = HTTPServer((HOST_NAME, PORT_NUMBER), MyHandler)
     log.info('Server Starts - %s:%s', HOST_NAME, PORT_NUMBER)
