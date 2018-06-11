@@ -125,8 +125,9 @@ tags:
 
       ## <a section="section/involved-objects"></a>Involved objects
       Each event has a list of `involvedObjects`. Each event should have at least one other entity in the list of `involvedObjects`, since entities
-      only exist in the context of one or more other entities. Some event types impose additional requirements, such as a higher minimal number of
-      `involvedObjects` or a specific type of entity as involved object.
+      only exist in the context of one or more other entities. (Note that events count as entities too, so it _is_ valid to have an event that only
+      has another event as involved object. An example is a `cancelEvent`, that only has the event it cancels as involved object.) Some event types
+      impose additional requirements, such as a higher minimal number of `involvedObjects` or a specific type of entity as involved object.
 
       Note that events can be published on the endpoint of an entity, thus creating
       an involvement implicitly. In other words, when you `PUT` e.g. a `locationUpdateEvent` on the

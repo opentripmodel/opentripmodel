@@ -216,7 +216,7 @@ class MyHandler(BaseHTTPRequestHandler):
             tag = tags.get('4.2.0-a1')
             sha = tag['commit']['sha']
 
-        contents_bytes = self.handle_file_request(sha, 'redoc/index.html', local_file)
+        contents_bytes = self.handle_file_request(sha, 'redoc/index.html', version, local_file)
         contents = contents_bytes.decode("utf-8")
         processed = contents \
             .replace("spec-url='/api-docs'", "spec-url='swagger.yaml'") \
