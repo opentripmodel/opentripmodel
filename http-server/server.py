@@ -98,6 +98,7 @@ class MyHandler(BaseHTTPRequestHandler):
         "htm": "text/html; charset=utf-8",
         "yaml": "text/x-yaml; charset=utf-8",
         "yml": "text/x-yaml; charset=utf-8",
+        "js": "application/javascript; charset=utf-8",
     }
 
     GITHUB_TOKEN = os.environ.get('GITHUB_TOKEN')
@@ -127,6 +128,11 @@ class MyHandler(BaseHTTPRequestHandler):
         if version == 'favicon.ico':
             self.send_response(404)
             self.end_headers()
+            return
+        if version == 'lib':
+            content = self.handle_file_request('', 'lib/{}'.format(file), '', local_file=True)
+            content_type = self.CONTENT_TYPES.get(file_extension)
+            self.handle_response(200, {'Content-type': content_type}, content)
             return
 
         req = self.get_versions_from_github()
