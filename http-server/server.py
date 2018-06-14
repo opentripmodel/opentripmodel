@@ -80,10 +80,9 @@ files_cache = TTLCache(maxsize=1000, ttl=86400)  # 24 hours
 
 log = logging.getLogger('otm-spec-server')
 
-local_html_file_string = os.environ.get("LOCAL_HTML_FILE", "False")
-local_swagger_file_string = os.environ.get("LOCAL_SWAGGER_FILE", "False")
-local_html_file = local_html_file_string.upper() == "TRUE"
-local_swagger_file = local_swagger_file_string.upper() == "TRUE"
+LOCAL_HTML_FILE = os.environ.get("LOCAL_HTML_FILE", "False").upper() == "TRUE"
+LOCAL_SWAGGER_FILE = os.environ.get("LOCAL_SWAGGER_FILE", "False").upper() == "TRUE"
+SHOW_ALPHA_VERSIONS = os.environ.get('SHOW_ALPHA_VERSIONS', 'False').upper() == "TRUE"
 
 datadog = Datadog()
 
@@ -139,6 +138,9 @@ class MyHandler(BaseHTTPRequestHandler):
         if req.status_code in (200, 201):
             tags_list = req.json()
             tags = dict((t.get('name').rsplit('/')[-1], t) for t in tags_list)
+            if not SHOW_ALPHA_VERSIONS:
+                unwanted_tags = set(key for key in tags.keys() if str(semver.parse(key).get('prerelease', '')).upper().startswith('A'))
+                tags = dict((key, value) for key, value in tags.items() if key not in unwanted_tags)
 
             if version == 'health':
                 health = {
@@ -164,10 +166,10 @@ class MyHandler(BaseHTTPRequestHandler):
 
                     if file == 'index.html' or file == '':
                         datadog.request('GET', "index.html", version)
-                        self.handle_index_html(sha, tags, version, local_html_file)
+                        self.handle_index_html(sha, tags, version, LOCAL_HTML_FILE)
                     elif file == 'swagger.yaml':
                         datadog.request('GET', "swagger.yaml", version)
-                        self.handle_swagger_yaml(sha, version, local_swagger_file)
+                        self.handle_swagger_yaml(sha, version, LOCAL_SWAGGER_FILE)
                     else:
                         datadog.request('GET', file_extension, version)
                         self.handle_github_file(file, file_extension, sha, version)
@@ -219,7 +221,7 @@ class MyHandler(BaseHTTPRequestHandler):
 
         # Compatibility with older versions, where index.html did not contain a placeholder for version selection.
         if version in ['4.0.0-b1', '4.0.0', '4.0.1', '4.1.0', '4.1.1', '4.1.2']:
-            tag = tags.get('4.2.0-a1')
+            tag = tags.get('4.2.0-b1')
             sha = tag['commit']['sha']
 
         contents_bytes = self.handle_file_request(sha, 'redoc/index.html', version, local_file)
@@ -308,8 +310,8 @@ def initialize_logging():
 if __name__ == '__main__':
     initialize_logging()
 
-    log.debug("LOCAL_HTML_FILE=%s", local_html_file)
-    log.debug("LOCAL_SWAGGER_FILE=%s", local_swagger_file)
+    log.debug("LOCAL_HTML_FILE=%s", LOCAL_HTML_FILE)
+    log.debug("LOCAL_SWAGGER_FILE=%s", LOCAL_SWAGGER_FILE)
 
     httpd = HTTPServer((HOST_NAME, PORT_NUMBER), MyHandler)
     log.info('Server Starts - %s:%s', HOST_NAME, PORT_NUMBER)

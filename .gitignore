@@ -7,3 +7,4 @@ api/swagger_v.yaml
 /aws.env
 /taskdef-prod.json
 /lib/
+/taskdef-dev.json
