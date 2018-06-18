@@ -43,7 +43,7 @@ info:
     once. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
 
     ## Changes since 4.2.0-b1
-    - Added [top level `/events` endpoint]ß/paths/~1events/get)
+    - Added [top level `/events` endpoint]/paths/~1events/get)
     - Added `involvedObject` query parameter for filtering events
     - Added `lifecycle` query parameter for filtering events on their lifecycle. This only applies when querying for events via the general `/events`
       endpoint.
@@ -1958,7 +1958,7 @@ paths:
     put:
       summary: Create a new Constraint
       description: |
-        Create a new per-defined `Constraint` object, that can be referenced to in objects that have a `constraint` member.
+        Create a new pre-defined `Constraint` object, that can be referenced to in objects that have a `constraint` member.
       tags:
         - Constraint
       responses:
