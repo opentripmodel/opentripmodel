@@ -15,6 +15,12 @@ info:
     [main website of OpenTripModel](https://www.opentripmodel.org/). This documentation is generated from the OpenTripModel API specification, the
     source of which can be found at [OpenTripModels GitHub repository](https://github.com/opentripmodel/opentripmodel).
 
+    > ## ℹ A word on examples
+    > The example requests that are shown in this documentation are automatically generated. This means the _structure_ of the examples is right,
+    according to the specification, while the _data_ in the examples is not always correct in a given context. E.g. various event types instruct
+    to have certain `involvedObjects` available in the event. The examples do not reflect these requirements, since there is (currently) no way
+    to express these in terms of an OpenAPI specification.
+
     # The model
     <iframe src="images/otm-model.svg" height="300" width="425" style="border:0px;"></iframe>
 
