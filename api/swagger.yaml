@@ -22,7 +22,7 @@ info:
     to express these in terms of an OpenAPI specification.
 
     # The model
-    <iframe src="images/otm-model.svg" height="300" width="425" style="border:0px;"></iframe>
+    <iframe src="images/otm-model.svg" height="350" width="350" style="border:0px;"></iframe>
 
     OpenTripModel defines entities, displayed yellow in the image. You can click on the boxes in the image to jump to the corresponding section in
     this API Reference Documentation. For a more conceptual introduction to the entities, please read the
