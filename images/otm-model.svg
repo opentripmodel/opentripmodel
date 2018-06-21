@@ -1,55 +1,60 @@
-<svg xmlns="http://www.w3.org/2000/svg" id="svg8468" width="424.559" height="298.225" fill="none" stroke-miterlimit="10" xmlns:xlink="http://www.w3.org/1999/xlink" viewBox="0 0 424.55908 298.22467" stroke-linecap="square">
-  <defs>
-    <style>
-      @import url(https://fonts.googleapis.com/css?family=Montserrat:400,700);
-    </style>
-  </defs>
-  <path fill="#366092" stroke="#666" d="M308.28 272.76l28.944-32.925v14.472c46.336-12.954 80.536-55.44 86.06-106.91 6.678 62.204-30.062 120.2-86.06 135.855v14.473z"/>
-  <path fill="#2b4c74" stroke="#666" d="M424.06 161.87c0-69.235-51.837-125.36-115.78-125.36V7.563c30.706 0 60.155 13.208 81.868 36.718 21.713 23.51 33.91 55.398 33.91 88.646z"/>
-  <path fill="#366092" stroke="#666" d="M116.28 25.464L87.335 58.39V43.917C41 56.87 6.8 99.357 1.275 150.827c-6.678-62.203 30.062-120.2 86.06-135.855V.5z"/>
-  <path fill="#2b4c74" stroke="#666" d="M.5 136.354c0 69.235 51.836 125.362 115.78 125.362v28.945c-30.707 0-60.156-13.205-81.87-36.715C12.7 230.435.5 198.547.5 165.3z"/>
-  <a target="_top" xlink:href="/#section/The-model/Life-cycle-phases">
-    <rect fill="#4bb84c" stroke="#666" x="117" y="7" width="95" height="29" />
-    <text x="163.5" y="21.5" fill="#fff" font-size="20" font-family="Montserrat, sans-serif" text-anchor="middle" dominant-baseline="central">projected</text>
-  </a>
-  <a target="_top" xlink:href="/#section/The-model/Life-cycle-phases">
-    <rect fill="#4bb84c" stroke="#666" x="213" y="7" width="95" height="29" />
-    <text x="261.5" y="21.5" fill="#fff" font-size="20" font-family="Montserrat, sans-serif" text-anchor="middle" dominant-baseline="central">actual</text>
-  </a>
-  <a target="_top" xlink:href="/#section/The-model/Life-cycle-phases">
-    <rect fill="#4bb84c" stroke="#666" x="117" y="261" width="95" height="29" />
-    <text x="163.5" y="275.5" fill="#fff" font-size="20" font-family="Montserrat, sans-serif" text-anchor="middle" dominant-baseline="central">planned</text>
-  </a>
-  <a target="_top" xlink:href="/#section/The-model/Life-cycle-phases">
-    <rect fill="#4bb84c" stroke="#666" x="213" y="261" width="95" height="29" />
-    <text x="261.5" y="275.5" fill="#fff" font-size="20" font-family="Montserrat, sans-serif" text-anchor="middle" dominant-baseline="central">realized</text>
-  </a>
-  <a target="_top" xlink:href="/#tag/Location">
-    <rect fill="#fec052" stroke="#666" x="95" y="73" width="106" height="35" />
-    <text x="148" y="90.5" fill="#fff" font-size="20" font-family="Montserrat, sans-serif" text-anchor="middle" dominant-baseline="central">Location</text>
-  </a>
-  <a target="_top" xlink:href="/#tag/Vehicle">
-    <rect fill="#fec052" stroke="#666" x="232" y="73" width="106" height="35" />
-    <text x="285" y="90.5" fill="#fff" font-size="20" font-family="Montserrat, sans-serif" text-anchor="middle" dominant-baseline="central">Vehicle</text>
-  </a>
-  <a target="_top" xlink:href="/#tag/Route">
-    <rect fill="#fec052" stroke="#666" x="33" y="135" width="106" height="35" />
-    <text x="86" y="152.5" fill="#fff" font-size="20" font-family="Montserrat, sans-serif" text-anchor="middle" dominant-baseline="central">Route</text>
-  </a>
-  <a target="_top" xlink:href="/#tag/Event">
-    <rect fill="#f36f39" stroke="#666" x="163" y="135" width="106" height="35" />
-    <text x="216" y="152.5" fill="#fff" font-size="20" font-family="Montserrat, sans-serif" text-anchor="middle" dominant-baseline="central">Event</text>
-  </a>
-  <a target="_top" xlink:href="/#tag/Trip">
-    <rect fill="#fec052" stroke="#666" x="292" y="135" width="106" height="35" />
-    <text x="345" y="152.5" fill="#fff" font-size="20" font-family="Montserrat, sans-serif" text-anchor="middle" dominant-baseline="central">Trip</text>
-  </a>
-  <a target="_top" xlink:href="/#tag/Shipment">
-    <rect fill="#fec052" stroke="#666" x="95" y="190" width="106" height="35" />
-    <text x="148" y="207.5" fill="#fff" font-size="20" font-family="Montserrat, sans-serif" text-anchor="middle" dominant-baseline="central">Shipment</text>
-  </a>
-  <a target="_top" xlink:href="/#tag/Actor">
-    <rect fill="#fec052" stroke="#666" x="232" y="190" width="106" height="35" />
-    <text x="285" y="207.5" fill="#fff" font-size="20" font-family="Montserrat, sans-serif" text-anchor="middle" dominant-baseline="central">Actor</text>
-  </a>
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="250.08mm" height="250.11mm" version="1.1" viewBox="0 0 250.08144 250.10571" xmlns="http://www.w3.org/2000/svg"
+     xmlns:cc="http://creativecommons.org/ns#" xmlns:dc="http://purl.org/dc/elements/1.1/" xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+     xmlns:xlink="http://www.w3.org/1999/xlink">
+    <metadata>
+        <rdf:RDF>
+            <cc:Work rdf:about="">
+                <dc:format>image/svg+xml</dc:format>
+                <dc:type rdf:resource="http://purl.org/dc/dcmitype/StillImage"/>
+                <dc:title>OpenTripModel</dc:title>
+            </cc:Work>
+        </rdf:RDF>
+    </metadata>
+    <g transform="translate(17.786 22.54)">
+        <path id="a" transform="scale(.26458)" d="m411.04-83.301v91.74a379.32 379.32 0 0 1 373.45 373.08h91.533a470.94 470.94 0 0 0 -464.99 -464.82z"
+              fill="#38b854" fill-opacity=".81429" stroke="#38b854" stroke-linejoin="round" stroke-width="3.7795"/>
+        <path id="b" transform="scale(.26458)" d="m397.93-83.092a470.94 470.94 0 0 0 -463.27 464.36h91.711a379.32 379.32 0 0 1 371.56 -372.91z"
+              fill="#38b854" fill-opacity=".81429" stroke="#38b854" stroke-linejoin="round" stroke-width="3.7795"/>
+        <path id="c" transform="scale(.26458)" d="m-65.209 394.38a470.94 470.94 0 0 0 462.99 463.82v-91.787a379.32 379.32 0 0 1 -371.47 -372.04z"
+              fill="#38b854" fill-opacity=".81429" stroke="#38b854" stroke-linejoin="round" stroke-width="3.7795"/>
+        <path id="d" transform="scale(.26458)" d="m784.35 394.63a379.32 379.32 0 0 1 -373.46 372.03v91.486a470.94 470.94 0 0 0 465.19 -463.51z"
+              fill="#38b854" fill-opacity=".81429" stroke="#38b854" stroke-linejoin="round" stroke-width="3.7795"/>
+        <flowRoot fill="#000000" font-family="'Century Gothic'" font-size="24px" font-weight="bold" letter-spacing="0px" stroke-width="1px" word-spacing="0px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:200px" xml:space="preserve"><flowRegion><rect x="219.96" y="398.53" width="221.42" height="88.859"/></flowRegion><flowPara/></flowRoot>
+        <rect x="77.463" y="92.007" width="59.591" height="21.026" ry="4.2396" fill="#fc6e43" fill-opacity=".78571" stroke="#fc6e43"
+              stroke-linejoin="round" stroke-width=".76383"/>
+        <text x="93.498566" y="106.05515" fill="#ffffff" font-family="Arial" font-size="9.8778px" font-weight="bold" letter-spacing="0px" stroke-width=".26458px" word-spacing="0px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:52.91666412px" xml:space="preserve"><tspan x="93.498566" y="106.05515">Event</tspan></text>
+        <rect x="45.565" y="130.1" width="59.591" height="21.026" ry="4.2396" fill="#ffbf5f" fill-opacity=".83333" stroke="#ffbf5f"
+              stroke-linejoin="round" stroke-width=".76383"/>
+        <text x="52.732449" y="144.14638" fill="#ffffff" font-family="Arial" font-size="9.8778px" font-weight="bold" letter-spacing="0px" stroke-width=".26458px" word-spacing="0px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:52.91666412px" xml:space="preserve"><tspan x="52.732449" y="144.14638">Shipment</tspan></text>
+        <rect x="108.85" y="130.1" width="59.591" height="21.026" ry="4.2396" fill="#ffbf5f" fill-opacity=".83333" stroke="#ffbf5f"
+              stroke-linejoin="round" stroke-width=".76383"/>
+        <text x="125.67551" y="144.14638" fill="#ffffff" font-family="Arial" font-size="9.8778px" font-weight="bold" letter-spacing="0px" stroke-width=".26458px" word-spacing="0px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:52.91666412px" xml:space="preserve"><tspan x="125.67551" y="144.14638">Actor</tspan></text>
+        <rect x="140.4" y="104.7" width="59.591" height="21.026" ry="4.2396" fill="#ffbf5f" fill-opacity=".83333" stroke="#ffbf5f"
+              stroke-linejoin="round" stroke-width=".76383"/>
+        <text x="153.19652" y="118.75223" fill="#ffffff" font-family="Arial" font-size="9.8778px" font-weight="bold" letter-spacing="0px" stroke-width=".26458px" word-spacing="0px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:52.91666412px" xml:space="preserve"><tspan x="153.19652" y="118.75223">Sensor</tspan></text>
+        <rect x="140.4" y="79.31" width="59.591" height="21.026" ry="4.2396" fill="#ffbf5f" fill-opacity=".83333" stroke="#ffbf5f"
+              stroke-linejoin="round" stroke-width=".76383"/>
+        <text x="161.21739" y="93.358086" fill="#ffffff" font-family="Arial" font-size="9.8778px" font-weight="bold" letter-spacing="0px" stroke-width=".26458px" word-spacing="0px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:52.91666412px" xml:space="preserve"><tspan x="161.21739" y="93.358086">Trip</tspan></text>
+        <g transform="translate(2.798)">
+            <rect x="106.05" y="53.916" width="59.591" height="21.026" ry="4.2396" fill="#ffbf5f" fill-opacity=".83333" stroke="#ffbf5f"
+                  stroke-linejoin="round" stroke-width=".76383"/>
+            <text x="119.016" y="67.963928" fill="#ffffff" font-family="Arial" font-size="9.8778px" font-weight="bold" letter-spacing="0px" stroke-width=".26458px" word-spacing="0px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:52.91666412px" xml:space="preserve"><tspan x="119.016" y="67.963928">Vehicle</tspan></text>
+        </g>
+        <g transform="translate(3.5374)">
+            <rect x="42.027" y="53.916" width="59.591" height="21.026" ry="4.2396" fill="#ffbf5f" fill-opacity=".83333" stroke="#ffbf5f"
+                  stroke-linejoin="round" stroke-width=".76383"/>
+            <text x="51.184597" y="67.963928" fill="#ffffff" font-family="Arial" font-size="9.8778px" font-weight="bold" letter-spacing="0px" stroke-width=".26458px" word-spacing="0px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:52.91666412px" xml:space="preserve"><tspan x="51.184597" y="67.963928">Location</tspan></text>
+        </g>
+        <rect x="14.527" y="79.31" width="59.591" height="21.026" ry="4.2396" fill="#ffbf5f" fill-opacity=".83333" stroke="#ffbf5f"
+              stroke-linejoin="round" stroke-width=".76383"/>
+        <text x="30.153719" y="93.358086" fill="#ffffff" font-family="Arial" font-size="9.8778px" font-weight="bold" letter-spacing="0px" stroke-width=".26458px" word-spacing="0px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:52.91666412px" xml:space="preserve"><tspan x="30.153719" y="93.358086">Route</tspan></text>
+        <rect x="14.527" y="104.7" width="59.591" height="21.026" ry="4.2396" fill="#ffbf5f" fill-opacity=".83333" stroke="#ffbf5f"
+              stroke-linejoin="round" stroke-width=".76383"/>
+        <text x="19.439737" y="118.75223" fill="#ffffff" font-family="Arial" font-size="9.8778px" font-weight="bold" letter-spacing="0px" stroke-width=".26458px" word-spacing="0px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:52.91666412px" xml:space="preserve"><tspan x="19.439737" y="118.75223">Constraint</tspan></text>
+        <text dy="-8" fill="#ffffff" font-family="'Century Gothic'" font-size="9.8778px" font-weight="bold" letter-spacing="0px" stroke-width=".26458px" word-spacing="0px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:52.91666412px" xml:space="preserve"><textPath startOffset="270" xlink:href="#b"><tspan fill="#ffffff" font-family="'Century Gothic'" font-size="9.8778px" font-weight="bold" stroke-width=".26458px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal">projected</tspan></textPath></text>
+        <text dy="-8" fill="#ffffff" font-family="Arial" font-size="9.8778px" font-weight="bold" letter-spacing="0px" stroke-width=".26458px" word-spacing="0px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:52.91666412px" xml:space="preserve"><textPath startOffset="85" xlink:href="#a"><tspan fill="#ffffff" font-family="Arial" font-size="9.8778px" font-weight="bold" stroke-width=".26458px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal">actual</tspan></textPath></text>
+        <text dy="-8" fill="#ffffff" font-family="Arial" font-size="9.8778px" font-weight="bold" letter-spacing="0px" stroke-width=".26458px" word-spacing="0px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:52.91666412px" xml:space="preserve"><textPath startOffset="270" xlink:href="#c"><tspan fill="#ffffff" font-family="Arial" font-size="9.8778px" font-weight="bold" stroke-width=".26458px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal">planned</tspan></textPath></text>
+        <text fill="#000000" font-family="Arial" font-size="9.8778px" font-weight="bold" letter-spacing="0px" stroke-width=".26458px" word-spacing="0px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal;line-height:52.91666412px" xml:space="preserve"><textPath startOffset="60" xlink:href="#d"><tspan dy="-8" fill="#ffffff" font-family="Arial" font-size="9.8778px" font-weight="bold" stroke-width=".26458px" style="font-feature-settings:normal;font-variant-caps:normal;font-variant-ligatures:normal;font-variant-numeric:normal">realized</tspan></textPath></text>
+    </g>
 </svg>
