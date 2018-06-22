@@ -352,7 +352,7 @@ tags:
 
       ### assignDriverEvent, deassignDriverEvent
 
-      (De)assigns an `Actor` as a driver to/from a `Trip`.
+      (De)assigns an `Actor` as a driver to/from a `Vehicle`.
 
       _Applicable entities for `assignDriverEvent` and `deassignDriverEvent`:_
 
