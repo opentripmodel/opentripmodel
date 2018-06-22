@@ -48,6 +48,10 @@ info:
     roll-back scenario's. A typical use case is when the originating system is not event based, and it has to communicate an entire "planning" at
     once. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
 
+    ## Changes since 4.2.0-b2
+    - Added the [`Contraint`](#tag/Constraint)-type `eventOrderConstraint`,  to constrain the order of event if there are no timestamps available.
+    - Updated the diagram in the section [The model](#section/The-model) to reflect recent changes.
+
     ## Changes since 4.2.0-b1
     - Added [top level `/events` endpoint]/paths/~1events/get)
     - Added `involvedObject` query parameter for filtering events
@@ -2719,7 +2723,12 @@ components:
           items:
             $ref: '#/components/schemas/contactDetail'
         constraint:
-          $ref: '#/components/schemas/constraint'
+          allOf:
+            - description: |
+                In the context of a `Location`, access to the location is only allowed if the given constraint applies.
+
+                > **ℹ Note** that constraints can be nested and combined using the `andConstraint`, `orConstraint` and `notConstraint`.
+            - $ref: '#/components/schemas/constraint'
         remarks:
           type: string
           description: |
@@ -3270,6 +3279,24 @@ components:
         - $ref: '#/components/schemas/constraint'
         - $ref: '#/components/schemas/dayOfWeekTimeRange'
 
+    eventOrderConstraint:
+      allOf:
+        - $ref: '#/components/schemas/constraint'
+        - properties:
+            eventOrderConstraintType:
+              description: |
+                The type of event order constraint. Available types are:
+                  - `before`: The event this constraint is placed on should occur before the referenced event.
+                  - `after`: The event this constraint is placed on should occur after the referenced event.
+              type: string
+              enum:
+                - before
+                - after
+            eventReference:
+              description: The URI of the referenced event.
+              type: string
+              format: uri
+
     sizeConstraint:
       allOf:
         - $ref: '#/components/schemas/constraint'
@@ -3748,7 +3775,13 @@ components:
             Free format text field that can be used to describe the contents of this shipment.
           example: 50 boxes of bananas
         constraint:
-          $ref: '#/components/schemas/constraint'
+          allOf:
+            - description: |
+                In the context of a `Shipment`, constraints can be used to e.g. define minimum or maximum temperatures for shipments, or date time
+                constraints for delivery.
+
+                > **ℹ Note** that constraints can be nested and combined using the `andConstraint`, `orConstraint` and `notConstraint`.
+            - $ref: '#/components/schemas/constraint'
 
     trip:
       type: object
@@ -3795,7 +3828,13 @@ components:
           example: |
             https://api.opentripmodel.org/api/public/v4/routes/9df853e4-1291-40de-bfc1-4e5d7b23cc76
         constraint:
-          $ref: '#/components/schemas/constraint'
+          allOf:
+            - description: |
+                In the context of a `Trip`, constraints can be used to define constraints that have to be met during the trip, e.g. if the temperature
+                in a refridgerated trailer has to stay below a given maximum during the trip.
+
+                > **ℹ Note** that constraints can be nested and combined using the `andConstraint`, `orConstraint` and `notConstraint`.
+            - $ref: '#/components/schemas/constraint'
 
     route:
       type: object
@@ -4001,6 +4040,19 @@ components:
           description: |
             Remarks for this event.
           example: The traffic lights weren't working
+        constraint:
+          allOf:
+            - description: |
+                In the context of an `Event`, a `Constraint` can be used to constrain the order of events. This can be useful if events don't have
+                any timestamp but you need to guarantee that a certain event occurs before another event. The only constraint types that are valid in
+                the context of an `Event` are:
+
+                - `eventOrderConstraint`;
+                - `andConstraint`;
+                - `orConstraint`;
+                - `constraintReference`.
+            - $ref: '#/components/schemas/constraint'
+
       discriminator:
         propertyName: type
       required:
