@@ -51,6 +51,9 @@ info:
     ## Changes since 4.2.0-b2
     - Added the [`Contraint`](#tag/Constraint)-type `eventOrderConstraint`,  to constrain the order of event if there are no timestamps available.
     - Updated the diagram in the section [The model](#section/The-model) to reflect recent changes.
+    - Added the possibility to add a `constraint` directly to a `Sensor` entity.
+    - Added a `placement` field to the `loadShipmentEvent`.
+    - Numeric values in `valueWithUnit` can now be any numeric type, not just `int32`.
 
     ## Changes since 4.2.0-b1
     - Added [top level `/events` endpoint]/paths/~1events/get)
@@ -3660,6 +3663,15 @@ components:
             $ref: '#/components/schemas/idReference'
         sensorType:
           $ref: '#/components/schemas/sensorType'
+        constraint:
+          allOf:
+            - description: |
+                In the context of a `Sensor`, only `sensorValueConstraint`s really make sense. You can use such a constraint to model a sensor of\
+                which the measured value must be within certain bounds at all times.
+
+                > **ℹ Note** that constraints can be nested and combined using the `andConstraint`, `orConstraint` and `notConstraint`.
+            - $ref: '#/components/schemas/constraint'
+
 
     sensorType:
       type: object
@@ -4187,6 +4199,12 @@ components:
         - properties:
             location:
               $ref: '#/components/schemas/updateEvent_location'
+            placement:
+              type: string
+              description: |
+                Sometimes a `Vehicle` has multiple compartments, e.g. to have gefridgerated zones with different temperatures. You can use the
+                placement value to specify if a `Shipment` should be loaded into a specific compartment of the `Vehicle`.
+              example: Compartment 1
 
     unloadShipmentEvent:
       description: |
@@ -4352,8 +4370,7 @@ components:
           description: measurement unit of this value
           example: kg
         value:
-          type: integer
-          format: int32
+          type: number
           description: value in the given unit
           example: 42
       required:
