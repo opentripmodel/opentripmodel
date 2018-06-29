@@ -21,6 +21,7 @@ info:
     to have certain `involvedObjects` available in the event. The examples do not reflect these requirements, since there is (currently) no way
     to express these in terms of an OpenAPI specification.
 
+
     # The model
     <iframe src="images/otm-model.svg" height="350" width="350" style="border:0px;"></iframe>
 
@@ -32,6 +33,7 @@ info:
     Apart from these entities, perhaps the most important entity in OpenTripModel is the **[Event](/#tag/Event)**. All dynamic behaviour is modeled
     as (a series of) event(s). Please refer to the sections [Important Concepts](https://www.opentripmodel.org/docs/concepts) and
     [Event entity](https://www.opentripmodel.org/docs/event-entity) of the general documentation for an introduction.
+
 
     # Technical notes
 
@@ -64,7 +66,6 @@ info:
     - Added overview documentation about [Involved objects](#involved-objects)
     - Updated the specification definition to [OpenAPI 3.0.0](https://swagger.io/specification/)
 
-
     ## Changes since 4.1
     - Rewrite of the [documentation on `Event`s](#tag/Event).
     - Added `groupingId` to `Event`s.
@@ -78,7 +79,6 @@ info:
         - Added `coupleSensorEvent` and `decoupleSensorEvent`
         - Updated `sensorValueConstraint`
         - Added `sensorUpdateFrequencyConstraint`
-
 
     ## Changes since 4.0
     - The `administrativeReference` member of the `Location` entity is now camelCased, like all other members. In OTM 4.0 it was inconsistently
@@ -4202,7 +4202,7 @@ components:
             placement:
               type: string
               description: |
-                Sometimes a `Vehicle` has multiple compartments, e.g. to have gefridgerated zones with different temperatures. You can use the
+                Sometimes a `Vehicle` has multiple compartments, e.g. to have refridgerated zones with different temperatures. You can use the
                 placement value to specify if a `Shipment` should be loaded into a specific compartment of the `Vehicle`.
               example: Compartment 1
 
