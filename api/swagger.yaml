@@ -1846,7 +1846,7 @@ parameters:
     required: false
     description: |
       The schema of external ID, to search for entities by their external IDs. This would return all entities that have an external ID reference with
-      the given schema. This could still be a lot of entities. Combine with the `externalIdSchema` query parameter to limit the number of results
+      the given schema. This could still be a lot of entities. Combine with the `externalIdValue` query parameter to limit the number of results
       further.
   externalIdValueParam:
     name: externalIdValue
