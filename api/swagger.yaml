@@ -2301,7 +2301,7 @@ paths:
       description: |
         By putting a bundle on the server, a client can create or update multiple entities in one call. This can bring down the number of calls,
         thus reducing network traffic. It also ensures all entities in the bundle are validated at the same time and no entities are created or
-        updated if there is an error in the bundle. This can be sees as a simple form of transaction. Bundles are not saved as an entity of their own.
+        updated if there is an error in the bundle. This can be seen as a simple form of transaction. Bundles are not saved as an entity of their own.
         This means there's no `GET` call on the bundle endpoint.
       tags:
         - Bundle
