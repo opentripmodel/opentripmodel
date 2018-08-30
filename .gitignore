@@ -6,3 +6,5 @@ api/swagger_v.yaml
 /codeship.aes
 /aws.env
 /taskdef-prod.json
+/lib/
+/taskdef-dev.json
