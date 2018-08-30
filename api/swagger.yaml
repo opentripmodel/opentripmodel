@@ -3923,8 +3923,7 @@ components:
             $ref: '#/components/schemas/bundledEntity'
         events:
           description: |
-            An array of events. Often, the order of events will be determined by the timestamps of the events. If there are events without timestamp,
-            events are assumed to occur it the order they are listed in the bundle.
+            An array of events. The order of events is determined by the timestamps as explained on the [Ordering of events](https://www.opentripmodel.org/v4.2.0/docs/ordering-of-events) page.
           type: array
           items:
             $ref: '#/components/schemas/event'
