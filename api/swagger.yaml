@@ -56,6 +56,7 @@ info:
     - Added the possibility to add a `constraint` directly to a `Sensor` entity.
     - Added a `placement` field to the `loadShipmentEvent`.
     - Numeric values in `valueWithUnit` can now be any numeric type, not just `int32`.
+    - More explicit documentation on event ordering in relation to the `cancelAllEntityEvents` event.
 
     ## Changes since 4.2.0-b1
     - Added [top level `/events` endpoint]/paths/~1events/get)
@@ -473,7 +474,7 @@ tags:
       In such a case, it can be more efficient to just cancel all events and start over. You can only cancel events that are in the
       same lifecycle phase as the `cancelAllEntityEvents` you are sending. If there are any `cancelAllEntityEvents` for the given entity, those will not be cancelled.
 
-      _How to determine which events get cancelled_:
+      #### How to determine which events get cancelled:
 
       In order to preserve idempotence without making it impossible to insert new events for the given entity, this event follows
       a specific rule about timing.
@@ -482,8 +483,8 @@ tags:
       [Ordering of events](https://www.opentripmodel.org/v4.2.0/docs/ordering-of-events)
 
       The main rule is:
-      #### A `cancelAllEntityEvents` event cancels every associated events of the given entity with an `eventGenerationTime` earlier than
-      the `time` given in the `cancelAllEntityEvents` body.
+      > **A `cancelAllEntityEvents` event cancels every associated event of the given entity with an `eventGenerationTime` earlier than
+      the `time` given in the `cancelAllEntityEvents` body.**
 
       As an example, take the two events given in the [Ordering of events](https://www.opentripmodel.org/v4.2.0/docs/ordering-of-events) page:
       * A `planned` `stopMovingEvent` with `time` = _2018-09-05T12:00Z_ and `eventGenerationTime` = _2018-08-30T10:15Z_
