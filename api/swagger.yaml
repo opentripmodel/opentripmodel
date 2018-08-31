@@ -23,7 +23,7 @@ info:
 
 
     # The model
-    <iframe src="images/otm-model.svg" height="350" width="350" style="border:0px;"></iframe>
+    <img src="images/otm-model.svg" width="350" style="border:0px;"/>
 
     OpenTripModel defines entities, displayed yellow in the image. You can click on the boxes in the image to jump to the corresponding section in
     this API Reference Documentation. For a more conceptual introduction to the entities, please read the
@@ -495,7 +495,7 @@ tags:
       can only cancel events in their own lifeCycle. It is given `time` = _2018-08-30T09:45Z_ and `eventGenerationTime` = _2018-08-30T11:48Z_
       This eventGenerationTime is the time the cancelAllEntityEvents object was generated and is not relevant beyond that.
 
-      <iframe src="images/cancel-all-entity-events-timing.svg" height="252" width="1134" style="border:0px;"></iframe>
+      <img src="images/cancel-all-entity-events-timing.svg" width="800" style="border:0px;"/>
 
       In this example, the 'cutoff point' for the cancelAllEntityEvents is 2018-08-30T09:45Z. All events associated with the vehicle with an `eventGenerationTime`
       earlier than that are cancelled. Events with an `eventGenerationTime` after the cutoff point are not cancelled, so the `stopMovingEvent` stays active.
