@@ -472,7 +472,8 @@ tags:
       generated before the time given in the `cancelAllEntityEvents` are cancelled.
       This might be needed e.g. in cases where a `Trip` with lots of `planned` events is published and the planning is changed.
       In such a case, it can be more efficient to just cancel all events and start over. You can only cancel events that are in the
-      same lifecycle phase as the `cancelAllEntityEvents` you are sending. If there are any `cancelAllEntityEvents` for the given entity, those will not be cancelled.
+      same lifecycle phase as the `cancelAllEntityEvents` you are sending. If there are any `cancelAllEntityEvents` for the given entity, those will
+      not be cancelled.
 
       #### How to determine which events get cancelled:
 
@@ -480,32 +481,34 @@ tags:
       a specific rule about timing.
 
       This rule is based on the different event timing orders as explained in the main OpenTripModel documentation:
-      [Ordering of events](https://www.opentripmodel.org/v4.2.0/docs/ordering-of-events)
+      [Ordering of events](https://www.opentripmodel.org/v4.2.0/docs/ordering-of-events).
 
       The main rule is:
       > **A `cancelAllEntityEvents` event cancels every associated event of the given entity with an `eventGenerationTime` earlier than
-      the `time` given in the `cancelAllEntityEvents` body.**
+        the `time` given in the `cancelAllEntityEvents` body.**
 
       As an example, take the two events given in the [Ordering of events](https://www.opentripmodel.org/v4.2.0/docs/ordering-of-events) page:
       * A `planned` `stopMovingEvent` with `time` = _2018-09-05T12:00Z_ and `eventGenerationTime` = _2018-08-30T10:15Z_
       * A `planned` `startMovingEvent` with `time` = _2018-09-05T13:00Z_ and `eventGenerationTime` = _2018-08-30T09:15Z_
+
       Both events have the same vehicle as an `involvedObject`.
 
       * A user inserts a `cancelAllEntityEvents` for this vehicle. This event is inserted in the `planned` lifeCycle because cancel Events
-      can only cancel events in their own lifeCycle. It is given `time` = _2018-08-30T09:45Z_ and `eventGenerationTime` = _2018-08-30T11:48Z_
-      This eventGenerationTime is the time the cancelAllEntityEvents object was generated and is not relevant beyond that.
+        can only cancel events in their own lifeCycle. It is given `time` = _2018-08-30T09:45Z_ and `eventGenerationTime` = _2018-08-30T11:48Z_
+        This eventGenerationTime is the time the `cancelAllEntityEvents` object was generated and is not relevant beyond that.
 
       <img src="images/cancel-all-entity-events-timing.svg" width="800" style="border:0px;"/>
 
-      In this example, the 'cutoff point' for the cancelAllEntityEvents is 2018-08-30T09:45Z. All events associated with the vehicle with an `eventGenerationTime`
-      earlier than that are cancelled. Events with an `eventGenerationTime` after the cutoff point are not cancelled, so the `stopMovingEvent` stays active.
+      In this example, the 'cutoff point' for the `cancelAllEntityEvents` is _2018-08-30T09:45Z_. All events associated with the vehicle with an
+      `eventGenerationTime` earlier than that are cancelled. Events with an `eventGenerationTime` after the cutoff point are not cancelled, so the
+      `stopMovingEvent` stays active.
 
       A few edge cases have been identified:
-      * Events with an eventGenerationTime exactly _equal_ to the `time` of the `cancelAllEntityEvents` are _not_ cancelled. This makes it more straightforward
-      to use a `cancelAllEntityEvents` as part of a larger update containing new events that should not be cancelled.
+      * Events with an `eventGenerationTime` exactly _equal_ to the `time` of the `cancelAllEntityEvents` are _not_ cancelled. This makes it more
+        straightforward to use a `cancelAllEntityEvents` as part of a larger update containing new events that should not be cancelled.
       * A `cancelAllEntityEvents` with a `time` after its own `eventGenerationTime` is invalid and should not be used.
-      * Events without an explicit `eventGenerationTime` cannot be cancelled by a `cancelAllEntityEvents`. Make sure to use the `eventGenerationTime` on all events
-      if you want to make use of the `cancelAllEntityEvents`.
+      * Events without an explicit `eventGenerationTime` cannot be cancelled by a `cancelAllEntityEvents`. Make sure to use the `eventGenerationTime`
+        on all events if you want to make use of the `cancelAllEntityEvents`.
 
       _Applicable entities for `cancelAllEntityEvents`:_
 
