@@ -495,7 +495,8 @@ tags:
 
       * A user inserts a `cancelAllEntityEvents` for this vehicle. This event is inserted in the `planned` lifeCycle because cancel Events
         can only cancel events in their own lifeCycle. It is given `time` = _2018-08-30T09:45Z_ and `eventGenerationTime` = _2018-08-30T11:48Z_
-        This eventGenerationTime is the time the `cancelAllEntityEvents` object was generated and is not relevant beyond that.
+
+      This `eventGenerationTime` is the time the `cancelAllEntityEvents` object was generated and is not relevant beyond that.
 
       <img src="images/cancel-all-entity-events-timing.svg" width="800" style="border:0px;"/>
 
