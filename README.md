@@ -57,23 +57,34 @@ pip install datadog
 pip install semver
 ```
 
+You will also need to add the redoc js library. From the repository's root directory:
+```bash
+mkdir -p "lib/redoc-2.0.0-alpha.38"
+wget "https://cdn.jsdelivr.net/npm/redoc@2.0.0-alpha.38/bundles/redoc.standalone.js" -P "lib/redoc-2.0.0-alpha.38/"
+wget "https://cdn.jsdelivr.net/npm/redoc@2.0.0-alpha.38/bundles/redoc.standalone.js.map" -P "lib/redoc-2.0.0-alpha.38/"
+```
+
 After that, you can start the server:
 
 ```bash
-python http-server/server.py
+cd http-server
+python ./server.py
 ```
 
 The server expects some environment variables to be set:
 
-* `ENVIRONMENT`: the environment that will be reported to 
-  [Datadog](https://www.datadoghq.com/), to be able to distinguish metrics
-  from different environments.
+
 * `GITHUB_TOKEN`: a GitHub token to access the GitHub repository via the 
   GitHub API. This is needed because the different versions of the 
   specification are loaded from GitHub.
 * `LOGENTRIES_TOKEN`: Token to publish application logs to 
   [Logentries](https://logentries.com/). If not set, logs will only be
   written to the console.
+* `DATADOG_API_KEY`: Token to publish metrics to 
+  [Datadog](https://www.datadoghq.com/). If not set, no metrics will be sent.
+* `ENVIRONMENT`: the environment that will be reported to 
+  [Datadog](https://www.datadoghq.com/), to be able to distinguish metrics
+  from different environments. Only necessary if `DATADOG_API_KEY` is set.
 * `LOCAL_HTML_FILE`: Boolean, indicating if the `index.html` file should
   be served from the local file system (`true`) or from GitHub (`false`).
   If omitted, the file is served from GitHub.
