@@ -10,7 +10,7 @@ from cachetools import TTLCache
 from logentries import LogentriesHandler
 
 
-class Datadog:
+class DatadogMetrics:
     import socket
     from datadog import api
     from datadog import ThreadStats
@@ -72,6 +72,20 @@ class Datadog:
         self.stats.flush()
 
 
+class NoopMetrics:
+    def __init__(self):
+        pass
+
+    def request(self, verb, request_type, version):
+        pass
+
+    def github_resource(self, file, version, from_cache, status_code=None):
+        pass
+
+    def event(self, title, text):
+        pass
+
+
 HOST_NAME = '0.0.0.0'
 PORT_NUMBER = 9000
 
@@ -84,7 +98,11 @@ LOCAL_HTML_FILE = os.environ.get("LOCAL_HTML_FILE", "False").upper() == "TRUE"
 LOCAL_SWAGGER_FILE = os.environ.get("LOCAL_SWAGGER_FILE", "False").upper() == "TRUE"
 SHOW_ALPHA_VERSIONS = os.environ.get('SHOW_ALPHA_VERSIONS', 'False').upper() == "TRUE"
 
-datadog = Datadog()
+if 'DATADOG_API_KEY' in os.environ:
+    metrics = DatadogMetrics()
+else:
+    log.warning("No DATADOG_API_KEY found in environment. Running server without datadog metrics")
+    metrics = NoopMetrics()
 
 
 class MyHandler(BaseHTTPRequestHandler):
@@ -107,7 +125,7 @@ class MyHandler(BaseHTTPRequestHandler):
     GITHUB_TOKEN_STRING = 'token {}'.format(GITHUB_TOKEN)
 
     def do_HEAD(self):
-        datadog.request('HEAD', None, None)
+        metrics.request('HEAD', None, None)
         self.send_response(200)
         self.send_header('Content-type', 'text/html')
         self.end_headers()
@@ -139,7 +157,8 @@ class MyHandler(BaseHTTPRequestHandler):
             tags_list = req.json()
             tags = dict((t.get('name').rsplit('/')[-1], t) for t in tags_list)
             if not SHOW_ALPHA_VERSIONS:
-                unwanted_tags = set(key for key in tags.keys() if str(semver.parse(key).get('prerelease', '')).upper().startswith('A'))
+                unwanted_tags = set(
+                    key for key in tags.keys() if str(semver.parse(key).get('prerelease', '')).upper().startswith('A'))
                 tags = dict((key, value) for key, value in tags.items() if key not in unwanted_tags)
 
             if version == 'health':
@@ -165,13 +184,13 @@ class MyHandler(BaseHTTPRequestHandler):
                     sha = tag['commit']['sha']
 
                     if file == 'index.html' or file == '':
-                        datadog.request('GET', "index.html", version)
+                        metrics.request('GET', "index.html", version)
                         self.handle_index_html(sha, tags, version, LOCAL_HTML_FILE)
                     elif file == 'swagger.yaml':
-                        datadog.request('GET', "swagger.yaml", version)
+                        metrics.request('GET', "swagger.yaml", version)
                         self.handle_swagger_yaml(sha, version, LOCAL_SWAGGER_FILE)
                     else:
-                        datadog.request('GET', file_extension, version)
+                        metrics.request('GET', file_extension, version)
                         self.handle_github_file(file, file_extension, sha, version)
                 else:
                     self.handle_github_file("{}/{}".format(version, file), file_extension, "master", version)
@@ -254,9 +273,9 @@ class MyHandler(BaseHTTPRequestHandler):
                 "https://raw.githubusercontent.com/opentripmodel/opentripmodel/{}/{}".format(sha, file))
             if result.status_code in (200, 201):
                 files_cache.setdefault(cachekey, result)
-            datadog.github_resource(file=file, version=version, from_cache=True, status_code=result.status_code)
+            metrics.github_resource(file=file, version=version, from_cache=True, status_code=result.status_code)
         else:
-            datadog.github_resource(file=file, version=version, from_cache=True)
+            metrics.github_resource(file=file, version=version, from_cache=True)
         return result
 
     def handle_redirect(self, url):
@@ -315,11 +334,11 @@ if __name__ == '__main__':
 
     httpd = HTTPServer((HOST_NAME, PORT_NUMBER), MyHandler)
     log.info('Server Starts - %s:%s', HOST_NAME, PORT_NUMBER)
-    datadog.event('OTM Spec Server Starts', 'HTTP server starts listening on {}:{}'.format(HOST_NAME, PORT_NUMBER))
+    metrics.event('OTM Spec Server Starts', 'HTTP server starts listening on {}:{}'.format(HOST_NAME, PORT_NUMBER))
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
     httpd.server_close()
     log.info('Server Stops - %s:%s', HOST_NAME, PORT_NUMBER)
-    datadog.event('OTM Spec Server Stops', 'HTTP server stopped listening on {}:{}'.format(HOST_NAME, PORT_NUMBER))
+    metrics.event('OTM Spec Server Stops', 'HTTP server stopped listening on {}:{}'.format(HOST_NAME, PORT_NUMBER))
