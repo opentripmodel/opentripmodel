@@ -988,6 +988,7 @@ paths:
       tags:
         - Route
       parameters:
+        - $ref: '#/components/parameters/nameParam'
         - $ref: '#/components/parameters/actorQueryParam'
         - $ref: '#/components/parameters/externalIdSchemaParam'
         - $ref: '#/components/parameters/externalIdValueParam'
@@ -2734,7 +2735,7 @@ components:
             $ref: '#/components/schemas/idReference'
         name:
           type: string
-          description: Name of the `Actor`. For display purposes only.
+          description: Name of the `Actor`. For display purposes and search only.
           example: 'My awesome company, Ltd.'
 
     location:
@@ -2752,7 +2753,7 @@ components:
             https://api.opentripmodel.org/api/public/v4/locations/11c11d75-e114-4b5f-9751-b3a4afa23ecf
         name:
           type: string
-          description: 'Name of the location. Used for display, filtering and display.'
+          description: Name of the `Location`. For display purposes and search only.
           example: Main warehouse
         externalIds:
           type: array
@@ -3238,6 +3239,10 @@ components:
                        `Location`, the `id` field is only used if the `type` is `constraintReference`, to refer to a predefined `Constraint`.
           example: |
             https://api.opentripmodel.org/api/public/v4/constraints/6d4b4ac8-0122-457f-89cf-15f6d82ac2ec
+        name:
+          type: string
+          description: Name of the `Constraint`. For display purposes and search only.
+          example: Langestraat bridge max weight
         type:
           description: |
             The constraint type. Set the type to `constraintReference` te refer to a predefined top-level constraint. In that case, use the `id`
@@ -3564,9 +3569,10 @@ components:
           example: |
             https://api.opentripmodel.org/api/public/v4/vehicles/b9bb914d-845e-46f2-91ff-31fa4bac2fbe
         name:
+
           type: string
           description: |
-            Name of the `Vehicle`, mainly used for display and search purposes.
+            Name of the `Vehicle`. For display and search purposes only.
           example: Otto's truck
         externalIds:
           type: array
@@ -3692,7 +3698,7 @@ components:
         name:
           type: string
           description: |
-            Name of the `Sensor`, mainly used for display and search purposes.
+            Name of the `Sensor`, for display and search purposes only.
           example: Temperature sensor in trailer x
         placement:
           type: string
@@ -3761,6 +3767,10 @@ components:
             it. Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
           example: |
             https://api.opentripmodel.org/api/public/v4/shipments/ddb488f2-9082-4ec9-bd88-3c4e703a103d
+        name:
+          type: string
+          description: Name of the `Shipment`. For display purposes and search only.
+          example: Special delivery for store 3
         externalIds:
           type: array
           description: |
@@ -3865,7 +3875,7 @@ components:
         name:
           type: string
           description: |
-            Name of the `Trip`, only used for display and search purposes.
+            Name of the `Trip`, for display and search purposes only.
           example: Warehouse to shop
         linkedTrips:
           type: array
@@ -3905,6 +3915,10 @@ components:
             Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
           example: |
             https://api.opentripmodel.org/api/public/v4/routes/fcc0828c-591f-4b3c-bc48-7dc8856e7f2a
+        name:
+          type: string
+          description: Name of the `Route`. For display purposes and search only.
+          example: Quickest from Amsterdam warehouse to Maastricht store
         externalIds:
           type: array
           description: |
