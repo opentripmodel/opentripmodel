@@ -50,6 +50,12 @@ info:
     roll-back scenario's. A typical use case is when the originating system is not event based, and it has to communicate an entire "planning" at
     once. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
 
+    ## Changes since 4.2.0-b3
+    - Added the `name` field to `Constraint`, `Shipment` and `Route`, so that all Entities use it in the same way.
+    - Added `externalIds` to `Constraint`, so that all Entities use it in the same way.
+    - Updated `trafficWarningEvent` to reflect the fact that it needs at least one Location or Route, it does not require both.
+    - The eventGenerationTime now may be set by the recipient if the sender does not set it.
+
     ## Changes since 4.2.0-b2
     - Added the [`Contraint`](#tag/Constraint)-type `eventOrderConstraint`,  to constrain the order of event if there are no timestamps available.
     - Updated the diagram in the section [The model](#section/The-model) to reflect recent changes.
@@ -509,7 +515,8 @@ tags:
         straightforward to use a `cancelAllEntityEvents` as part of a larger update containing new events that should not be cancelled.
       * A `cancelAllEntityEvents` with a `time` after its own `eventGenerationTime` is invalid and should not be used.
       * Events without an explicit `eventGenerationTime` cannot be cancelled by a `cancelAllEntityEvents`. Make sure to use the `eventGenerationTime`
-        on all events if you want to make use of the `cancelAllEntityEvents`.
+        on all events if you want to make use of the `cancelAllEntityEvents`. Note that if the sender does not set the eventGenerationTime on an event,
+        the recipient may set this field to the time of receival.
 
       _Applicable entities for `cancelAllEntityEvents`:_
 
@@ -3577,7 +3584,6 @@ components:
           example: |
             https://api.opentripmodel.org/api/public/v4/vehicles/b9bb914d-845e-46f2-91ff-31fa4bac2fbe
         name:
-
           type: string
           description: |
             Name of the `Vehicle`. For display and search purposes only.
@@ -4109,6 +4115,8 @@ components:
             This field can optionally contain the date and time this event was generated. This can be useful e.g. for events in the `projected`
             lifecycle phase, that typically are calculated. The generation (calculation) time can be an indicator for the relevance of the event.
             The `eventGenerationTime` should always be in the past.
+
+            If the sender of an OTM event does not set the eventGenerationTime, the recipient may set it to the current time.
 
             All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation:
             `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
