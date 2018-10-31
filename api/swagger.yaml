@@ -57,6 +57,7 @@ info:
     - The eventGenerationTime now may be set by the recipient if the sender does not set it.
     - `Actor` now supports the same contactDetails field `Location` already had.
     - `Shipment` now has a count field for shipments that are counted in units of packaging.
+    - Inline location in an `Event` is now always optional because it's also possible to use an involvedObject Location.
 
     ## Changes since 4.2.0-b2
     - Added the [`Contraint`](#tag/Constraint)-type `eventOrderConstraint`,  to constrain the order of event if there are no timestamps available.
@@ -191,7 +192,9 @@ tags:
 
       | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
       | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
-      | &#160;   | ●       | &#160;   | &#160;| &#160;| &#160;| &#160;     | &#160; | &#160;|
+      | □        | ●       | &#160;   | &#160;| &#160;| &#160;| &#160;     | &#160; | &#160;|
+
+      The Location is optional because an inline location reference can be used for this event.
 
       ### sensorUpdateEvent
 
@@ -4181,18 +4184,20 @@ components:
         - properties:
             location:
               $ref: '#/components/schemas/updateEvent_location'
-      required:
-        - location
 
     startMovingEvent:
       allOf:
         - $ref: '#/components/schemas/event'
-        - $ref: '#/components/schemas/locationUpdateEvent'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
 
     stopMovingEvent:
       allOf:
         - $ref: '#/components/schemas/event'
-        - $ref: '#/components/schemas/locationUpdateEvent'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
 
     startWaitingEvent:
       allOf:
@@ -4211,12 +4216,16 @@ components:
     startLoadingAndUnloadingEvent:
       allOf:
         - $ref: '#/components/schemas/event'
-        - $ref: '#/components/schemas/locationUpdateEvent'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
 
     stopLoadingAndUnloadingEvent:
       allOf:
         - $ref: '#/components/schemas/event'
-        - $ref: '#/components/schemas/locationUpdateEvent'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
 
     startEngineEvent:
       allOf:
@@ -4258,7 +4267,9 @@ components:
     decoupleVehiclesEvent:
       allOf:
         - $ref: '#/components/schemas/event'
-        - $ref: '#/components/schemas/locationUpdateEvent'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
 
     assignDriverEvent:
       allOf:
@@ -4312,7 +4323,9 @@ components:
         This event models the reception of a `Shipment` at a `Location`. This event often takes place at the same time as a `unloadShipmentEvent`.
       allOf:
         - $ref: '#/components/schemas/event'
-        - $ref: '#/components/schemas/locationUpdateEvent'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
 
     releaseShipmentEvent:
       description: |
@@ -4320,12 +4333,16 @@ components:
         `loadShipmentEvent`.
       allOf:
         - $ref: '#/components/schemas/event'
-        - $ref: '#/components/schemas/locationUpdateEvent'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
 
     restrictionWarningEvent:
       allOf:
         - $ref: '#/components/schemas/event'
-        - $ref: '#/components/schemas/locationUpdateEvent'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
         - properties:
             warning:
               type: string
@@ -4336,7 +4353,9 @@ components:
     trafficWarningEvent:
       allOf:
         - $ref: '#/components/schemas/event'
-        - $ref: '#/components/schemas/locationUpdateEvent'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
         - properties:
             warning:
               type: string
