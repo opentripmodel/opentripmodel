@@ -3860,8 +3860,7 @@ components:
           description: |
             Amount of units of packaging. For instance, if this field is '2' and packaging is 'pallet', this indicates the shipment
             contains 2 pallets.
-
-            Note: This field can be used alongside dimensions and weight, but dimensions and weight always apply
+            > Note: This field can be used alongside dimensions and weight, but dimensions and weight always apply
             to the entire shipment, not to a single unit of packaging.
           example: 2
         type:
