@@ -59,6 +59,7 @@ info:
     - `Shipment` now has a count field for shipments that are counted in units of packaging.
     - Inline location in an `Event` is now always optional because it's also possible to use an involvedObject Location.
     - Removed linkedTrips array from the `Trip` Entity. Trips should be linked using the `linkTripsEvent`.
+    - Removed links array from the `Vehicle` Entity. Vehicles should be linked using the `coupleVehiclesEvent`.
 
     ## Changes since 4.2.0-b2
     - Added the [`Contraint`](#tag/Constraint)-type `eventOrderConstraint`,  to constrain the order of event if there are no timestamps available.
@@ -3613,15 +3614,6 @@ components:
           format: int32
           description: |
             Maximum number of links to other `Vehicle` s. Typical values are 0, 1 or 2.
-        links:
-          type: array
-          readOnly: true
-          description: 'list of URIs, pointing to vehicles this vehicle is linked to'
-          items:
-            type: string
-            format: uri
-            example: |
-              https://api.opentripmodel.org/api/public/v4/vehicles/dc47d2b1-4a88-4f3e-a3f9-cb379dee3f1b
         loadCapacities:
           description: |
             The load capacities of the `Vehicle`. This can be an array of values, for several reasons:
