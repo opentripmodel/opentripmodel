@@ -1985,11 +1985,13 @@ paths:
     get:
       summary: Get a list of Constraints
       description: |
-        Retrieves all known `Constraints`, optionally filtered by (part of the) name.
+        Retrieves all known `Constraints`, optionally filtered by query parameters.
       tags:
         - Constraint
       parameters:
         - $ref: '#/components/parameters/nameParam'
+        - $ref: '#/components/parameters/externalIdSchemaParam'
+        - $ref: '#/components/parameters/externalIdValueParam'
       responses:
         '200':
           description: A list of `Constraints`
@@ -2440,7 +2442,7 @@ components:
       in: query
       required: false
       description: |
-        An external ID value, a part of it, to search for entities by their external IDs. This parameter should be combined with the
+        An external ID value, or a part of it, to search for entities by their external IDs. This parameter should be combined with the
         `externalIdSchema` parameter.
       schema:
         type: string
@@ -3243,6 +3245,12 @@ components:
           type: string
           description: Name of the `Constraint`. For display purposes and search only.
           example: Langestraat bridge max weight
+        externalIds:
+          type: array
+          description: |
+            An optional array of IDs by which the constraint may be known in other systems.
+          items:
+            $ref: '#/components/schemas/idReference'
         type:
           description: |
             The constraint type. Set the type to `constraintReference` te refer to a predefined top-level constraint. In that case, use the `id`
@@ -3576,6 +3584,8 @@ components:
           example: Otto's truck
         externalIds:
           type: array
+          description: |
+            An optional array of IDs by which the vehicle may be known in other systems.
           items:
             $ref: '#/components/schemas/idReference'
         vehicleType:
@@ -3710,6 +3720,8 @@ components:
           example: Compartment 1
         externalIds:
           type: array
+          description: |
+            An optional array of IDs by which the sensor may be known in other systems.
           items:
             $ref: '#/components/schemas/idReference'
         sensorType:
@@ -3774,7 +3786,7 @@ components:
         externalIds:
           type: array
           description: |
-            An optional array of IDs by which the location may be known in other systems.
+            An optional array of IDs by which the shipment may be known in other systems.
           items:
             $ref: '#/components/schemas/idReference'
         physicalSenderId:
@@ -3869,7 +3881,7 @@ components:
         externalIds:
           type: array
           description: |
-            An optional array of IDs by which the location may be known in other systems.
+            An optional array of IDs by which the trip may be known in other systems.
           items:
             $ref: '#/components/schemas/idReference'
         name:
@@ -3922,7 +3934,7 @@ components:
         externalIds:
           type: array
           description: |
-            An optional array of IDs by which the location may be known in other systems.
+            An optional array of IDs by which the route may be known in other systems.
           items:
             $ref: '#/components/schemas/idReference'
         geoReferences:
