@@ -55,6 +55,7 @@ info:
     - Added `externalIds` to `Constraint`, so that all Entities use it in the same way.
     - Updated `trafficWarningEvent` to reflect the fact that it needs at least one Location or Route, it does not require both.
     - The eventGenerationTime now may be set by the recipient if the sender does not set it.
+    - `Actor` now supports the same contactDetails field `Location` already had.
 
     ## Changes since 4.2.0-b2
     - Added the [`Contraint`](#tag/Constraint)-type `eventOrderConstraint`,  to constrain the order of event if there are no timestamps available.
@@ -2746,6 +2747,10 @@ components:
           type: string
           description: Name of the `Actor`. For display purposes and search only.
           example: 'My awesome company, Ltd.'
+        contactDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/contactDetail'
 
     location:
       type: object
