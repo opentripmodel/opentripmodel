@@ -4185,6 +4185,66 @@ components:
             location:
               $ref: '#/components/schemas/updateEvent_location'
 
+    sensorUpdateEvent:
+      allOf:
+      - $ref: '#/components/schemas/event'
+      - properties:
+          location:
+            $ref: '#/components/schemas/updateEvent_location'
+          sensorValue:
+            $ref: '#/components/schemas/valueWithUnit'
+
+    startEngineEvent:
+      allOf:
+        - $ref: '#/components/schemas/event'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
+
+    stopEngineEvent:
+      allOf:
+        - $ref: '#/components/schemas/event'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
+
+
+    restrictionWarningEvent:
+      allOf:
+        - $ref: '#/components/schemas/event'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
+        - properties:
+            warning:
+              type: string
+              description: Restriction warning description
+      required:
+        - warning
+
+    constraintViolationEvent:
+      allOf:
+        - $ref: '#/components/schemas/event'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
+            violatedConstraint:
+              $ref: '#/components/schemas/constraint'
+
+    trafficWarningEvent:
+      allOf:
+        - $ref: '#/components/schemas/event'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
+        - properties:
+            warning:
+              type: string
+              description: Traffic warning description
+      required:
+        - warning
+
+
     startMovingEvent:
       allOf:
         - $ref: '#/components/schemas/event'
@@ -4227,19 +4287,35 @@ components:
             location:
               $ref: '#/components/schemas/updateEvent_location'
 
-    startEngineEvent:
+
+    pickupTimeWindowStartEvent:
       allOf:
         - $ref: '#/components/schemas/event'
         - properties:
             location:
               $ref: '#/components/schemas/updateEvent_location'
 
-    stopEngineEvent:
+    pickupTimeWindowEndEvent:
       allOf:
         - $ref: '#/components/schemas/event'
         - properties:
             location:
               $ref: '#/components/schemas/updateEvent_location'
+
+    deliveryTimeWindowStartEvent:
+      allOf:
+        - $ref: '#/components/schemas/event'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
+
+    deliveryTimeWindowEndEvent:
+      allOf:
+        - $ref: '#/components/schemas/event'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
+
 
     coupleVehiclesEvent:
       allOf:
@@ -4248,13 +4324,12 @@ components:
             location:
               $ref: '#/components/schemas/updateEvent_location'
 
-    coupleSensorEvent:
+    decoupleVehiclesEvent:
       allOf:
         - $ref: '#/components/schemas/event'
-
-    decoupleSensorEvent:
-      allOf:
-        - $ref: '#/components/schemas/event'
+        - properties:
+            location:
+              $ref: '#/components/schemas/updateEvent_location'
 
     assignToTripEvent:
       allOf:
@@ -4263,13 +4338,6 @@ components:
     deassignFromTripEvent:
       allOf:
         - $ref: '#/components/schemas/event'
-
-    decoupleVehiclesEvent:
-      allOf:
-        - $ref: '#/components/schemas/event'
-        - properties:
-            location:
-              $ref: '#/components/schemas/updateEvent_location'
 
     assignDriverEvent:
       allOf:
@@ -4285,14 +4353,42 @@ components:
             location:
               $ref: '#/components/schemas/updateEvent_location'
 
-    sensorUpdateEvent:
+    associateWithActorEvent:
       allOf:
         - $ref: '#/components/schemas/event'
         - properties:
-            location:
-              $ref: '#/components/schemas/updateEvent_location'
-            sensorValue:
-              $ref: '#/components/schemas/valueWithUnit'
+            actor:
+              type: string
+              format: uri
+              description: |
+                Reference to the `Actor` to which the `involvedObjects` are to be associated
+              example: |
+                https://api.opentripmodel.org/api/public/v4/actors/45db6ed0-28a7-4e4a-baba-3d5f8d171103
+            role:
+              type: string
+              description: |
+                The role of the `Actor` with respect to the `involvedObjects`. There are no pre-defined roles, and the role does not have any
+                special meaning in OpenTripModel.
+              example: owner
+
+    dissociateFromActorEvent:
+      allOf:
+        - $ref: '#/components/schemas/event'
+        - properties:
+            actor:
+              type: string
+              format: uri
+              description: |
+                Reference to the `Actor` from which the `involvedObjects` are to be dissociated
+              example: |
+                https://api.opentripmodel.org/api/public/v4/actors/45db6ed0-28a7-4e4a-baba-3d5f8d171103
+            role:
+              type: string
+              description: |
+                The role of the `Actor` with respect to the `involvedObjects`. There are no pre-defined roles, and the role does not have any
+                special meaning in OpenTripModel.
+              example: owner
+
 
     loadShipmentEvent:
       description: |
@@ -4337,74 +4433,24 @@ components:
             location:
               $ref: '#/components/schemas/updateEvent_location'
 
-    restrictionWarningEvent:
-      allOf:
-        - $ref: '#/components/schemas/event'
-        - properties:
-            location:
-              $ref: '#/components/schemas/updateEvent_location'
-        - properties:
-            warning:
-              type: string
-              description: Restriction warning description
-      required:
-        - warning
-
-    trafficWarningEvent:
-      allOf:
-        - $ref: '#/components/schemas/event'
-        - properties:
-            location:
-              $ref: '#/components/schemas/updateEvent_location'
-        - properties:
-            warning:
-              type: string
-              description: Traffic warning description
-      required:
-        - warning
-
     linkTripsEvent:
       allOf:
         - $ref: '#/components/schemas/event'
 
-    pickupTimeWindowStartEvent:
+    coupleSensorEvent:
       allOf:
         - $ref: '#/components/schemas/event'
-        - properties:
-            location:
-              $ref: '#/components/schemas/updateEvent_location'
 
-    pickupTimeWindowEndEvent:
+    decoupleSensorEvent:
       allOf:
         - $ref: '#/components/schemas/event'
-        - properties:
-            location:
-              $ref: '#/components/schemas/updateEvent_location'
 
-    deliveryTimeWindowStartEvent:
-      allOf:
-        - $ref: '#/components/schemas/event'
-        - properties:
-            location:
-              $ref: '#/components/schemas/updateEvent_location'
-
-    deliveryTimeWindowEndEvent:
-      allOf:
-        - $ref: '#/components/schemas/event'
-        - properties:
-            location:
-              $ref: '#/components/schemas/updateEvent_location'
-
-    constraintViolationEvent:
-      allOf:
-        - $ref: '#/components/schemas/event'
-        - properties:
-            location:
-              $ref: '#/components/schemas/updateEvent_location'
-            violatedConstraint:
-              $ref: '#/components/schemas/constraint'
 
     cancelEvent:
+      allOf:
+        - $ref: '#/components/schemas/event'
+
+    cancelAllEntityEvents:
       allOf:
         - $ref: '#/components/schemas/event'
 
@@ -4423,31 +4469,10 @@ components:
                 - a52680d3-18d5-4ad5-baed-ba85bd4ce8dc
                 - 6ebdb45e-d82d-41df-9554-0a1166db9a05
 
-    cancelAllEntityEvents:
-      allOf:
-        - $ref: '#/components/schemas/event'
-
     ignoreEvent:
       allOf:
         - $ref: '#/components/schemas/event'
 
-    associateWithActorEvent:
-      allOf:
-        - $ref: '#/components/schemas/event'
-        - properties:
-            actor:
-              type: string
-              format: uri
-              description: |
-                Reference to the `Actor` to which the `involvedObjects` are to be associated
-              example: |
-                https://api.opentripmodel.org/api/public/v4/actors/45db6ed0-28a7-4e4a-baba-3d5f8d171103
-            role:
-              type: string
-              description: |
-                The role of the `Actor` with respect to the `involvedObjects`. There are no pre-defined roles, and the role does not have any
-                special meaning in OpenTripModel.
-              example: owner
 
     lifecyclePhase:
       type: object
