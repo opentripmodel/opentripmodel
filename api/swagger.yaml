@@ -58,6 +58,7 @@ info:
     - `Actor` now supports the same contactDetails field `Location` already had.
     - `Shipment` now has a count field for shipments that are counted in units of packaging.
     - Inline location in an `Event` is now always optional because it's also possible to use an involvedObject Location.
+    - Removed linkedTrips array from the `Trip` Entity. Trips should be linked using the `linkTripsEvent`.
 
     ## Changes since 4.2.0-b2
     - Added the [`Contraint`](#tag/Constraint)-type `eventOrderConstraint`,  to constrain the order of event if there are no timestamps available.
@@ -3912,16 +3913,6 @@ components:
           description: |
             Name of the `Trip`, for display and search purposes only.
           example: Warehouse to shop
-        linkedTrips:
-          type: array
-          readOnly: true
-          items:
-            type: string
-            format: uri
-            description: |
-              URI of an endpoint to access trip that is linked to this `Trip`. A linked `Trip` can be a `Trip` that precedes or succeeds this `Trip`.
-            example: |
-              https://api.opentripmodel.org/api/public/v4/trips/fce64357-f28b-4de2-a6ac-20f2d0e8d18f
         route:
           type: string
           format: uri
