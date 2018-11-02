@@ -59,9 +59,9 @@ pip install semver
 
 You will also need to add the redoc js library. From the repository's root directory:
 ```bash
-mkdir -p "lib/redoc-2.0.0-alpha.38"
-wget "https://cdn.jsdelivr.net/npm/redoc@2.0.0-alpha.38/bundles/redoc.standalone.js" -P "lib/redoc-2.0.0-alpha.38/"
-wget "https://cdn.jsdelivr.net/npm/redoc@2.0.0-alpha.38/bundles/redoc.standalone.js.map" -P "lib/redoc-2.0.0-alpha.38/"
+mkdir -p "lib/redoc"
+wget "https://cdn.jsdelivr.net/npm/redoc@2.0.0-alpha.41/bundles/redoc.standalone.js" -P "lib/redoc"
+wget "https://cdn.jsdelivr.net/npm/redoc@2.0.0-alpha.41/bundles/redoc.standalone.js.map" -P "lib/redoc"
 ```
 
 After that, you can start the server:
@@ -87,10 +87,16 @@ The server expects some environment variables to be set:
 * `LOCAL_HTML_FILE`: Boolean, indicating if the `index.html` file should
   be served from the local file system (`true`) or from GitHub (`false`).
   If omitted, the file is served from GitHub.
+  
   This variable cannot be used for the Docker container, because it does not contain the HTML file.
+  
+  Note: Older versions of the `index.html` are no longer compatible with the current redoc setup.
+  To see older versions of the spec locally, either set this variable to `false` or install the
+  old redoc versions as described in the Dockerfile.
 * `LOCAL_SWAGGER_FILE`: Boolean, indicating if the `swagger.yaml` file should
   be served from the local file system (`true`) or from GitHub (`false`).
   If omitted, the file is served from GitHub.
+  
   This variable cannot be used for the Docker container, because it does not contain the Swagger file.
   
 
