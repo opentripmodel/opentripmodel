@@ -57,29 +57,48 @@ pip install datadog
 pip install semver
 ```
 
+You will also need to add the redoc js library. From the repository's root directory:
+```bash
+mkdir -p "lib/redoc"
+wget "https://cdn.jsdelivr.net/npm/redoc@2.0.0-alpha.41/bundles/redoc.standalone.js" -P "lib/redoc"
+wget "https://cdn.jsdelivr.net/npm/redoc@2.0.0-alpha.41/bundles/redoc.standalone.js.map" -P "lib/redoc"
+```
+
 After that, you can start the server:
 
 ```bash
-python http-server/server.py
+cd http-server
+python ./server.py
 ```
 
 The server expects some environment variables to be set:
 
-* `ENVIRONMENT`: the environment that will be reported to 
-  [Datadog](https://www.datadoghq.com/), to be able to distinguish metrics
-  from different environments.
 * `GITHUB_TOKEN`: a GitHub token to access the GitHub repository via the 
   GitHub API. This is needed because the different versions of the 
   specification are loaded from GitHub.
 * `LOGENTRIES_TOKEN`: Token to publish application logs to 
   [Logentries](https://logentries.com/). If not set, logs will only be
   written to the console.
+* `DATADOG_API_KEY`: Token to publish metrics to 
+  [Datadog](https://www.datadoghq.com/). If not set, no metrics will be sent.
+* `ENVIRONMENT`: the environment that will be reported to 
+  [Datadog](https://www.datadoghq.com/), to be able to distinguish metrics
+  from different environments. Only necessary if `DATADOG_API_KEY` is set.
 * `LOCAL_HTML_FILE`: Boolean, indicating if the `index.html` file should
   be served from the local file system (`true`) or from GitHub (`false`).
   If omitted, the file is served from GitHub.
+  
+  This variable cannot be used for the Docker container, because it does not contain the HTML file.
+  
+  Note: Older versions of the `index.html` are no longer compatible with the current redoc setup.
+  To see older versions of the spec locally, either set this variable to `false` or install the
+  old redoc versions as described in the Dockerfile.
 * `LOCAL_SWAGGER_FILE`: Boolean, indicating if the `swagger.yaml` file should
   be served from the local file system (`true`) or from GitHub (`false`).
   If omitted, the file is served from GitHub.
+  
+  This variable cannot be used for the Docker container, because it does not contain the Swagger file.
+  
 
 ## Licence
 <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/"><img alt="Creative Commons License" style="border-width:0" src="https://i.creativecommons.org/l/by-sa/4.0/88x31.png" /></a><br />All OpenTripModel documentation is licensed under a <a rel="license" href="http://creativecommons.org/licenses/by-sa/4.0/">Creative Commons Attribution-ShareAlike 4.0 International License</a>.
