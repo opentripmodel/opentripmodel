@@ -523,7 +523,7 @@ tags:
       * A `cancelAllEntityEvents` with a `time` after its own `eventGenerationTime` is invalid and should not be used.
       * Events without an explicit `eventGenerationTime` cannot be cancelled by a `cancelAllEntityEvents`. Make sure to use the `eventGenerationTime`
         on all events if you want to make use of the `cancelAllEntityEvents`. Note that if the sender does not set the eventGenerationTime on an event,
-        the recipient may set this field to the time of receival.
+        the recipient may set this field to the time of reception of the event.
 
       _Applicable entities for `cancelAllEntityEvents`:_
 
