@@ -50,6 +50,14 @@ info:
     roll-back scenario's. A typical use case is when the originating system is not event based, and it has to communicate an entire "planning" at
     once. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
 
+    ## Changes since 4.2.0-b3
+    - Added the `name` field to `Constraint`, `Shipment` and `Route`, so that all Entities use it in the same way.
+    - Added `externalIds` to `Constraint`, so that all Entities use it in the same way.
+    - Updated `trafficWarningEvent` to reflect the fact that it needs at least one Location or Route, it does not require both.
+    - The eventGenerationTime now may be set by the recipient if the sender does not set it.
+    - `Actor` now supports the same contactDetails field `Location` already had.
+    - `Shipment` now has a count field for shipments that are counted in units of packaging.
+
     ## Changes since 4.2.0-b2
     - Added the [`Contraint`](#tag/Constraint)-type `eventOrderConstraint`,  to constrain the order of event if there are no timestamps available.
     - Updated the diagram in the section [The model](#section/The-model) to reflect recent changes.
@@ -253,7 +261,7 @@ tags:
 
       | Location | Vehicle | Shipment | Trip  | Route | Actor | Constraint | Sensor | Event |
       | :------: | :-----: | :------: | :---: | :---: | :---: | :--------: | :----: | :---: |
-      | ●        | &#160;  | &#160;   | &#160;| ●     | &#160;| &#160;     | &#160; | &#160;|
+      | ■        | &#160;  | &#160;   | &#160;| ■     | &#160;| &#160;     | &#160; | &#160;|
 
 
       ## Action events
@@ -509,7 +517,8 @@ tags:
         straightforward to use a `cancelAllEntityEvents` as part of a larger update containing new events that should not be cancelled.
       * A `cancelAllEntityEvents` with a `time` after its own `eventGenerationTime` is invalid and should not be used.
       * Events without an explicit `eventGenerationTime` cannot be cancelled by a `cancelAllEntityEvents`. Make sure to use the `eventGenerationTime`
-        on all events if you want to make use of the `cancelAllEntityEvents`.
+        on all events if you want to make use of the `cancelAllEntityEvents`. Note that if the sender does not set the eventGenerationTime on an event,
+        the recipient may set this field to the time of receival.
 
       _Applicable entities for `cancelAllEntityEvents`:_
 
@@ -988,6 +997,7 @@ paths:
       tags:
         - Route
       parameters:
+        - $ref: '#/components/parameters/nameParam'
         - $ref: '#/components/parameters/actorQueryParam'
         - $ref: '#/components/parameters/externalIdSchemaParam'
         - $ref: '#/components/parameters/externalIdValueParam'
@@ -1984,11 +1994,13 @@ paths:
     get:
       summary: Get a list of Constraints
       description: |
-        Retrieves all known `Constraints`, optionally filtered by (part of the) name.
+        Retrieves all known `Constraints`, optionally filtered by query parameters.
       tags:
         - Constraint
       parameters:
         - $ref: '#/components/parameters/nameParam'
+        - $ref: '#/components/parameters/externalIdSchemaParam'
+        - $ref: '#/components/parameters/externalIdValueParam'
       responses:
         '200':
           description: A list of `Constraints`
@@ -2439,7 +2451,7 @@ components:
       in: query
       required: false
       description: |
-        An external ID value, a part of it, to search for entities by their external IDs. This parameter should be combined with the
+        An external ID value, or a part of it, to search for entities by their external IDs. This parameter should be combined with the
         `externalIdSchema` parameter.
       schema:
         type: string
@@ -2734,8 +2746,12 @@ components:
             $ref: '#/components/schemas/idReference'
         name:
           type: string
-          description: Name of the `Actor`. For display purposes only.
+          description: Name of the `Actor`. For display purposes and search only.
           example: 'My awesome company, Ltd.'
+        contactDetails:
+          type: array
+          items:
+            $ref: '#/components/schemas/contactDetail'
 
     location:
       type: object
@@ -2752,7 +2768,7 @@ components:
             https://api.opentripmodel.org/api/public/v4/locations/11c11d75-e114-4b5f-9751-b3a4afa23ecf
         name:
           type: string
-          description: 'Name of the location. Used for display, filtering and display.'
+          description: Name of the `Location`. For display purposes and search only.
           example: Main warehouse
         externalIds:
           type: array
@@ -3238,6 +3254,16 @@ components:
                        `Location`, the `id` field is only used if the `type` is `constraintReference`, to refer to a predefined `Constraint`.
           example: |
             https://api.opentripmodel.org/api/public/v4/constraints/6d4b4ac8-0122-457f-89cf-15f6d82ac2ec
+        name:
+          type: string
+          description: Name of the `Constraint`. For display purposes and search only.
+          example: Langestraat bridge max weight
+        externalIds:
+          type: array
+          description: |
+            An optional array of IDs by which the constraint may be known in other systems.
+          items:
+            $ref: '#/components/schemas/idReference'
         type:
           description: |
             The constraint type. Set the type to `constraintReference` te refer to a predefined top-level constraint. In that case, use the `id`
@@ -3566,10 +3592,12 @@ components:
         name:
           type: string
           description: |
-            Name of the `Vehicle`, mainly used for display and search purposes.
+            Name of the `Vehicle`. For display and search purposes only.
           example: Otto's truck
         externalIds:
           type: array
+          description: |
+            An optional array of IDs by which the vehicle may be known in other systems.
           items:
             $ref: '#/components/schemas/idReference'
         vehicleType:
@@ -3692,7 +3720,7 @@ components:
         name:
           type: string
           description: |
-            Name of the `Sensor`, mainly used for display and search purposes.
+            Name of the `Sensor`, for display and search purposes only.
           example: Temperature sensor in trailer x
         placement:
           type: string
@@ -3704,6 +3732,8 @@ components:
           example: Compartment 1
         externalIds:
           type: array
+          description: |
+            An optional array of IDs by which the sensor may be known in other systems.
           items:
             $ref: '#/components/schemas/idReference'
         sensorType:
@@ -3761,10 +3791,14 @@ components:
             it. Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
           example: |
             https://api.opentripmodel.org/api/public/v4/shipments/ddb488f2-9082-4ec9-bd88-3c4e703a103d
+        name:
+          type: string
+          description: Name of the `Shipment`. For display purposes and search only.
+          example: Special delivery for store 3
         externalIds:
           type: array
           description: |
-            An optional array of IDs by which the location may be known in other systems.
+            An optional array of IDs by which the shipment may be known in other systems.
           items:
             $ref: '#/components/schemas/idReference'
         physicalSenderId:
@@ -3810,17 +3844,25 @@ components:
           example: 'https://partner.transfollow.com/api/freightdocuments/abc001'
         dimensions:
           allOf:
-            - description: The dimenstions of the shipment.
+            - description: The dimensions of the shipment.
             - $ref: '#/components/schemas/dimensions'
         weight:
           allOf:
-            - desription: The weight of the shipment.
+            - description: The weight of the shipment.
             - $ref: '#/components/schemas/valueWithUnit'
         packaging:
           type: string
           description: |
             Description of the packaging (type) of this shipment
           example: pallet
+        count:
+          type: number
+          description: |
+            Amount of units of packaging. For instance, if this field is '2' and packaging is 'pallet', this indicates the shipment
+            contains 2 pallets.
+            > Note: This field can be used alongside dimensions and weight, but dimensions and weight always apply
+            to the entire shipment, not to a single unit of packaging.
+          example: 2
         type:
           type: string
           description: |
@@ -3859,13 +3901,13 @@ components:
         externalIds:
           type: array
           description: |
-            An optional array of IDs by which the location may be known in other systems.
+            An optional array of IDs by which the trip may be known in other systems.
           items:
             $ref: '#/components/schemas/idReference'
         name:
           type: string
           description: |
-            Name of the `Trip`, only used for display and search purposes.
+            Name of the `Trip`, for display and search purposes only.
           example: Warehouse to shop
         linkedTrips:
           type: array
@@ -3905,10 +3947,14 @@ components:
             Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
           example: |
             https://api.opentripmodel.org/api/public/v4/routes/fcc0828c-591f-4b3c-bc48-7dc8856e7f2a
+        name:
+          type: string
+          description: Name of the `Route`. For display purposes and search only.
+          example: Quickest from Amsterdam warehouse to Maastricht store
         externalIds:
           type: array
           description: |
-            An optional array of IDs by which the location may be known in other systems.
+            An optional array of IDs by which the route may be known in other systems.
           items:
             $ref: '#/components/schemas/idReference'
         geoReferences:
@@ -4083,6 +4129,8 @@ components:
             This field can optionally contain the date and time this event was generated. This can be useful e.g. for events in the `projected`
             lifecycle phase, that typically are calculated. The generation (calculation) time can be an indicator for the relevance of the event.
             The `eventGenerationTime` should always be in the past.
+
+            If the sender of an OTM event does not set the eventGenerationTime, the recipient may set it to the current time.
 
             All date-time values in OpenTripModel are UTC times, in [ISO-8601](https://en.wikipedia.org/wiki/ISO_8601) notation:
             `YYYY-MM-DDThh:mm:ss.sssZ`. See the [Time values](/#section/Technical-notes/Time-values) section for details.
