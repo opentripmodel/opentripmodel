@@ -4176,6 +4176,8 @@ components:
             $ref: '#/components/schemas/updateEvent_location'
           sensorValue:
             $ref: '#/components/schemas/valueWithUnit'
+      required:
+        - sensorValue
 
     startEngineEvent:
       allOf:
