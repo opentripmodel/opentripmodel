@@ -50,6 +50,9 @@ info:
     roll-back scenario's. A typical use case is when the originating system is not event based, and it has to communicate an entire "planning" at
     once. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
 
+    ## Changes since 4.2.0-b4
+    - Change `sizeConstraint` in `SizeConstraint` to camelCase formatted enum, to be more consistent with other enums.
+
     ## Changes since 4.2.0-b3
     - Added the `name` field to `Constraint`, `Shipment` and `Route`, so that all Entities use it in the same way.
     - Added `externalIds` to `Constraint`, so that all Entities use it in the same way.
@@ -3394,9 +3397,9 @@ components:
             sizeConstraint:
               type: string
               enum:
-                - vehicle-length
-                - vehicle-height
-                - vehicle-width
+                - vehicleLength
+                - vehicleHeight
+                - vehicleWidth
             maximum:
               allOf:
                 - description: Maximum size allowed
