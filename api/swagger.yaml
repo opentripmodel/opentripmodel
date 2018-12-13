@@ -3257,18 +3257,18 @@ components:
             > **NOTE** The exact meaning of this `id` field depends on the location where it is used. If used in a top-level `Constraint`, defined via
                        the `constraints` endpoint, it denotes the unique `id` of the `Constraint`. If used inside another entity, such as e.g.
                        `Location`, the `id` field is only used if the `type` is `constraintReference`, to refer to a predefined `Constraint`.
-          example: |
-            https://api.opentripmodel.org/api/public/v4/constraints/6d4b4ac8-0122-457f-89cf-15f6d82ac2ec
+          example: 'https://api.opentripmodel.org/api/public/v4/constraints/6d4b4ac8-0122-457f-89cf-15f6d82ac2ec'
         name:
           type: string
           description: Name of the `Constraint`. For display purposes and search only.
-          example: Langestraat bridge max weight
+          example: 'Constraint name'
         externalIds:
           type: array
           description: |
             An optional array of IDs by which the constraint may be known in other systems.
           items:
             $ref: '#/components/schemas/idReference'
+          example:
         type:
           description: |
             The constraint type. Set the type to `constraintReference` te refer to a predefined top-level constraint. In that case, use the `id`
@@ -3279,25 +3279,12 @@ components:
         propertyName: type
       required:
         - type
-      example:
-        type: andConstraint
-        and:
-          - type: startDateTimeConstraint
-            startDateTime: '2017-01-01T00:00:00Z'
-          - type: endDateTimeConstraint
-            endDateTime: '2018-12-31T23:59:59Z'
-          - type: notConstraint
-            not:
-              type: fuelTypeConstraint
-              fuelTypes:
-                - type: diesel
-                - type: biodiesel
-                - type: other
-                  other: liquidGas
 
     constraintReference:
       allOf:
         - $ref: '#/components/schemas/constraint'
+        - example:
+            type: constraintReference
 
     andConstraint:
       allOf:
@@ -3310,6 +3297,21 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/constraint'
+          example:
+            type: andConstraint
+            and:
+              - type: startDateTimeConstraint
+                startDateTime: '2017-01-01T00:00Z'
+              - type: endDateTimeConstraint
+                endDateTime: '2018-12-31T23:59:59Z'
+              - type: notConstraint
+                not:
+                  type: fuelTypeConstraint
+                  fuelTypes:
+                    - type: diesel
+                    - type: biodiesel
+                    - type: other
+                      other: liquidGas
 
     orConstraint:
       allOf:
@@ -3322,6 +3324,15 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/constraint'
+          example:
+            type: orConstraint
+            or:
+            - type: fuelTypeConstraint
+              fuelTypes:
+                - type: battery
+            - type: fuelTypeConstraint
+              fuelTypes:
+                - type: biodiesel
 
     notConstraint:
       allOf:
@@ -3332,6 +3343,12 @@ components:
                 This inverts the given constraint, like a boolean NOT operation. This means the resulting constraint will apply if the underlying
                 constraint would not.
               $ref: '#/components/schemas/constraint'
+          example:
+            type: notConstraint
+            not:
+              type: fuelTypeConstraint
+              fuelTypes:
+                - type: petrol
 
     startDateTimeConstraint:
       allOf:
@@ -3341,7 +3358,7 @@ components:
               type: string
               format: date-time
               description: This constraint applies from the given start date/time.
-              example: '2012-01-01T00:00:00Z'
+              example: '2012-01-01T00:00Z'
 
     endDateTimeConstraint:
       allOf:
@@ -3375,6 +3392,7 @@ components:
               description: The URI of the referenced event.
               type: string
               format: uri
+              example: 'https://api.opentripmodel.org/api/public/v4/events/17118916-d6bd-4d5d-8b9a-62db7dd6149d'
 
     sizeConstraint:
       allOf:
@@ -3405,6 +3423,15 @@ components:
               allOf:
                 - description: Minimum size allowed
                 - $ref: '#/components/schemas/valueWithUnit'
+          example:
+            sizeConstraintType: range
+            sizeConstraint: vehicle-length
+            minimum:
+              value: 4
+              unit: m
+            maximum:
+              value: 20
+              unit: m
 
     weightConstraint:
       allOf:
@@ -3429,6 +3456,14 @@ components:
               allOf:
                 - description: Minimum weight allowed
                 - $ref: '#/components/schemas/valueWithUnit'
+          example:
+            weightConstraintType: range
+            minimum:
+              value: 0
+              unit: kg
+            maximum:
+              value: 200
+              unit: kg
 
     speedConstraint:
       allOf:
@@ -3451,6 +3486,14 @@ components:
               allOf:
                 - description: Minimum speed allowed
                 - $ref: '#/components/schemas/valueWithUnit'
+          example:
+            speedConstraintType: range
+            minimum:
+              value: 30
+              unit: 'km/h'
+            maximum:
+              value: 130
+              unit: 'km/h'
 
     sensorValueConstraint:
       allOf:
@@ -3469,8 +3512,7 @@ components:
               type: string
               format: uri
               description: OTM URI of the sensor this constraint applies to.
-              example: |
-                https://api.opentripmodel.org/api/public/v4/sensors/6666f00c-1332-472c-aff9-bc11b3d53296
+              example: 'https://api.opentripmodel.org/api/public/v4/sensors/6666f00c-1332-472c-aff9-bc11b3d53296'
             maximum:
               allOf:
                 - description: Maximum sensor value allowed
@@ -3479,6 +3521,15 @@ components:
               allOf:
                 - description: Minimum sensor value allowed
                 - $ref: '#/components/schemas/valueWithUnit'
+          example:
+            sensor: 'https://api.opentripmodel.org/api/public/v4/sensors/6666f00c-1332-472c-aff9-bc11b3d53296'
+            sensorValueConstraintType: range
+            minimum:
+              value: -10
+              unit: °C
+            maximum:
+              value: 0
+              unit: °C
 
     sensorUpdateFrequencyConstraint:
       allOf:
@@ -3497,8 +3548,7 @@ components:
               type: string
               format: uri
               description: OTM URI of the sensor this constraint applies to.
-              example: |
-                https://api.opentripmodel.org/api/public/v4/sensors/6666f00c-1332-472c-aff9-bc11b3d53296
+              example: 'https://api.opentripmodel.org/api/public/v4/sensors/6666f00c-1332-472c-aff9-bc11b3d53296'
             maximum:
               allOf:
                 - description: Maximum sensor value allowed
@@ -3507,6 +3557,14 @@ components:
               allOf:
                 - description: Minimum sensor value allowed
                 - $ref: '#/components/schemas/valueWithUnit'
+          example:
+            sensorUpdateFrequencyConstraintType: range
+            minimum:
+              value: 2
+              unit: ea
+            maximum:
+              value: 4
+              unit: ea
 
     fuelTypeConstraint:
       allOf:
@@ -3517,6 +3575,13 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/fuelType'
+          example:
+            type: fuelTypeConstraint
+            fuelTypes:
+              - type: battery
+              - type: biodiesel
+              - type: other
+                other: wind
 
     vehicleTypeConstraint:
       allOf:
@@ -3534,6 +3599,12 @@ components:
         - properties:
             route:
               $ref: '#/components/schemas/geoReference'
+          example:
+            type: routeConstraint
+            route:
+              - type: latLongPointGeoReference
+                lat: 52.0838333
+                lon: 5.8318803
 
     dayOfWeekTimeRange:
       type: object
@@ -3592,8 +3663,7 @@ components:
           description: |
             Unique ID for this `Vehicle`. A URI can be assigned by the client or will be generated by the server if the client doesn't provide it.
             Once assigned, the URI can't be changed. See [Unique Identifiers](/#section/Technical-notes/Unique-identifiers) for more information.
-          example: |
-            https://api.opentripmodel.org/api/public/v4/vehicles/b9bb914d-845e-46f2-91ff-31fa4bac2fbe
+          example: 'https://api.opentripmodel.org/api/public/v4/vehicles/b9bb914d-845e-46f2-91ff-31fa4bac2fbe'
         name:
           type: string
           description: |
@@ -3623,22 +3693,37 @@ components:
           type: array
           items:
             $ref: '#/components/schemas/valueWithUnit'
+          example:
+            - value: 1000
+              unit: 'kg'
         length:
           allOf:
             - description: The length of the `Vehicle`.
             - $ref: '#/components/schemas/valueWithUnit'
+          example:
+            value: 5200
+            unit: 'mm'
         height:
           allOf:
             - description: The height of the `Vehicle`.
             - $ref: '#/components/schemas/valueWithUnit'
+          example:
+            value: 2500
+            unit: 'mm'
         width:
           allOf:
             - description: The width of the `Vehicle`.
             - $ref: '#/components/schemas/valueWithUnit'
+          example:
+            value: 1800
+            unit: 'mm'
         emptyWeight:
           allOf:
             - description: The weight of the `Vehicle` when empty.
             - $ref: '#/components/schemas/valueWithUnit'
+          example:
+            value: 2000
+            unit: 'kg'
       required:
         - maxLinks
         - type
@@ -4001,8 +4086,7 @@ components:
         - entityType
       example:
         entityType: vehicleEntity
-        id: |
-          https://api.opentripmodel.org/api/public/v4/vehicles/635f6bd2-2568-45d8-b4e0-312f563b87de
+        id: 'https://api.opentripmodel.org/api/public/v4/vehicles/635f6bd2-2568-45d8-b4e0-312f563b87de'
         externalIds:
           - schema: 'https://opentripmodel.org/types/licensePlate/nl'
             value: T-123-AB
@@ -4345,8 +4429,7 @@ components:
               format: uri
               description: |
                 Reference to the `Actor` to which the `involvedObjects` are to be associated
-              example: |
-                https://api.opentripmodel.org/api/public/v4/actors/45db6ed0-28a7-4e4a-baba-3d5f8d171103
+              example: 'https://api.opentripmodel.org/api/public/v4/actors/45db6ed0-28a7-4e4a-baba-3d5f8d171103'
             role:
               type: string
               description: |
