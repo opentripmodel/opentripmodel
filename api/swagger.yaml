@@ -50,6 +50,9 @@ info:
     roll-back scenario's. A typical use case is when the originating system is not event based, and it has to communicate an entire "planning" at
     once. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
 
+    ## Changes since 4.2.0-b4
+    - Added tge fields `basisType` and `basisReference` to describe the basis of a [`Contraint`](#tag/Constraint).
+
     ## Changes since 4.2.0-b3
     - Added the `name` field to `Constraint`, `Shipment` and `Route`, so that all Entities use it in the same way.
     - Added `externalIds` to `Constraint`, so that all Entities use it in the same way.
@@ -3275,6 +3278,23 @@ components:
             field to refer to the `id` of that predefined constraint. To define a constraint instead of referring to it, choose any of the other types
             and fill the fields that come with that constraint type.
           type: string
+        basisType:
+          description: |
+            The basis for the `Constraint`. Legal and physical constraints can generally not be violated. But a constraint may also be based on an
+            advise or request, in which case a party may choose not to stick to the constraint.
+          type: string
+          enum:
+            - legal
+            - physical
+            - contractual
+            - advise
+            - request
+        basisReference:
+          description: |
+            Reference to the basis of the `Constraint`. In case the `basisType` is `legal`, this can e.g. be a link to a specific law. For a
+            `physical` constraint, it may be a link to a photograph or drawing of the situation, etc.
+          type: string
+
       discriminator:
         propertyName: type
       required:
