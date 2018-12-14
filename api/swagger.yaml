@@ -50,6 +50,10 @@ info:
     roll-back scenario's. A typical use case is when the originating system is not event based, and it has to communicate an entire "planning" at
     once. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
 
+    ## Changes since 4.2.0-b4
+    - Added the fields `basisType` and `basisReference` to describe the basis of a [`Contraint`](#tag/Constraint).
+    - Added the [`Constraint`](#tag/Constraint)-type `dangerousGoodsConstraint`.
+
     ## Changes since 4.2.0-b3
     - Added the `name` field to `Constraint`, `Shipment` and `Route`, so that all Entities use it in the same way.
     - Added `externalIds` to `Constraint`, so that all Entities use it in the same way.
@@ -62,7 +66,7 @@ info:
     - Removed links array from the `Vehicle` Entity. Vehicles should be linked using the `coupleVehiclesEvent`.
 
     ## Changes since 4.2.0-b2
-    - Added the [`Contraint`](#tag/Constraint)-type `eventOrderConstraint`,  to constrain the order of event if there are no timestamps available.
+    - Added the [`Constraint`](#tag/Constraint)-type `eventOrderConstraint`,  to constrain the order of event if there are no timestamps available.
     - Updated the diagram in the section [The model](#section/The-model) to reflect recent changes.
     - Added the possibility to add a `constraint` directly to a `Sensor` entity.
     - Added a `placement` field to the `loadShipmentEvent`.
@@ -3240,8 +3244,8 @@ components:
         `Constraints` can do different things, depending on the context they're
         used in:
           - In the context of a `Location`, access to the location is only allowed if the given constraint applies.
-          - In the context of a `Trip`, constraints can be used to define constraints that have to be met during the trip, e.g. if the temperature in a
-            refridgerated trailer has to stay below a given maximum during the trip.
+          - In the context of a `Trip`, constraints can be used to define constraints that have to be met during the trip, e.g. if the temperature in
+            a refrigerated trailer has to stay below a given maximum during the trip.
           - In the context of a `Shipment`, constraints can be used to e.g. define minimum or maximum temperatures for shipments, or date time
             constraints for delivery.
 
@@ -3275,6 +3279,23 @@ components:
             field to refer to the `id` of that predefined constraint. To define a constraint instead of referring to it, choose any of the other types
             and fill the fields that come with that constraint type.
           type: string
+        basisType:
+          description: |
+            The basis for the `Constraint`. Legal and physical constraints can generally not be violated. But a constraint may also be based on an
+            advice or request, in which case a party may choose not to stick to the constraint.
+          type: string
+          enum:
+            - legal
+            - physical
+            - contractual
+            - advice
+            - request
+        basisReference:
+          description: |
+            Reference to the basis of the `Constraint`. In case the `basisType` is `legal`, this can e.g. be a link to a specific law. For a
+            `physical` constraint, it may be a link to a photograph or drawing of the situation, etc.
+          type: string
+
       discriminator:
         propertyName: type
       required:
@@ -3527,6 +3548,37 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/vehicleType'
+
+    dangerousGoodsConstraint:
+      allOf:
+        - $ref: '#/components/schemas/constraint'
+        - properties:
+            description:
+              description: The description of a dangerous good. The exact meaning of the description depends on the `descriptionType` field.
+              type: string
+            descriptionType:
+              description: The type of description of the dangerous good.
+              type: string
+              enum:
+                - chemicalIdentifier
+                - commercialName
+                - class
+                - other
+            descriptionTypeReference:
+              description: |
+                Reference to a resource where the exact meaning of the description can be found. E.g. in case of a `descriptionType` of `class`,
+                this reference can be a document where the classes are described. This can be a law, or a document from international organizations
+                like IATA, ICAO, IMO, etc. In case the `descriptionType` is `commercialName`, the reference might be a document describing the
+                specific dangerous good, with its properties. In case `descriptionType` is `chemicalIdentifier`, the reference is the standard
+                that's used to identify the good. Examples of widely used standards for chemical identifiers are:
+
+                - [InChi](https://en.wikipedia.org/wiki/International_Chemical_Identifier)
+                - [CAS Registry Number](https://en.wikipedia.org/wiki/CAS_Registry_Number)
+            example:
+              type: dangerousGoodsConstraint
+              description: XLYOFNOQVPJJNP-UHFFFAOYSA-N
+              descriptionType: chemicalIdentifier
+              descriptionTypeReference: https://en.wikipedia.org/wiki/International_Chemical_Identifier
 
     routeConstraint:
       allOf:
