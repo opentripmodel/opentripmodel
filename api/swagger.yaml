@@ -3428,10 +3428,10 @@ components:
             sizeConstraint: vehicle-length
             minimum:
               value: 4
-              unit: m
+              unit: 'm'
             maximum:
-              value: 20
-              unit: m
+              value: '20'
+              unit: 'm'
 
     weightConstraint:
       allOf:
@@ -3457,13 +3457,10 @@ components:
                 - description: Minimum weight allowed
                 - $ref: '#/components/schemas/valueWithUnit'
           example:
-            weightConstraintType: range
-            minimum:
-              value: 0
-              unit: kg
+            weightConstraintType: maximum
             maximum:
               value: 200
-              unit: kg
+              unit: 'kg'
 
     speedConstraint:
       allOf:
@@ -3523,13 +3520,10 @@ components:
                 - $ref: '#/components/schemas/valueWithUnit'
           example:
             sensor: 'https://api.opentripmodel.org/api/public/v4/sensors/6666f00c-1332-472c-aff9-bc11b3d53296'
-            sensorValueConstraintType: range
-            minimum:
-              value: -10
-              unit: °C
+            sensorValueConstraintType: maximum
             maximum:
               value: 0
-              unit: °C
+              unit: '°C'
 
     sensorUpdateFrequencyConstraint:
       allOf:
@@ -3561,10 +3555,7 @@ components:
             sensorUpdateFrequencyConstraintType: range
             minimum:
               value: 2
-              unit: ea
-            maximum:
-              value: 4
-              unit: ea
+              unit: 'Hz'
 
     fuelTypeConstraint:
       allOf:
