@@ -3319,6 +3319,9 @@ components:
     constraintReference:
       allOf:
         - $ref: '#/components/schemas/constraint'
+      example:
+        type: constraintReference
+        id: 'https://api.opentripmodel.org/api/public/v4/constraints/6d4b4ac8-0122-457f-89cf-15f6d82ac2ec'
 
     andConstraint:
       allOf:
