@@ -3081,7 +3081,9 @@ components:
             openLRString:
               type: string
               format: openLR
-              description: A base64 encoded binary OpenLR string
+              description: |
+                A base64 encoded binary OpenLR string.
+                More information about OpenLR: http://openlr.org/documents.html
               example: CgOkbyUN6COJAwEB/8YjGQ==
       required:
         - openLRString
@@ -3593,9 +3595,8 @@ components:
           example:
             type: routeConstraint
             route:
-              - type: latLongPointGeoReference
-                lat: 52.0838333
-                lon: 5.8318803
+              type: openLRGeoReference
+              openLRString: 'CwPQHiUgVAH58hJ8+cw7fg4B'
 
     dayOfWeekTimeRange:
       type: object
