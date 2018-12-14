@@ -51,6 +51,7 @@ info:
     once. The benefits of using a `Bundle` are that you can save network traffic and that all entities and events are validated at the same time.
 
     ## Changes since 4.2.0-b4
+    - Change `sizeConstraint` in `SizeConstraint` to camelCase formatted enum, to be more consistent with other enums.
     - Added the fields `basisType` and `basisReference` to describe the basis of a [`Contraint`](#tag/Constraint).
     - Added the [`Constraint`](#tag/Constraint)-type `dangerousGoodsConstraint`.
 
@@ -3418,9 +3419,9 @@ components:
             sizeConstraint:
               type: string
               enum:
-                - vehicle-length
-                - vehicle-height
-                - vehicle-width
+                - vehicleLength
+                - vehicleHeight
+                - vehicleWidth
             maximum:
               allOf:
                 - description: Maximum size allowed
