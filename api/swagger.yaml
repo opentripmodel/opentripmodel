@@ -65,7 +65,7 @@ info:
     - Removed links array from the `Vehicle` Entity. Vehicles should be linked using the `coupleVehiclesEvent`.
 
     ## Changes since 4.2.0-b2
-    - Added the [`Contraint`](#tag/Constraint)-type `eventOrderConstraint`,  to constrain the order of event if there are no timestamps available.
+    - Added the [`Constraint`](#tag/Constraint)-type `eventOrderConstraint`,  to constrain the order of event if there are no timestamps available.
     - Updated the diagram in the section [The model](#section/The-model) to reflect recent changes.
     - Added the possibility to add a `constraint` directly to a `Sensor` entity.
     - Added a `placement` field to the `loadShipmentEvent`.
@@ -3243,8 +3243,8 @@ components:
         `Constraints` can do different things, depending on the context they're
         used in:
           - In the context of a `Location`, access to the location is only allowed if the given constraint applies.
-          - In the context of a `Trip`, constraints can be used to define constraints that have to be met during the trip, e.g. if the temperature in a
-            refridgerated trailer has to stay below a given maximum during the trip.
+          - In the context of a `Trip`, constraints can be used to define constraints that have to be met during the trip, e.g. if the temperature in
+            a refridgerated trailer has to stay below a given maximum during the trip.
           - In the context of a `Shipment`, constraints can be used to e.g. define minimum or maximum temperatures for shipments, or date time
             constraints for delivery.
 
@@ -3547,6 +3547,28 @@ components:
               type: array
               items:
                 $ref: '#/components/schemas/vehicleType'
+
+    dangerousGoodsConstraint:
+      allOf:
+        - $ref: '#/components/schemas/constraint'
+        - properties:
+            description:
+              description: The description of a dangerous good. The exact meaning of the description depends on the `descriptionType` field.
+              type: string
+            descriptionType:
+              description: The type of description of the dangerous good.
+              type: string
+              enum:
+                - chemicalName
+                - commercialName
+                - class
+                - other
+            descriptionTypeReference:
+              description: |
+                Reference to a resource where the exact meaning of the description can be found. E.g. in case of a `descriptionType` of `class`,
+                this reference can be a document where the classes are described. This can be a law, or a document from international organizations
+                like IATA, ICAO, IMO, etc. In case the `descriptionType` is `chemicalName` or `commercialName`, the reference might be a document
+                describing the specific dangerous good, with its properties.
 
     routeConstraint:
       allOf:
