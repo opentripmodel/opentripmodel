@@ -4614,14 +4614,14 @@ components:
       type: object
       description: Value with unit
       properties:
-        unit:
-          type: string
-          description: measurement unit of this value
-          example: kg
         value:
           type: number
           description: value in the given unit
           example: 42
+        unit:
+          type: string
+          description: measurement unit of this value
+          example: kg
       required:
         - unit
         - value
