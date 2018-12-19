@@ -2785,6 +2785,9 @@ components:
             An optional array of IDs by which the location may be known in other systems.
           items:
             $ref: '#/components/schemas/idReference'
+          examples:
+            buildingExample:
+              $ref: '#/components/examples/idReferenceBuilding'
         type:
           $ref: '#/components/schemas/locationType'
         geoReference:
@@ -4670,3 +4673,11 @@ components:
       required:
         - schema
         - value
+
+  examples:
+    idReferenceBuilding:
+      [{
+         schema: https://what3words.com/,
+         value: defends.keyboard.building,
+         uri: https://map.what3words.com/defends.keyboard.building
+       }]
