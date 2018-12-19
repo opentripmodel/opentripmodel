@@ -4118,6 +4118,7 @@ components:
           type: tractor
         fuel:
           type: diesel
+        maxLinks: 1
 
     sensorEntity:
       type: object
