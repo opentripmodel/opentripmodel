@@ -3982,6 +3982,11 @@ components:
           description: |
             Description of the packaging (type) of this shipment
           example: pallet
+        type:
+          type: string
+          description: |
+            This field can be used to categorize and/or group shipments by type, depending on the needs of a specific logistic process.
+          example: fresh goods
         count:
           type: number
           description: |
@@ -3990,11 +3995,6 @@ components:
             > Note: This field can be used alongside dimensions and weight, but dimensions and weight always apply
             to the entire shipment, not to a single unit of packaging.
           example: 2
-        type:
-          type: string
-          description: |
-            This field can be used to categorize and/or group shipments by type, depending on the needs of a specific logistic process.
-          example: fresh goods
         description:
           type: string
           description: |
