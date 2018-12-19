@@ -3212,7 +3212,7 @@ components:
             [ISO 3166-1 alpha-2](https://en.wikipedia.org/wiki/ISO_3166-1) country code.
       example:
         street: Langestraat
-        houseNumber: 3
+        houseNumber: "3"
         houseNumberAddition: a
         postalCode: 1234AB
         city: Amersfoort
@@ -3234,7 +3234,7 @@ components:
       example:
         name: Main entrance of store
         street: Langestraat
-        houseNumber: 3
+        houseNumber: "3"
         houseNumberAddition: a
         postalCode: 1234AB
         city: Amersfoort
