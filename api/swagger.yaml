@@ -3849,6 +3849,12 @@ components:
           description: |
             Name of the `Sensor`, for display and search purposes only.
           example: Temperature sensor in trailer x
+        externalIds:
+          type: array
+          description: |
+            An optional array of IDs by which the sensor may be known in other systems.
+          items:
+            $ref: '#/components/schemas/idReference'
         placement:
           type: string
           description: |
@@ -3857,12 +3863,6 @@ components:
             a sensor is placed. Parties using OpenTripModel to exchange sensor data may wish to agree on a standardized naming, but this is too
             specific to describe in the standard.
           example: Compartment 1
-        externalIds:
-          type: array
-          description: |
-            An optional array of IDs by which the sensor may be known in other systems.
-          items:
-            $ref: '#/components/schemas/idReference'
         sensorType:
           $ref: '#/components/schemas/sensorType'
         constraint:
