@@ -2935,6 +2935,12 @@ components:
         type: latLongPointGeoReference
         lat: 52.0838333
         lon: 5.8318803
+        speed:
+          unit: 'km/h'
+          value: 76
+        heading:
+          unit: 'degrees'
+          value: '143'
 
     latLongArrayGeoReference:
       allOf:
