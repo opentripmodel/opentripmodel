@@ -54,6 +54,9 @@ info:
     - Change `sizeConstraint` in `SizeConstraint` to camelCase formatted enum, to be more consistent with other enums.
     - Added the fields `basisType` and `basisReference` to describe the basis of a [`Contraint`](#tag/Constraint).
     - Added the [`Constraint`](#tag/Constraint)-type `dangerousGoodsConstraint`.
+    - Added additional `Loaction` types.
+    - Added additional `Vehicle` types.
+    - Added the [`Constraint`](#tag/Constraint)-type `numberOfVehiclesConstraint`.
 
     ## Changes since 4.2.0-b3
     - Added the `name` field to `Constraint`, `Shipment` and `Route`, so that all Entities use it in the same way.
@@ -2822,6 +2825,10 @@ components:
             - environmental_zone
             - restricted_area
             - customer
+            - parking_lot
+            - parking_garage
+            - parking_spot
+            - loading_unloading_area
             - other
           example: warehouse
         other:
@@ -3413,6 +3420,34 @@ components:
               format: uri
               example: 'https://api.opentripmodel.org/api/public/v4/events/17118916-d6bd-4d5d-8b9a-62db7dd6149d'
 
+    numberOfVehiclesConstraint:
+      allOf:
+        - $ref: '#/components/schemas/constraint'
+        - properties:
+            numberConstraintType:
+              description: |
+                The type of number contraint. Available types are:
+                  - `maximum`: the constraint is met as long as the number of vehicles in the associated `Location` stays below or on the maximum.
+                  - `minimum`: the constraint is met as long as the number of vehicles in the associated `Location` stays above or on the minimum.
+                  - `range`: the constraint is met as long as the number of vehicles in the associated `Location` stays between the minimum and
+                    maximum, including maximum and minimum values.
+              type: string
+              enum:
+                - maximum
+                - minimum
+                - range
+            maximum:
+              type: number
+              format: int64
+              description: The maximum number of vehicles, only applies if `numberConstraintType` is `maximum` or `range`.
+            minimum:
+              type: number
+              format: int64
+              description: The minimum number of vehicles, only applies if `numberConstraintType` is `minimum` or `range`.
+          example:
+            numberConstraintType: 'maximum'
+            maximum: 300
+
     sizeConstraint:
       allOf:
         - $ref: '#/components/schemas/constraint'
@@ -3776,11 +3811,20 @@ components:
           type: string
           enum:
             - boxtruck
-            - tractor
+            - truck
             - trailer
+            - lorry
+            - tractor
             - airplane
             - deep sea vessel
             - barge
+            - passenger_car
+            - motor_bike
+            - bike
+            - bus
+            - coach
+            - train
+            - tram
             - unknown
             - other
         other:
