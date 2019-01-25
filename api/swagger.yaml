@@ -54,6 +54,10 @@ info:
     - Change `sizeConstraint` in `SizeConstraint` to camelCase formatted enum, to be more consistent with other enums.
     - Added the fields `basisType` and `basisReference` to describe the basis of a [`Contraint`](#tag/Constraint).
     - Added the [`Constraint`](#tag/Constraint)-type `dangerousGoodsConstraint`.
+    - Added additional `Location` types.
+    - Added additional `Vehicle` types.
+    - Added the [`Constraint`](#tag/Constraint)-type `numberOfVehiclesConstraint`.
+    - All enums are now camelCase, for consistency. Some snake_case values were changed in the process.
 
     ## Changes since 4.2.0-b3
     - Added the `name` field to `Constraint`, `Shipment` and `Route`, so that all Entities use it in the same way.
@@ -2819,9 +2823,13 @@ components:
           enum:
             - warehouse
             - store
-            - environmental_zone
-            - restricted_area
+            - environmentalZone
+            - restrictedArea
             - customer
+            - parkingLot
+            - parkingGarage
+            - parkingSpot
+            - loadingUnloadingArea
             - other
           example: warehouse
         other:
@@ -2948,7 +2956,7 @@ components:
         - properties:
             points:
               type: array
-              minLength: 1
+              minItems: 1
               items:
                 $ref: '#/components/schemas/latLongPoint'
       required:
@@ -2998,7 +3006,7 @@ components:
         - properties:
             coordinates:
               type: array
-              minLength: 1
+              minItems: 1
               items:
                 $ref: '#/components/schemas/point2D'
       required:
@@ -3147,7 +3155,7 @@ components:
           type: string
         points:
           type: array
-          minLength: 1
+          minItems: 1
           items:
             $ref: '#/components/schemas/tmcPoint'
         startOffset:
@@ -3269,29 +3277,29 @@ components:
           items:
             $ref: '#/components/schemas/idReference'
           example:
-        type:
-          description: |
-            The constraint type. Set the type to `constraintReference` te refer to a predefined top-level constraint. In that case, use the `id`
-            field to refer to the `id` of that predefined constraint. To define a constraint instead of referring to it, choose any of the other types
-            and fill the fields that come with that constraint type.
-          type: string
         basisType:
           description: |
             The basis for the `Constraint`. Legal and physical constraints can generally not be violated. But a constraint may also be based on an
             advice or request, in which case a party may choose not to stick to the constraint.
           type: string
           enum:
-            - legal
-            - physical
-            - contractual
-            - advice
-            - request
+          - legal
+          - physical
+          - contractual
+          - advice
+          - request
         basisReference:
           description: |
             Reference to the basis of the `Constraint`. In case the `basisType` is `legal`, this can e.g. be a link to a specific law. For a
             `physical` constraint, it may be a link to a photograph or drawing of the situation, etc.
           type: string
-
+          example: https://wetten.overheid.nl/BWBR0007606/2015-04-01
+        type:
+          description: |
+            The constraint type. Set the type to `constraintReference` to refer to a predefined top-level constraint. In that case, use the `id`
+            field to refer to the `id` of that predefined constraint. To define a constraint instead of referring to it, choose any of the other types
+            and fill the fields that come with that constraint type.
+          type: string
       discriminator:
         propertyName: type
       required:
@@ -3357,10 +3365,11 @@ components:
         - $ref: '#/components/schemas/constraint'
         - properties:
             not:
-              description: |
-                This inverts the given constraint, like a boolean NOT operation. This means the resulting constraint will apply if the underlying
-                constraint would not.
-              $ref: '#/components/schemas/constraint'
+              allOf:
+                - description: |
+                    The `notConstraint` inverts a given constraint, like a boolean NOT operation. This means the resulting constraint will apply if the
+                    underlying constraint would not.
+                - $ref: '#/components/schemas/constraint'
           example:
             type: notConstraint
             not:
@@ -3411,6 +3420,34 @@ components:
               type: string
               format: uri
               example: 'https://api.opentripmodel.org/api/public/v4/events/17118916-d6bd-4d5d-8b9a-62db7dd6149d'
+
+    numberOfVehiclesConstraint:
+      allOf:
+        - $ref: '#/components/schemas/constraint'
+        - properties:
+            numberConstraintType:
+              description: |
+                The type of number contraint. Available types are:
+                  - `maximum`: the constraint is met as long as the number of vehicles in the associated `Location` stays below or on the maximum.
+                  - `minimum`: the constraint is met as long as the number of vehicles in the associated `Location` stays above or on the minimum.
+                  - `range`: the constraint is met as long as the number of vehicles in the associated `Location` stays between the minimum and
+                    maximum, including maximum and minimum values.
+              type: string
+              enum:
+                - maximum
+                - minimum
+                - range
+            maximum:
+              type: number
+              format: int64
+              description: The maximum number of vehicles, only applies if `numberConstraintType` is `maximum` or `range`.
+            minimum:
+              type: number
+              format: int64
+              description: The minimum number of vehicles, only applies if `numberConstraintType` is `minimum` or `range`.
+          example:
+            numberConstraintType: 'maximum'
+            maximum: 300
 
     sizeConstraint:
       allOf:
@@ -3627,11 +3664,11 @@ components:
 
                 - [InChi](https://en.wikipedia.org/wiki/International_Chemical_Identifier)
                 - [CAS Registry Number](https://en.wikipedia.org/wiki/CAS_Registry_Number)
-            example:
-              type: dangerousGoodsConstraint
-              description: XLYOFNOQVPJJNP-UHFFFAOYSA-N
-              descriptionType: chemicalIdentifier
-              descriptionTypeReference: https://en.wikipedia.org/wiki/International_Chemical_Identifier
+          example:
+            type: dangerousGoodsConstraint
+            description: 'XLYOFNOQVPJJNP-UHFFFAOYSA-N'
+            descriptionType: 'chemicalIdentifier'
+            descriptionTypeReference: 'https://en.wikipedia.org/wiki/International_Chemical_Identifier'
 
     routeConstraint:
       allOf:
@@ -3667,7 +3704,7 @@ components:
           example: 1
         ranges:
           type: array
-          minLength: 1
+          minItems: 1
           items:
             $ref: '#/components/schemas/timeRange'
       required:
@@ -3775,11 +3812,20 @@ components:
           type: string
           enum:
             - boxtruck
-            - tractor
+            - truck
             - trailer
+            - lorry
+            - tractor
             - airplane
-            - deep sea vessel
+            - deepSeaVessel
             - barge
+            - passengerCar
+            - motorBike
+            - bike
+            - bus
+            - coach
+            - train
+            - tram
             - unknown
             - other
         other:
