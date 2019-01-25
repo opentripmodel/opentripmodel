@@ -54,9 +54,10 @@ info:
     - Change `sizeConstraint` in `SizeConstraint` to camelCase formatted enum, to be more consistent with other enums.
     - Added the fields `basisType` and `basisReference` to describe the basis of a [`Contraint`](#tag/Constraint).
     - Added the [`Constraint`](#tag/Constraint)-type `dangerousGoodsConstraint`.
-    - Added additional `Loaction` types.
+    - Added additional `Location` types.
     - Added additional `Vehicle` types.
     - Added the [`Constraint`](#tag/Constraint)-type `numberOfVehiclesConstraint`.
+    - All enums are now camelCase, for consistency. Some snake_case values were changed in the process.
 
     ## Changes since 4.2.0-b3
     - Added the `name` field to `Constraint`, `Shipment` and `Route`, so that all Entities use it in the same way.
@@ -2822,13 +2823,13 @@ components:
           enum:
             - warehouse
             - store
-            - environmental_zone
-            - restricted_area
+            - environmentalZone
+            - restrictedArea
             - customer
-            - parking_lot
-            - parking_garage
-            - parking_spot
-            - loading_unloading_area
+            - parkingLot
+            - parkingGarage
+            - parkingSpot
+            - loadingUnloadingArea
             - other
           example: warehouse
         other:
@@ -3295,7 +3296,7 @@ components:
           example: https://wetten.overheid.nl/BWBR0007606/2015-04-01
         type:
           description: |
-            The constraint type. Set the type to `constraintReference` te refer to a predefined top-level constraint. In that case, use the `id`
+            The constraint type. Set the type to `constraintReference` to refer to a predefined top-level constraint. In that case, use the `id`
             field to refer to the `id` of that predefined constraint. To define a constraint instead of referring to it, choose any of the other types
             and fill the fields that come with that constraint type.
           type: string
@@ -3816,10 +3817,10 @@ components:
             - lorry
             - tractor
             - airplane
-            - deep sea vessel
+            - deepSeaVessel
             - barge
-            - passenger_car
-            - motor_bike
+            - passengerCar
+            - motorBike
             - bike
             - bus
             - coach
