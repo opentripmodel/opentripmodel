@@ -52,7 +52,7 @@ info:
 
     ## Changes since 4.2.0-b4
     - Change `sizeConstraint` in `SizeConstraint` to camelCase formatted enum, to be more consistent with other enums.
-    - Added the fields `basisType` and `basisReference` to describe the basis of a [`Contraint`](#tag/Constraint).
+    - Added the fields `basisType` and `basisReference` to describe the basis of a [`Constraint`](#tag/Constraint).
     - Added the [`Constraint`](#tag/Constraint)-type `dangerousGoodsConstraint`.
     - Added additional `Location` types.
     - Added additional `Vehicle` types.
