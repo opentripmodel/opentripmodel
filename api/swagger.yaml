@@ -2943,51 +2943,50 @@ components:
           items:
             $ref: '#/components/schemas/contactDetail'
         constraint:
-          allOf:
-            - description: |
-                In the context of a `Location`, access to the location is only allowed if the given constraint applies.
+          description: |
+            In the context of a `Location`, access to the location is only allowed if the given constraint applies.
 
-                > **ℹ Note** that constraints can be nested and combined using the `andConstraint`, `orConstraint` and `notConstraint`.
-            - oneOf:
-              - $ref: '#/components/schemas/constraintReference'
-              - $ref: '#/components/schemas/andConstraint'
-              - $ref: '#/components/schemas/notConstraint'
-              - $ref: '#/components/schemas/orConstraint'
-              - $ref: '#/components/schemas/sizeConstraint'
-              - $ref: '#/components/schemas/speedConstraint'
-              - $ref: '#/components/schemas/weightConstraint'
-              - $ref: '#/components/schemas/fuelTypeConstraint'
-              - $ref: '#/components/schemas/vehicleTypeConstraint'
-              - $ref: '#/components/schemas/routeConstraint'
-              - $ref: '#/components/schemas/dangerousGoodsConstraint'
-              - $ref: '#/components/schemas/numberOfVehiclesConstraint'
-              - $ref: '#/components/schemas/eventOrderConstraint'
-              - $ref: '#/components/schemas/sensorValueConstraint'
-              - $ref: '#/components/schemas/sensorUpdateFrequencyConstraint'
-              - $ref: '#/components/schemas/startDateTimeConstraint'
-              - $ref: '#/components/schemas/endDateTimeConstraint'
-              - $ref: '#/components/schemas/timeRangeConstraint'
-              discriminator:
-                propertyName: type
-                mapping:
-                  constraintReference: '#/components/schemas/constraintReference'
-                  andConstraint: '#/components/schemas/andConstraint'
-                  notConstraint: '#/components/schemas/notConstraint'
-                  orConstraint: '#/components/schemas/orConstraint'
-                  sizeConstraint: '#/components/schemas/sizeConstraint'
-                  speedConstraint: '#/components/schemas/speedConstraint'
-                  weightConstraint: '#/components/schemas/weightConstraint'
-                  fuelTypeConstraint: '#/components/schemas/fuelTypeConstraint'
-                  vehicleTypeConstraint: '#/components/schemas/vehicleTypeConstraint'
-                  routeConstraint: '#/components/schemas/routeConstraint'
-                  dangerousGoodsConstraint: '#/components/schemas/dangerousGoodsConstraint'
-                  numberOfVehiclesConstraint: '#/components/schemas/numberOfVehiclesConstraint'
-                  eventOrderConstraint: '#/components/schemas/eventOrderConstraint'
-                  sensorValueConstraint: '#/components/schemas/sensorValueConstraint'
-                  sensorUpdateFrequencyConstraint: '#/components/schemas/sensorUpdateFrequencyConstraint'
-                  startDateTimeConstraint: '#/components/schemas/startDateTimeConstraint'
-                  endDateTimeConstraint: '#/components/schemas/endDateTimeConstraint'
-                  timeRangeConstraint: '#/components/schemas/timeRangeConstraint'
+            > **ℹ Note** that constraints can be nested and combined using the `andConstraint`, `orConstraint` and `notConstraint`.
+          oneOf:
+            - $ref: '#/components/schemas/constraintReference'
+            - $ref: '#/components/schemas/andConstraint'
+            - $ref: '#/components/schemas/notConstraint'
+            - $ref: '#/components/schemas/orConstraint'
+            - $ref: '#/components/schemas/sizeConstraint'
+            - $ref: '#/components/schemas/speedConstraint'
+            - $ref: '#/components/schemas/weightConstraint'
+            - $ref: '#/components/schemas/fuelTypeConstraint'
+            - $ref: '#/components/schemas/vehicleTypeConstraint'
+            - $ref: '#/components/schemas/routeConstraint'
+            - $ref: '#/components/schemas/dangerousGoodsConstraint'
+            - $ref: '#/components/schemas/numberOfVehiclesConstraint'
+            - $ref: '#/components/schemas/eventOrderConstraint'
+            - $ref: '#/components/schemas/sensorValueConstraint'
+            - $ref: '#/components/schemas/sensorUpdateFrequencyConstraint'
+            - $ref: '#/components/schemas/startDateTimeConstraint'
+            - $ref: '#/components/schemas/endDateTimeConstraint'
+            - $ref: '#/components/schemas/timeRangeConstraint'
+          discriminator:
+            propertyName: type
+            mapping:
+              constraintReference: '#/components/schemas/constraintReference'
+              andConstraint: '#/components/schemas/andConstraint'
+              notConstraint: '#/components/schemas/notConstraint'
+              orConstraint: '#/components/schemas/orConstraint'
+              sizeConstraint: '#/components/schemas/sizeConstraint'
+              speedConstraint: '#/components/schemas/speedConstraint'
+              weightConstraint: '#/components/schemas/weightConstraint'
+              fuelTypeConstraint: '#/components/schemas/fuelTypeConstraint'
+              vehicleTypeConstraint: '#/components/schemas/vehicleTypeConstraint'
+              routeConstraint: '#/components/schemas/routeConstraint'
+              dangerousGoodsConstraint: '#/components/schemas/dangerousGoodsConstraint'
+              numberOfVehiclesConstraint: '#/components/schemas/numberOfVehiclesConstraint'
+              eventOrderConstraint: '#/components/schemas/eventOrderConstraint'
+              sensorValueConstraint: '#/components/schemas/sensorValueConstraint'
+              sensorUpdateFrequencyConstraint: '#/components/schemas/sensorUpdateFrequencyConstraint'
+              startDateTimeConstraint: '#/components/schemas/startDateTimeConstraint'
+              endDateTimeConstraint: '#/components/schemas/endDateTimeConstraint'
+              timeRangeConstraint: '#/components/schemas/timeRangeConstraint'
         remarks:
           type: string
           description: |
@@ -4111,52 +4110,51 @@ components:
         sensorType:
           $ref: '#/components/schemas/sensorType'
         constraint:
-          allOf:
-            - description: |
-                In the context of a `Sensor`, only `sensorValueConstraint`s really make sense. You can use such a constraint to model a sensor of
-                which the measured value must be within certain bounds at all times.
+          description: |
+            In the context of a `Sensor`, only `sensorValueConstraint`s really make sense. You can use such a constraint to model a sensor of
+            which the measured value must be within certain bounds at all times.
 
-                > **ℹ Note** that constraints can be nested and combined using the `andConstraint`, `orConstraint` and `notConstraint`.
-            - oneOf:
-              - $ref: '#/components/schemas/constraintReference'
-              - $ref: '#/components/schemas/andConstraint'
-              - $ref: '#/components/schemas/notConstraint'
-              - $ref: '#/components/schemas/orConstraint'
-              - $ref: '#/components/schemas/sizeConstraint'
-              - $ref: '#/components/schemas/speedConstraint'
-              - $ref: '#/components/schemas/weightConstraint'
-              - $ref: '#/components/schemas/fuelTypeConstraint'
-              - $ref: '#/components/schemas/vehicleTypeConstraint'
-              - $ref: '#/components/schemas/routeConstraint'
-              - $ref: '#/components/schemas/dangerousGoodsConstraint'
-              - $ref: '#/components/schemas/numberOfVehiclesConstraint'
-              - $ref: '#/components/schemas/eventOrderConstraint'
-              - $ref: '#/components/schemas/sensorValueConstraint'
-              - $ref: '#/components/schemas/sensorUpdateFrequencyConstraint'
-              - $ref: '#/components/schemas/startDateTimeConstraint'
-              - $ref: '#/components/schemas/endDateTimeConstraint'
-              - $ref: '#/components/schemas/timeRangeConstraint'
-              discriminator:
-                propertyName: type
-                mapping:
-                  constraintReference: '#/components/schemas/constraintReference'
-                  andConstraint: '#/components/schemas/andConstraint'
-                  notConstraint: '#/components/schemas/notConstraint'
-                  orConstraint: '#/components/schemas/orConstraint'
-                  sizeConstraint: '#/components/schemas/sizeConstraint'
-                  speedConstraint: '#/components/schemas/speedConstraint'
-                  weightConstraint: '#/components/schemas/weightConstraint'
-                  fuelTypeConstraint: '#/components/schemas/fuelTypeConstraint'
-                  vehicleTypeConstraint: '#/components/schemas/vehicleTypeConstraint'
-                  routeConstraint: '#/components/schemas/routeConstraint'
-                  dangerousGoodsConstraint: '#/components/schemas/dangerousGoodsConstraint'
-                  numberOfVehiclesConstraint: '#/components/schemas/numberOfVehiclesConstraint'
-                  eventOrderConstraint: '#/components/schemas/eventOrderConstraint'
-                  sensorValueConstraint: '#/components/schemas/sensorValueConstraint'
-                  sensorUpdateFrequencyConstraint: '#/components/schemas/sensorUpdateFrequencyConstraint'
-                  startDateTimeConstraint: '#/components/schemas/startDateTimeConstraint'
-                  endDateTimeConstraint: '#/components/schemas/endDateTimeConstraint'
-                  timeRangeConstraint: '#/components/schemas/timeRangeConstraint'
+            > **ℹ Note** that constraints can be nested and combined using the `andConstraint`, `orConstraint` and `notConstraint`.
+          oneOf:
+            - $ref: '#/components/schemas/constraintReference'
+            - $ref: '#/components/schemas/andConstraint'
+            - $ref: '#/components/schemas/notConstraint'
+            - $ref: '#/components/schemas/orConstraint'
+            - $ref: '#/components/schemas/sizeConstraint'
+            - $ref: '#/components/schemas/speedConstraint'
+            - $ref: '#/components/schemas/weightConstraint'
+            - $ref: '#/components/schemas/fuelTypeConstraint'
+            - $ref: '#/components/schemas/vehicleTypeConstraint'
+            - $ref: '#/components/schemas/routeConstraint'
+            - $ref: '#/components/schemas/dangerousGoodsConstraint'
+            - $ref: '#/components/schemas/numberOfVehiclesConstraint'
+            - $ref: '#/components/schemas/eventOrderConstraint'
+            - $ref: '#/components/schemas/sensorValueConstraint'
+            - $ref: '#/components/schemas/sensorUpdateFrequencyConstraint'
+            - $ref: '#/components/schemas/startDateTimeConstraint'
+            - $ref: '#/components/schemas/endDateTimeConstraint'
+            - $ref: '#/components/schemas/timeRangeConstraint'
+          discriminator:
+            propertyName: type
+            mapping:
+              constraintReference: '#/components/schemas/constraintReference'
+              andConstraint: '#/components/schemas/andConstraint'
+              notConstraint: '#/components/schemas/notConstraint'
+              orConstraint: '#/components/schemas/orConstraint'
+              sizeConstraint: '#/components/schemas/sizeConstraint'
+              speedConstraint: '#/components/schemas/speedConstraint'
+              weightConstraint: '#/components/schemas/weightConstraint'
+              fuelTypeConstraint: '#/components/schemas/fuelTypeConstraint'
+              vehicleTypeConstraint: '#/components/schemas/vehicleTypeConstraint'
+              routeConstraint: '#/components/schemas/routeConstraint'
+              dangerousGoodsConstraint: '#/components/schemas/dangerousGoodsConstraint'
+              numberOfVehiclesConstraint: '#/components/schemas/numberOfVehiclesConstraint'
+              eventOrderConstraint: '#/components/schemas/eventOrderConstraint'
+              sensorValueConstraint: '#/components/schemas/sensorValueConstraint'
+              sensorUpdateFrequencyConstraint: '#/components/schemas/sensorUpdateFrequencyConstraint'
+              startDateTimeConstraint: '#/components/schemas/startDateTimeConstraint'
+              endDateTimeConstraint: '#/components/schemas/endDateTimeConstraint'
+              timeRangeConstraint: '#/components/schemas/timeRangeConstraint'
 
 
     sensorType:
@@ -4281,52 +4279,51 @@ components:
             Free format text field that can be used to describe the contents of this shipment.
           example: 50 boxes of bananas
         constraint:
-          allOf:
-            - description: |
-                In the context of a `Shipment`, constraints can be used to e.g. define minimum or maximum temperatures for shipments, or date time
-                constraints for delivery.
+          description: |
+            In the context of a `Shipment`, constraints can be used to e.g. define minimum or maximum temperatures for shipments, or date time
+            constraints for delivery.
 
-                > **ℹ Note** that constraints can be nested and combined using the `andConstraint`, `orConstraint` and `notConstraint`.
-            - oneOf:
-              - $ref: '#/components/schemas/constraintReference'
-              - $ref: '#/components/schemas/andConstraint'
-              - $ref: '#/components/schemas/notConstraint'
-              - $ref: '#/components/schemas/orConstraint'
-              - $ref: '#/components/schemas/sizeConstraint'
-              - $ref: '#/components/schemas/speedConstraint'
-              - $ref: '#/components/schemas/weightConstraint'
-              - $ref: '#/components/schemas/fuelTypeConstraint'
-              - $ref: '#/components/schemas/vehicleTypeConstraint'
-              - $ref: '#/components/schemas/routeConstraint'
-              - $ref: '#/components/schemas/dangerousGoodsConstraint'
-              - $ref: '#/components/schemas/numberOfVehiclesConstraint'
-              - $ref: '#/components/schemas/eventOrderConstraint'
-              - $ref: '#/components/schemas/sensorValueConstraint'
-              - $ref: '#/components/schemas/sensorUpdateFrequencyConstraint'
-              - $ref: '#/components/schemas/startDateTimeConstraint'
-              - $ref: '#/components/schemas/endDateTimeConstraint'
-              - $ref: '#/components/schemas/timeRangeConstraint'
-              discriminator:
-                propertyName: type
-                mapping:
-                  constraintReference: '#/components/schemas/constraintReference'
-                  andConstraint: '#/components/schemas/andConstraint'
-                  notConstraint: '#/components/schemas/notConstraint'
-                  orConstraint: '#/components/schemas/orConstraint'
-                  sizeConstraint: '#/components/schemas/sizeConstraint'
-                  speedConstraint: '#/components/schemas/speedConstraint'
-                  weightConstraint: '#/components/schemas/weightConstraint'
-                  fuelTypeConstraint: '#/components/schemas/fuelTypeConstraint'
-                  vehicleTypeConstraint: '#/components/schemas/vehicleTypeConstraint'
-                  routeConstraint: '#/components/schemas/routeConstraint'
-                  dangerousGoodsConstraint: '#/components/schemas/dangerousGoodsConstraint'
-                  numberOfVehiclesConstraint: '#/components/schemas/numberOfVehiclesConstraint'
-                  eventOrderConstraint: '#/components/schemas/eventOrderConstraint'
-                  sensorValueConstraint: '#/components/schemas/sensorValueConstraint'
-                  sensorUpdateFrequencyConstraint: '#/components/schemas/sensorUpdateFrequencyConstraint'
-                  startDateTimeConstraint: '#/components/schemas/startDateTimeConstraint'
-                  endDateTimeConstraint: '#/components/schemas/endDateTimeConstraint'
-                  timeRangeConstraint: '#/components/schemas/timeRangeConstraint'
+            > **ℹ Note** that constraints can be nested and combined using the `andConstraint`, `orConstraint` and `notConstraint`.
+          oneOf:
+            - $ref: '#/components/schemas/constraintReference'
+            - $ref: '#/components/schemas/andConstraint'
+            - $ref: '#/components/schemas/notConstraint'
+            - $ref: '#/components/schemas/orConstraint'
+            - $ref: '#/components/schemas/sizeConstraint'
+            - $ref: '#/components/schemas/speedConstraint'
+            - $ref: '#/components/schemas/weightConstraint'
+            - $ref: '#/components/schemas/fuelTypeConstraint'
+            - $ref: '#/components/schemas/vehicleTypeConstraint'
+            - $ref: '#/components/schemas/routeConstraint'
+            - $ref: '#/components/schemas/dangerousGoodsConstraint'
+            - $ref: '#/components/schemas/numberOfVehiclesConstraint'
+            - $ref: '#/components/schemas/eventOrderConstraint'
+            - $ref: '#/components/schemas/sensorValueConstraint'
+            - $ref: '#/components/schemas/sensorUpdateFrequencyConstraint'
+            - $ref: '#/components/schemas/startDateTimeConstraint'
+            - $ref: '#/components/schemas/endDateTimeConstraint'
+            - $ref: '#/components/schemas/timeRangeConstraint'
+          discriminator:
+            propertyName: type
+            mapping:
+              constraintReference: '#/components/schemas/constraintReference'
+              andConstraint: '#/components/schemas/andConstraint'
+              notConstraint: '#/components/schemas/notConstraint'
+              orConstraint: '#/components/schemas/orConstraint'
+              sizeConstraint: '#/components/schemas/sizeConstraint'
+              speedConstraint: '#/components/schemas/speedConstraint'
+              weightConstraint: '#/components/schemas/weightConstraint'
+              fuelTypeConstraint: '#/components/schemas/fuelTypeConstraint'
+              vehicleTypeConstraint: '#/components/schemas/vehicleTypeConstraint'
+              routeConstraint: '#/components/schemas/routeConstraint'
+              dangerousGoodsConstraint: '#/components/schemas/dangerousGoodsConstraint'
+              numberOfVehiclesConstraint: '#/components/schemas/numberOfVehiclesConstraint'
+              eventOrderConstraint: '#/components/schemas/eventOrderConstraint'
+              sensorValueConstraint: '#/components/schemas/sensorValueConstraint'
+              sensorUpdateFrequencyConstraint: '#/components/schemas/sensorUpdateFrequencyConstraint'
+              startDateTimeConstraint: '#/components/schemas/startDateTimeConstraint'
+              endDateTimeConstraint: '#/components/schemas/endDateTimeConstraint'
+              timeRangeConstraint: '#/components/schemas/timeRangeConstraint'
 
     trip:
       type: object
@@ -4361,52 +4358,51 @@ components:
             URI of an endpoint that can be used to retrieve the route of this `Trip`.
           example: https://api.opentripmodel.org/api/public/v4/routes/9df853e4-1291-40de-bfc1-4e5d7b23cc76
         constraint:
-          allOf:
-            - description: |
-                In the context of a `Trip`, constraints can be used to define constraints that have to be met during the trip, e.g. if the temperature
-                in a refridgerated trailer has to stay below a given maximum during the trip.
+          description: |
+            In the context of a `Trip`, constraints can be used to define constraints that have to be met during the trip, e.g. if the temperature
+            in a refridgerated trailer has to stay below a given maximum during the trip.
 
-                > **ℹ Note** that constraints can be nested and combined using the `andConstraint`, `orConstraint` and `notConstraint`.
-            - oneOf:
-              - $ref: '#/components/schemas/constraintReference'
-              - $ref: '#/components/schemas/andConstraint'
-              - $ref: '#/components/schemas/notConstraint'
-              - $ref: '#/components/schemas/orConstraint'
-              - $ref: '#/components/schemas/sizeConstraint'
-              - $ref: '#/components/schemas/speedConstraint'
-              - $ref: '#/components/schemas/weightConstraint'
-              - $ref: '#/components/schemas/fuelTypeConstraint'
-              - $ref: '#/components/schemas/vehicleTypeConstraint'
-              - $ref: '#/components/schemas/routeConstraint'
-              - $ref: '#/components/schemas/dangerousGoodsConstraint'
-              - $ref: '#/components/schemas/numberOfVehiclesConstraint'
-              - $ref: '#/components/schemas/eventOrderConstraint'
-              - $ref: '#/components/schemas/sensorValueConstraint'
-              - $ref: '#/components/schemas/sensorUpdateFrequencyConstraint'
-              - $ref: '#/components/schemas/startDateTimeConstraint'
-              - $ref: '#/components/schemas/endDateTimeConstraint'
-              - $ref: '#/components/schemas/timeRangeConstraint'
-              discriminator:
-                propertyName: type
-                mapping:
-                  constraintReference: '#/components/schemas/constraintReference'
-                  andConstraint: '#/components/schemas/andConstraint'
-                  notConstraint: '#/components/schemas/notConstraint'
-                  orConstraint: '#/components/schemas/orConstraint'
-                  sizeConstraint: '#/components/schemas/sizeConstraint'
-                  speedConstraint: '#/components/schemas/speedConstraint'
-                  weightConstraint: '#/components/schemas/weightConstraint'
-                  fuelTypeConstraint: '#/components/schemas/fuelTypeConstraint'
-                  vehicleTypeConstraint: '#/components/schemas/vehicleTypeConstraint'
-                  routeConstraint: '#/components/schemas/routeConstraint'
-                  dangerousGoodsConstraint: '#/components/schemas/dangerousGoodsConstraint'
-                  numberOfVehiclesConstraint: '#/components/schemas/numberOfVehiclesConstraint'
-                  eventOrderConstraint: '#/components/schemas/eventOrderConstraint'
-                  sensorValueConstraint: '#/components/schemas/sensorValueConstraint'
-                  sensorUpdateFrequencyConstraint: '#/components/schemas/sensorUpdateFrequencyConstraint'
-                  startDateTimeConstraint: '#/components/schemas/startDateTimeConstraint'
-                  endDateTimeConstraint: '#/components/schemas/endDateTimeConstraint'
-                  timeRangeConstraint: '#/components/schemas/timeRangeConstraint'
+            > **ℹ Note** that constraints can be nested and combined using the `andConstraint`, `orConstraint` and `notConstraint`.
+          oneOf:
+            - $ref: '#/components/schemas/constraintReference'
+            - $ref: '#/components/schemas/andConstraint'
+            - $ref: '#/components/schemas/notConstraint'
+            - $ref: '#/components/schemas/orConstraint'
+            - $ref: '#/components/schemas/sizeConstraint'
+            - $ref: '#/components/schemas/speedConstraint'
+            - $ref: '#/components/schemas/weightConstraint'
+            - $ref: '#/components/schemas/fuelTypeConstraint'
+            - $ref: '#/components/schemas/vehicleTypeConstraint'
+            - $ref: '#/components/schemas/routeConstraint'
+            - $ref: '#/components/schemas/dangerousGoodsConstraint'
+            - $ref: '#/components/schemas/numberOfVehiclesConstraint'
+            - $ref: '#/components/schemas/eventOrderConstraint'
+            - $ref: '#/components/schemas/sensorValueConstraint'
+            - $ref: '#/components/schemas/sensorUpdateFrequencyConstraint'
+            - $ref: '#/components/schemas/startDateTimeConstraint'
+            - $ref: '#/components/schemas/endDateTimeConstraint'
+            - $ref: '#/components/schemas/timeRangeConstraint'
+          discriminator:
+            propertyName: type
+            mapping:
+              constraintReference: '#/components/schemas/constraintReference'
+              andConstraint: '#/components/schemas/andConstraint'
+              notConstraint: '#/components/schemas/notConstraint'
+              orConstraint: '#/components/schemas/orConstraint'
+              sizeConstraint: '#/components/schemas/sizeConstraint'
+              speedConstraint: '#/components/schemas/speedConstraint'
+              weightConstraint: '#/components/schemas/weightConstraint'
+              fuelTypeConstraint: '#/components/schemas/fuelTypeConstraint'
+              vehicleTypeConstraint: '#/components/schemas/vehicleTypeConstraint'
+              routeConstraint: '#/components/schemas/routeConstraint'
+              dangerousGoodsConstraint: '#/components/schemas/dangerousGoodsConstraint'
+              numberOfVehiclesConstraint: '#/components/schemas/numberOfVehiclesConstraint'
+              eventOrderConstraint: '#/components/schemas/eventOrderConstraint'
+              sensorValueConstraint: '#/components/schemas/sensorValueConstraint'
+              sensorUpdateFrequencyConstraint: '#/components/schemas/sensorUpdateFrequencyConstraint'
+              startDateTimeConstraint: '#/components/schemas/startDateTimeConstraint'
+              endDateTimeConstraint: '#/components/schemas/endDateTimeConstraint'
+              timeRangeConstraint: '#/components/schemas/timeRangeConstraint'
 
     route:
       type: object
@@ -4430,7 +4426,22 @@ components:
           items:
             $ref: '#/components/schemas/idReference'
         geoReferences:
-          $ref: '#/components/schemas/geoReference'
+          oneOf:
+          - $ref: '#/components/schemas/openLRGeoReference'
+          - $ref: '#/components/schemas/tmcArrayGeoReference'
+          - $ref: '#/components/schemas/latLongArrayGeoReference'
+          - $ref: '#/components/schemas/geoJSONLineString'
+          - $ref: '#/components/schemas/geoJSONMultiLineString'
+          - $ref: '#/components/schemas/geoJSONMultiPoint'
+          discriminator:
+            propertyName: type
+            mapping:
+              openLRGeoReference: '#/components/schemas/openLRGeoReference'
+              tmcArrayGeoReference: '#/components/schemas/tmcArrayGeoReference'
+              latLongArrayGeoReference: '#/components/schemas/latLongArrayGeoReference'
+              geoJSONLineString: '#/components/schemas/geoJSONLineString'
+              geoJSONMultiLineString: '#/components/schemas/geoJSONMultiLineString'
+              geoJSONMultiPoint: '#/components/schemas/geoJSONMultiPoint'
       required:
         - geoReferences
 
@@ -4445,14 +4456,108 @@ components:
             An array of OTM entities.
           type: array
           items:
-            $ref: '#/components/schemas/bundledEntity'
+            type: object
+            oneOf:
+              - $ref: '#/components/schemas/vehicleEntity'
+              - $ref: '#/components/schemas/locationEntity'
+              - $ref: '#/components/schemas/tripEntity'
+              - $ref: '#/components/schemas/routeEntity'
+              - $ref: '#/components/schemas/shipmentEntity'
+              - $ref: '#/components/schemas/actorEntity'
+              - $ref: '#/components/schemas/constraintEntity'
+              - $ref: '#/components/schemas/sensorEntity'
+            discriminator:
+              propertyName: entityType
+              mapping:
+                vehicle: '#/components/schemas/vehicleEntity'
+                location: '#/components/schemas/locationEntity'
+                trip: '#/components/schemas/tripEntity'
+                route: '#/components/schemas/routeEntity'
+                shipment: '#/components/schemas/shipmentEntity'
+                actor: '#/components/schemas/actorEntity'
+                constraint: '#/components/schemas/constraintEntity'
+                sensor: '#/components/schemas/sensorEntity'
         events:
           description: |
             An array of events. The order of events is determined by the timestamps as explained on the [Ordering of events](https://www.opentripmodel.org/v4.2.0/docs/ordering-of-events) page.
           type: array
           items:
-            $ref: '#/components/schemas/event'
-
+            type: object
+            oneOf:
+              - $ref: '#/components/schemas/locationUpdateEvent'
+              - $ref: '#/components/schemas/sensorUpdateEvent'
+              - $ref: '#/components/schemas/startEngineEvent'
+              - $ref: '#/components/schemas/stopEngineEvent'
+              - $ref: '#/components/schemas/restrictionWarningEvent'
+              - $ref: '#/components/schemas/constraintViolationEvent'
+              - $ref: '#/components/schemas/trafficWarningEvent'
+              - $ref: '#/components/schemas/startMovingEvent'
+              - $ref: '#/components/schemas/stopMovingEvent'
+              - $ref: '#/components/schemas/startWaitingEvent'
+              - $ref: '#/components/schemas/stopWaitingEvent'
+              - $ref: '#/components/schemas/startLoadingAndUnloadingEvent'
+              - $ref: '#/components/schemas/stopLoadingAndUnloadingEvent'
+              - $ref: '#/components/schemas/pickupTimeWindowStartEvent'
+              - $ref: '#/components/schemas/pickupTimeWindowEndEvent'
+              - $ref: '#/components/schemas/deliveryTimeWindowStartEvent'
+              - $ref: '#/components/schemas/deliveryTimeWindowEndEvent'
+              - $ref: '#/components/schemas/coupleVehiclesEvent'
+              - $ref: '#/components/schemas/decoupleVehiclesEvent'
+              - $ref: '#/components/schemas/assignToTripEvent'
+              - $ref: '#/components/schemas/deassignFromTripEvent'
+              - $ref: '#/components/schemas/assignDriverEvent'
+              - $ref: '#/components/schemas/deassignDriverEvent'
+              - $ref: '#/components/schemas/associateWithActorEvent'
+              - $ref: '#/components/schemas/dissociateFromActorEvent'
+              - $ref: '#/components/schemas/loadShipmentEvent'
+              - $ref: '#/components/schemas/unloadShipmentEvent'
+              - $ref: '#/components/schemas/receiveShipmentEvent'
+              - $ref: '#/components/schemas/releaseShipmentEvent'
+              - $ref: '#/components/schemas/linkTripsEvent'
+              - $ref: '#/components/schemas/coupleSensorEvent'
+              - $ref: '#/components/schemas/decoupleSensorEvent'
+              - $ref: '#/components/schemas/cancelEvent'
+              - $ref: '#/components/schemas/cancelAllEntityEvents'
+              - $ref: '#/components/schemas/cancelGroupedEvents'
+              - $ref: '#/components/schemas/ignoreEvent'
+            discriminator:
+              propertyName: type
+              mapping:
+                sensorUpdateEvent: '#/components/schemas/locationUpdateEvent'
+                startEngineEvent: '#/components/schemas/sensorUpdateEvent'
+                stopEngineEvent: '#/components/schemas/startEngineEvent'
+                restrictionWarningEvent: '#/components/schemas/stopEngineEvent'
+                constraintViolationEvent: '#/components/schemas/restrictionWarningEvent'
+                trafficWarningEvent: '#/components/schemas/constraintViolationEvent'
+                startMovingEvent: '#/components/schemas/trafficWarningEvent'
+                stopMovingEvent: '#/components/schemas/startMovingEvent'
+                startWaitingEvent: '#/components/schemas/stopMovingEvent'
+                stopWaitingEvent: '#/components/schemas/startWaitingEvent'
+                startLoadingAndUnloadingEvent: '#/components/schemas/stopWaitingEvent'
+                stopLoadingAndUnloadingEvent: '#/components/schemas/startLoadingAndUnloadingEvent'
+                pickupTimeWindowStartEvent: '#/components/schemas/stopLoadingAndUnloadingEvent'
+                pickupTimeWindowEndEvent: '#/components/schemas/pickupTimeWindowStartEvent'
+                deliveryTimeWindowStartEvent: '#/components/schemas/pickupTimeWindowEndEvent'
+                deliveryTimeWindowEndEvent: '#/components/schemas/deliveryTimeWindowStartEvent'
+                coupleVehiclesEvent: '#/components/schemas/deliveryTimeWindowEndEvent'
+                decoupleVehiclesEvent: '#/components/schemas/coupleVehiclesEvent'
+                assignToTripEvent: '#/components/schemas/decoupleVehiclesEvent'
+                deassignFromTripEvent: '#/components/schemas/assignToTripEvent'
+                assignDriverEvent: '#/components/schemas/deassignFromTripEvent'
+                deassignDriverEvent: '#/components/schemas/assignDriverEvent'
+                associateWithActorEvent: '#/components/schemas/deassignDriverEvent'
+                dissociateFromActorEvent: '#/components/schemas/associateWithActorEvent'
+                loadShipmentEvent: '#/components/schemas/dissociateFromActorEvent'
+                unloadShipmentEvent: '#/components/schemas/loadShipmentEvent'
+                receiveShipmentEvent: '#/components/schemas/unloadShipmentEvent'
+                releaseShipmentEvent: '#/components/schemas/receiveShipmentEvent'
+                linkTripsEvent: '#/components/schemas/releaseShipmentEvent'
+                coupleSensorEvent: '#/components/schemas/linkTripsEvent'
+                decoupleSensorEvent: '#/components/schemas/coupleSensorEvent'
+                cancelEvent: '#/components/schemas/decoupleSensorEvent'
+                cancelAllEntityEvents: '#/components/schemas/cancelEvent'
+                cancelGroupedEvents: '#/components/schemas/cancelAllEntityEvents'
+                ignoreEvent: '#/components/schemas/cancelGroupedEvents'
     bundle_meta:
       type: object
       description: Meta-information about this bundle.
@@ -4466,46 +4571,25 @@ components:
           format: date-time
           description: Date and time this bundle was generated
 
-    bundledEntity:
+    bundled_entity:
       type: object
       description: Entity that is part of a `Bundle`.
-      allOf:
-        - properties:
-            entityType:
-              type: string
-              description: |
-                The type of entity. This is needed, since the type cannot be derived from the endpoint in a `Bundle`.
-              enum:
-                - vehicleEntity
-                - locationEntity
-                - tripEntity
-                - routeEntity
-                - shipmentEntity
-                - actorEntity
-                - constraintEntity
-                - sensorEntity
-          required:
-            - entityType
-        - oneOf:
-          - $ref: '#/components/schemas/vehicleEntity'
-          - $ref: '#/components/schemas/locationEntity'
-          - $ref: '#/components/schemas/tripEntity'
-          - $ref: '#/components/schemas/routeEntity'
-          - $ref: '#/components/schemas/shipmentEntity'
-          - $ref: '#/components/schemas/actorEntity'
-          - $ref: '#/components/schemas/constraintEntity'
-          - $ref: '#/components/schemas/sensorEntity'
-      discriminator:
-        propertyName: entityType
-        mapping:
-          vehicle: '#/components/schemas/vehicleEntity'
-          location: '#/components/schemas/locationEntity'
-          trip: '#/components/schemas/tripEntity'
-          route: '#/components/schemas/routeEntity'
-          shipment: '#/components/schemas/shipmentEntity'
-          actor: '#/components/schemas/actorEntity'
-          constraint: '#/components/schemas/constraintEntity'
-          sensor: '#/components/schemas/sensorEntity'
+      properties:
+        entityType:
+          type: string
+          description: |
+            The type of entity. This is needed, since the type cannot be derived from the endpoint in a `Bundle`.
+          enum:
+            - vehicleEntity
+            - locationEntity
+            - tripEntity
+            - routeEntity
+            - shipmentEntity
+            - actorEntity
+            - constraintEntity
+            - sensorEntity
+      required:
+        - entityType
       example:
         entityType: vehicleEntity
         id: 'https://api.opentripmodel.org/api/public/v4/vehicles/635f6bd2-2568-45d8-b4e0-312f563b87de'
@@ -4521,41 +4605,49 @@ components:
     sensorEntity:
       type: object
       allOf:
+        - $ref: '#/components/schemas/bundled_entity'
         - $ref: '#/components/schemas/sensor'
 
     vehicleEntity:
       type: object
       allOf:
+        - $ref: '#/components/schemas/bundled_entity'
         - $ref: '#/components/schemas/vehicle'
 
     locationEntity:
       type: object
       allOf:
+        - $ref: '#/components/schemas/bundled_entity'
         - $ref: '#/components/schemas/location'
 
     tripEntity:
       type: object
       allOf:
+        - $ref: '#/components/schemas/bundled_entity'
         - $ref: '#/components/schemas/trip'
 
     routeEntity:
       type: object
       allOf:
+        - $ref: '#/components/schemas/bundled_entity'
         - $ref: '#/components/schemas/route'
 
     shipmentEntity:
       type: object
       allOf:
+        - $ref: '#/components/schemas/bundled_entity'
         - $ref: '#/components/schemas/shipment'
 
     actorEntity:
       type: object
       allOf:
+        - $ref: '#/components/schemas/bundled_entity'
         - $ref: '#/components/schemas/actor'
 
     constraintEntity:
       type: object
       allOf:
+        - $ref: '#/components/schemas/bundled_entity'
         - $ref: '#/components/schemas/constraint'
 
     event:
@@ -4630,56 +4722,55 @@ components:
             Remarks for this event.
           example: The traffic lights weren't working
         constraint:
-          allOf:
-            - description: |
-                In the context of an `Event`, a `Constraint` can be used to constrain the order of events. This can be useful if events don't have
-                any timestamp but you need to guarantee that a certain event occurs before another event. The only constraint types that are valid in
-                the context of an `Event` are:
+          description: |
+            In the context of an `Event`, a `Constraint` can be used to constrain the order of events. This can be useful if events don't have
+            any timestamp but you need to guarantee that a certain event occurs before another event. The only constraint types that are valid in
+            the context of an `Event` are:
 
-                - `eventOrderConstraint`;
-                - `andConstraint`;
-                - `orConstraint`;
-                - `constraintReference`.
-            - oneOf:
-              - $ref: '#/components/schemas/constraintReference'
-              - $ref: '#/components/schemas/andConstraint'
-              - $ref: '#/components/schemas/notConstraint'
-              - $ref: '#/components/schemas/orConstraint'
-              - $ref: '#/components/schemas/sizeConstraint'
-              - $ref: '#/components/schemas/speedConstraint'
-              - $ref: '#/components/schemas/weightConstraint'
-              - $ref: '#/components/schemas/fuelTypeConstraint'
-              - $ref: '#/components/schemas/vehicleTypeConstraint'
-              - $ref: '#/components/schemas/routeConstraint'
-              - $ref: '#/components/schemas/dangerousGoodsConstraint'
-              - $ref: '#/components/schemas/numberOfVehiclesConstraint'
-              - $ref: '#/components/schemas/eventOrderConstraint'
-              - $ref: '#/components/schemas/sensorValueConstraint'
-              - $ref: '#/components/schemas/sensorUpdateFrequencyConstraint'
-              - $ref: '#/components/schemas/startDateTimeConstraint'
-              - $ref: '#/components/schemas/endDateTimeConstraint'
-              - $ref: '#/components/schemas/timeRangeConstraint'
-              discriminator:
-                propertyName: type
-                mapping:
-                  constraintReference: '#/components/schemas/constraintReference'
-                  andConstraint: '#/components/schemas/andConstraint'
-                  notConstraint: '#/components/schemas/notConstraint'
-                  orConstraint: '#/components/schemas/orConstraint'
-                  sizeConstraint: '#/components/schemas/sizeConstraint'
-                  speedConstraint: '#/components/schemas/speedConstraint'
-                  weightConstraint: '#/components/schemas/weightConstraint'
-                  fuelTypeConstraint: '#/components/schemas/fuelTypeConstraint'
-                  vehicleTypeConstraint: '#/components/schemas/vehicleTypeConstraint'
-                  routeConstraint: '#/components/schemas/routeConstraint'
-                  dangerousGoodsConstraint: '#/components/schemas/dangerousGoodsConstraint'
-                  numberOfVehiclesConstraint: '#/components/schemas/numberOfVehiclesConstraint'
-                  eventOrderConstraint: '#/components/schemas/eventOrderConstraint'
-                  sensorValueConstraint: '#/components/schemas/sensorValueConstraint'
-                  sensorUpdateFrequencyConstraint: '#/components/schemas/sensorUpdateFrequencyConstraint'
-                  startDateTimeConstraint: '#/components/schemas/startDateTimeConstraint'
-                  endDateTimeConstraint: '#/components/schemas/endDateTimeConstraint'
-                  timeRangeConstraint: '#/components/schemas/timeRangeConstraint'
+            - `eventOrderConstraint`;
+            - `andConstraint`;
+            - `orConstraint`;
+            - `constraintReference`.
+          oneOf:
+            - $ref: '#/components/schemas/constraintReference'
+            - $ref: '#/components/schemas/andConstraint'
+            - $ref: '#/components/schemas/notConstraint'
+            - $ref: '#/components/schemas/orConstraint'
+            - $ref: '#/components/schemas/sizeConstraint'
+            - $ref: '#/components/schemas/speedConstraint'
+            - $ref: '#/components/schemas/weightConstraint'
+            - $ref: '#/components/schemas/fuelTypeConstraint'
+            - $ref: '#/components/schemas/vehicleTypeConstraint'
+            - $ref: '#/components/schemas/routeConstraint'
+            - $ref: '#/components/schemas/dangerousGoodsConstraint'
+            - $ref: '#/components/schemas/numberOfVehiclesConstraint'
+            - $ref: '#/components/schemas/eventOrderConstraint'
+            - $ref: '#/components/schemas/sensorValueConstraint'
+            - $ref: '#/components/schemas/sensorUpdateFrequencyConstraint'
+            - $ref: '#/components/schemas/startDateTimeConstraint'
+            - $ref: '#/components/schemas/endDateTimeConstraint'
+            - $ref: '#/components/schemas/timeRangeConstraint'
+          discriminator:
+            propertyName: type
+            mapping:
+              constraintReference: '#/components/schemas/constraintReference'
+              andConstraint: '#/components/schemas/andConstraint'
+              notConstraint: '#/components/schemas/notConstraint'
+              orConstraint: '#/components/schemas/orConstraint'
+              sizeConstraint: '#/components/schemas/sizeConstraint'
+              speedConstraint: '#/components/schemas/speedConstraint'
+              weightConstraint: '#/components/schemas/weightConstraint'
+              fuelTypeConstraint: '#/components/schemas/fuelTypeConstraint'
+              vehicleTypeConstraint: '#/components/schemas/vehicleTypeConstraint'
+              routeConstraint: '#/components/schemas/routeConstraint'
+              dangerousGoodsConstraint: '#/components/schemas/dangerousGoodsConstraint'
+              numberOfVehiclesConstraint: '#/components/schemas/numberOfVehiclesConstraint'
+              eventOrderConstraint: '#/components/schemas/eventOrderConstraint'
+              sensorValueConstraint: '#/components/schemas/sensorValueConstraint'
+              sensorUpdateFrequencyConstraint: '#/components/schemas/sensorUpdateFrequencyConstraint'
+              startDateTimeConstraint: '#/components/schemas/startDateTimeConstraint'
+              endDateTimeConstraint: '#/components/schemas/endDateTimeConstraint'
+              timeRangeConstraint: '#/components/schemas/timeRangeConstraint'
       required:
         - type
 
