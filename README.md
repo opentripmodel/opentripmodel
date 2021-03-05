@@ -1,9 +1,9 @@
-# OpenTripModel.org
+# OpenTripModel.org OTM 4
 
-This is the source code repository of the API Reference Documentation of
+This is the source code repository of the OTM 4 API Reference Documentation of
 [OpenTripModel.org](https://opentripmodel.org). General information on
 OpenTripModel can be found at
-[opentripmodel.org](https://opentripmodel.orghttps://opentripmodel.org). The
+[opentripmodel.org](https://opentripmodel.org). The OTM 4
 reference documentation that is generated out of this source code repository is
 published at [developer.opentripmodel.org](https://developer.opentripmodel.org).
 
@@ -14,6 +14,13 @@ standarised digital vocabulary to describe and exchange the information
 **before**, **during** and **after** transport operations within a logistics
 supply chain. Read more on the
 [OpenTripModel.org website](https://opentripmodel.org).
+
+## What is OTM 4?
+OpenTripModel version 4 is an older version of OTM that became deprecated once 
+[OTM5](https://otm5.opentripmodel.org/) was formally released in 2020. If you are
+a new user of OTM, we strongly advise you use OTM5. We keep the OTM 4 reference
+documentation around only for users who need to keep supporting an existing OTM 4
+connections.
 
 ## What is in this repository?
 This repository contains the OpenAPI specification for the OpenTripModel API in
