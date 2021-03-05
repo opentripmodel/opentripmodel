@@ -19,7 +19,7 @@ supply chain. Read more on the
 OpenTripModel version 4 is an older version of OTM that became deprecated once 
 [OTM5](https://otm5.opentripmodel.org/) was formally released in 2020. If you are
 a new user of OTM, we strongly advise you use OTM5. We keep the OTM 4 reference
-documentation around only for users who need to keep supporting an existing OTM 4
+documentation around only for users who need to keep supporting existing OTM 4
 connections.
 
 ## What is in this repository?
