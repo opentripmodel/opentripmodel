@@ -3,73 +3,68 @@ import logging
 import os
 import re
 import semver
+import subprocess
 from http.server import BaseHTTPRequestHandler, HTTPServer
 
 import requests
 from cachetools import TTLCache
-from logentries import LogentriesHandler
+from datadog import statsd
 
 
 class DatadogMetrics:
     import socket
-    from datadog import api
-    from datadog import ThreadStats
-    stats = ThreadStats()
 
     ACTUAL_HOST_NAME = socket.gethostname()
     METRIC_NAME_TEMPLATE = 'otm_spec_server.{}'
     REQUESTS_METRIC = METRIC_NAME_TEMPLATE.format('http.requests')
     GITHUB_RESOURCE_METRIC = METRIC_NAME_TEMPLATE.format('github_resource')
-    ENVIRONMENT = os.environ.get('ENVIRONMENT', 'unknown')
 
     def __init__(self):
         from datadog import initialize
-        initialize()
-        self.stats.start()
 
-        params = {
-            'description': 'HTTP requests',
-            'short_name': 'requests',
-            'type': 'count',
-            'unit': 'request',
-            'per_unit': None
-        }
+        # If you want to connect to the Datadog Agent running on a host machine, but from a docker, you need
+        # to use an IP address that acts like a bridge from the docker to the host. The "default via" ip
+        # in the Linux "ip route show" command works for this purpose.
+        # Also see: http://phillbarber.blogspot.nl/2015/02/connect-docker-to-service-on-parent-host.html
 
-        self.api.Metadata.update(metric_name=self.REQUESTS_METRIC, **params)
+        ip = '127.0.0.1'
+
+        ip_routes = subprocess.run(["ip", "route", "show"], capture_output=True, text=True).stdout.split("\n")
+
+        default_routes = []
+
+        for route in ip_routes:
+            if route.startswith("default via"):
+                default_routes.append(route)
+
+        if default_routes:
+            # Grab the IP from the response
+            ip = default_routes[0].split(" ")[2]
+
+        initialize(statsd_host=ip, statsd_port=8125)
 
     def request(self, verb, request_type, version):
         tags = [
             'verb:{}'.format(verb),
-            'environment:{}'.format(self.ENVIRONMENT)
         ]
         if request_type:
             tags.append('type:{}'.format(request_type)),
         if version:
             tags.append('version:{}'.format(version)),
 
-        self.stats.increment(metric_name=self.REQUESTS_METRIC, tags=tags, value=1, sample_rate=1)
+        statsd.increment(metric=self.REQUESTS_METRIC, tags=tags, value=1, sample_rate=1)
 
     def github_resource(self, file, version, from_cache, status_code=None):
         tags = [
             'file:{}'.format(file),
             'version:{}'.format(version),
             'from_cache:{}'.format(from_cache),
-            'environment:{}'.format(self.ENVIRONMENT)
         ]
         if status_code:
             tags.append('status_code:{}'.format(status_code))
         if version and version != 'images':
             tags.append('version:{}'.format(version)),
-        self.stats.increment(metric_name=self.GITHUB_RESOURCE_METRIC, tags=tags, value=1, sample_rate=1)
-
-    def event(self, title, text):
-        self.stats.event(
-            title=title,
-            text=text,
-            tags=['environment:{}'.format(self.ENVIRONMENT), 'otm_spec_server'],
-            hostname=self.ACTUAL_HOST_NAME,
-            aggregation_key='otm_spec_server')
-        self.stats.flush()
+        statsd.increment(metric=self.GITHUB_RESOURCE_METRIC, tags=tags, value=1, sample_rate=1)
 
 
 class NoopMetrics:
@@ -80,9 +75,6 @@ class NoopMetrics:
         pass
 
     def github_resource(self, file, version, from_cache, status_code=None):
-        pass
-
-    def event(self, title, text):
         pass
 
 
@@ -97,11 +89,13 @@ log = logging.getLogger('otm-spec-server')
 LOCAL_HTML_FILE = os.environ.get("LOCAL_HTML_FILE", "False").upper() == "TRUE"
 LOCAL_SWAGGER_FILE = os.environ.get("LOCAL_SWAGGER_FILE", "False").upper() == "TRUE"
 SHOW_ALPHA_VERSIONS = os.environ.get('SHOW_ALPHA_VERSIONS', 'False').upper() == "TRUE"
+DATADOG_ENABLED = os.environ.get('DATADOG_ENABLED', "False").upper() == "TRUE"
 
-if 'DATADOG_API_KEY' in os.environ:
+if DATADOG_ENABLED:
+    log.info("Starting Datadog client")
     metrics = DatadogMetrics()
 else:
-    log.warning("No DATADOG_API_KEY found in environment. Running server without datadog metrics")
+    log.warning("DATADOG_ENABLED not set to true in environment. Running server without datadog metrics")
     metrics = NoopMetrics()
 
 
@@ -196,8 +190,9 @@ class MyHandler(BaseHTTPRequestHandler):
                     self.handle_github_file("{}/{}".format(version, file), file_extension, "master", version)
             except FileNotFoundError:
                 self.handle_error(404, "File not found: '{}'".format(file))
-            except Exception:
-                self.handle_error(500, "Unkown error")
+            except Exception as ex:
+                log.error(ex)
+                self.handle_error(500, "Unknown error")
         else:
             self.handle_error(req.status_code, req.content)
 
@@ -316,13 +311,8 @@ class MyHandler(BaseHTTPRequestHandler):
 
 
 def initialize_logging():
-    logentries_token = os.environ.get('LOGENTRIES_TOKEN')
     log_level = os.environ.get("LOG_LEVEL", "INFO")
     logging.basicConfig(format='[%(levelname)s] %(message)s', level=log_level)
-    if logentries_token:
-        log.addHandler(LogentriesHandler(logentries_token))
-    else:
-        log.warning("No LOGENTRIES_TOKEN found in environment. Only logging to local console.")
     log.info("Logging initialized, level=%s", log_level)
 
 
@@ -334,11 +324,9 @@ if __name__ == '__main__':
 
     httpd = HTTPServer((HOST_NAME, PORT_NUMBER), MyHandler)
     log.info('Server Starts - %s:%s', HOST_NAME, PORT_NUMBER)
-    metrics.event('OTM Spec Server Starts', 'HTTP server starts listening on {}:{}'.format(HOST_NAME, PORT_NUMBER))
     try:
         httpd.serve_forever()
     except KeyboardInterrupt:
         pass
     httpd.server_close()
     log.info('Server Stops - %s:%s', HOST_NAME, PORT_NUMBER)
-    metrics.event('OTM Spec Server Stops', 'HTTP server stopped listening on {}:{}'.format(HOST_NAME, PORT_NUMBER))
