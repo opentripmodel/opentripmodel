@@ -1,9 +1,8 @@
-FROM python:3.7-alpine3.9
+FROM python:3.9-alpine3.15
 
 COPY http-server/server.py /
 
 RUN pip install cachetools && \
-    pip install logentries && \
     pip install requests && \
     pip install datadog && \
     pip install semver
