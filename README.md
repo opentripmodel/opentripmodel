@@ -27,91 +27,19 @@ connections.
 ## What is in this repository?
 
 This repository contains the OpenAPI specification for the OpenTripModel API in
-YAML format, as well as some tooling to automatically publish the documentation
-Read the following sections in this README for more information about the tooling
-and scripts.
+YAML format.
 
-The repository also includes a simple Python HTTP-server, that serves all files
-needed to render the documentation. This server can be found in
-[http-server/server.py](http-server/server.py).
+The repository also includes redoc/index.html.
 
-The server will serve a HTML-file, that includes
-[Redoc](https://github.com/Rebilly/ReDoc) to render the `swagger.yaml`
-in a more human readable fashion.
+With these files and an installation of [Redoc](https://github.com/Rebilly/ReDoc),
+the documentation can be rendered in a human-readable fashion. We recommend you don't do that yourself and instead
+refer to the version on [opentripmodel.org](https://opentripmodel.org).
 
-### How to generate a distribution
+## Important note about tagging releases
 
-The documentation server is distributed as a [Docker](https://www.docker.com/what-docker)
-container. To create a container from sources, you should install Docker on your
-machine. Then run
-
-```bash
-docker build -t otm-spec-server .
-```
-
-to build the container. Then the container can be started as follows:
-
-```bash
-docker run -p 9000:9000 -e "GITHUB_TOKEN=GitHub Token here" -e "LOG_LEVEL=DEBUG" otm-spec-server 
-``` 
-
-### Running the server locally
-
-The HTTP server can also be run locally, without the need to build a Docker
-container. To do so, you'll need to install Python 3.6 (or higher) on your local
-machine.
-
-It is recommended to use
-a [virtual environment](https://packaging.python.org/en/latest/guides/installing-using-pip-and-virtual-environments/#creating-a-virtual-environment)
-for the next steps.
-
-Also, you'll need to install some dependencies:
-
-```bash
-pip install cachetools
-pip install requests
-pip install datadog
-pip install semver
-```
-
-You will also need to add the redoc js library. From the repository's root directory:
-
-```bash
-mkdir -p "lib/redoc"
-wget "https://cdn.jsdelivr.net/npm/redoc@2.0.0-alpha.41/bundles/redoc.standalone.js" -P "lib/redoc"
-wget "https://cdn.jsdelivr.net/npm/redoc@2.0.0-alpha.41/bundles/redoc.standalone.js.map" -P "lib/redoc"
-```
-
-After that, you can start the server:
-
-```bash
-cd http-server
-python ./server.py
-```
-
-The server expects some environment variables to be set:
-
-* `GITHUB_TOKEN`: a GitHub token to access the GitHub repository via the
-  GitHub API. This is needed because the different versions of the
-  specification are loaded from GitHub.
-* `DATADOG_ENABLED`: Boolean whether metrics should be published to
-  [Datadog](https://www.datadoghq.com/). If true, will send to the local dogstatsd agent.
-  (with default settings according to
-  the [docs](https://docs.datadoghq.com/developers/dogstatsd/?tab=hostagent#instantiate-the-dogstatsd-client)).
-* `LOCAL_HTML_FILE`: Boolean, indicating if the `index.html` file should
-  be served from the local file system (`true`) or from GitHub (`false`).
-  If omitted, the file is served from GitHub.
-
-  This variable cannot be used for the Docker container, because it does not contain the HTML file.
-
-  Note: Older versions of the `index.html` are no longer compatible with the current redoc setup.
-  To see older versions of the spec locally, either set this variable to `false` or install the
-  old redoc versions as described in the Dockerfile.
-* `LOCAL_SWAGGER_FILE`: Boolean, indicating if the `swagger.yaml` file should
-  be served from the local file system (`true`) or from GitHub (`false`).
-  If omitted, the file is served from GitHub.
-
-  This variable cannot be used for the Docker container, because it does not contain the Swagger file.
+Every mainline and beta Git tag (such as `version/4.1.2` and `version/4.2.0-b5`) is automatically available on 
+developer.opentripmodel.org. Please do not create a tag in this repository unless you want the new OTM4
+version to be public.
 
 ## License
 
